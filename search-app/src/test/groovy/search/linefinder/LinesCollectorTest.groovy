@@ -1,10 +1,10 @@
 package search.linefinder
 
+import org.junit.jupiter.api.Test
+import search.linefinder.LinesCollector
+
 import static search.linefinder.LineVisibility.HIDE
 import static search.linefinder.LineVisibility.SHOW
-
-import org.junit.Test
-import search.linefinder.LinesCollector
 
 class LinesCollectorTest {
 

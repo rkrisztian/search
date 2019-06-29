@@ -1,13 +1,13 @@
 package search.conf
 
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import search.log.ILog
+import search.log.LogMock
+
 import static search.conf.Conf.DEFAULT_MAX_CONTEXT_LINES
 import static search.conf.ConfigParser.PROPERTY_EXCLUDE_FILE_PATTERNS
 import static search.conf.ConfigParser.PROPERTY_MAX_CONTEXT_LINES
-
-import org.junit.Before
-import org.junit.Test
-import search.log.ILog
-import search.log.LogMock
 
 class ConfigParserTest {
 
@@ -15,7 +15,7 @@ class ConfigParserTest {
 	private ILog log
 	private ConfigParser configParser
 
-	@Before
+	@BeforeEach
 	void setup() {
 		conf = new Conf()
 		log = LogMock.get()

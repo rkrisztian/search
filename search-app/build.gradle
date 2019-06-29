@@ -1,8 +1,9 @@
 apply plugin: 'groovy'
 
 dependencies {
-	compile localGroovy()
-	testCompile 'junit:junit:4.12'
+	implementation 'org.codehaus.groovy:groovy-all:2.4.15'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
 }
 
 task fatJar(type: Jar) {
@@ -16,7 +17,7 @@ task fatJar(type: Jar) {
 	}
 
 	from {
-		configurations.compile.collect {
+		configurations.compileClasspath.collect {
 			it.isDirectory() ? it : zipTree(it)
 		}
 	}
@@ -26,14 +27,21 @@ task fatJar(type: Jar) {
 
 task generateSearchScript(type: Copy) {
 	from 'etc/search_tmpl'
-	into distsDir
+	into "${buildDir}/${distsDirName}"
 	rename { file -> 'search' }
 	expand System: System, fatJar: fatJar
 }
 
 task setSearchScriptPerms(type: Exec) {
-	commandLine 'chmod', '+x', file("${distsDir}/search")
+	commandLine 'chmod', '+x', file("${buildDir}/${distsDirName}/search")
 }
 
 generateSearchScript.finalizedBy setSearchScriptPerms
 assemble.dependsOn fatJar, generateSearchScript
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events 'skipped', 'failed'
+	}
+}

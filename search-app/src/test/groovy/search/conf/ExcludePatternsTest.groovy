@@ -1,11 +1,11 @@
 package search.conf
 
-import static search.conf.ConfigParser.PROPERTY_EXCLUDE_FILE_PATTERNS
-
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import search.log.ILog
 import search.log.LogMock
+
+import static search.conf.ConfigParser.PROPERTY_EXCLUDE_FILE_PATTERNS
 
 class ExcludePatternsTest {
 
@@ -14,7 +14,7 @@ class ExcludePatternsTest {
 	private ArgumentsParser argumentsParser
 	private ConfigParser configParser
 
-	@Before
+	@BeforeEach
 	void setup() {
 		conf = new Conf()
 		log = LogMock.get()

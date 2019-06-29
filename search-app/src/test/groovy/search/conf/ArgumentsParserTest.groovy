@@ -1,7 +1,7 @@
 package search.conf
 
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import search.log.ILog
 import search.log.LogMock
 
@@ -11,7 +11,7 @@ class ArgumentsParserTest {
 	private ILog log
 	private ArgumentsParser argumentsParser
 
-	@Before
+	@BeforeEach
 	void setup() {
 		conf = new Conf()
 		log = LogMock.get()
