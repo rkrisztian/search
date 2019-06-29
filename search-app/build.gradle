@@ -1,0 +1,39 @@
+apply plugin: 'groovy'
+
+dependencies {
+	compile localGroovy()
+	testCompile 'junit:junit:4.12'
+}
+
+task fatJar(type: Jar) {
+	dependsOn jar
+	baseName = "${project.name}-standalone"
+
+	manifest {
+		attributes 'Implementation-Title': 'Search App (Standalone)',
+				'Implementation-Version': version,
+				'Main-Class': 'search.Search'
+	}
+
+	from {
+		configurations.compile.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+
+	with jar
+}
+
+task generateSearchScript(type: Copy) {
+	from 'etc/search_tmpl'
+	into distsDir
+	rename { file -> 'search' }
+	expand System: System, fatJar: fatJar
+}
+
+task setSearchScriptPerms(type: Exec) {
+	commandLine 'chmod', '+x', file("${distsDir}/search")
+}
+
+generateSearchScript.finalizedBy setSearchScriptPerms
+assemble.dependsOn fatJar, generateSearchScript

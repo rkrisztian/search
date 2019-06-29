@@ -1,0 +1,3 @@
+#!/bin/bash
+
+${System.env.JAVA_HOME}/bin/java \${JAVA_OPTS} -jar ${fatJar.archivePath} "\$@"

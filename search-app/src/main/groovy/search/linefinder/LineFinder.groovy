@@ -1,0 +1,146 @@
+package search.linefinder
+
+import static LineType.CONTEXT_LINE
+import static LineType.FOUND_LINE
+import static LineVisibility.HIDE
+import static LineVisibility.SHOW
+import static java.nio.file.Files.isReadable
+import static java.nio.file.Files.move
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
+import static search.conf.Constants.REPLACE_TMP_FILE_PATH
+
+import java.util.regex.Pattern
+
+import search.conf.PatternData
+import search.log.ILog
+import search.resultsprinter.IResultsPrinter
+
+class LineFinder {
+
+	private final Set<PatternData> patternData
+
+	private final List<Pattern> excludeLinePatterns
+
+	private final boolean doReplace
+
+	private final boolean dryRun
+
+	private final ILinesCollector linesCollector
+
+	private final IResultsPrinter resultsPrinter
+
+	private final ILog log
+
+	LineFinder(Set<PatternData> patternData, List<Pattern> excludeLinePatterns, boolean doReplace,
+			boolean dryRun, ILinesCollector linesCollector, IResultsPrinter resultsPrinter, ILog log) {
+		this.patternData = patternData
+		this.excludeLinePatterns = excludeLinePatterns
+		this.doReplace = doReplace
+		this.dryRun = dryRun
+		this.linesCollector = linesCollector
+		this.resultsPrinter = resultsPrinter
+		this.log = log
+	}
+
+	void findLines(File file = null) {
+		def filePath = file ? file.path : '<STDIN>'
+		linesCollector.reset()
+		boolean allPatternsFound = true
+
+		if (patternData) {
+			if (file && !isReadable(file.toPath())) {
+				log.error "${filePath} : Not readable"
+				log.rawPrintln()
+				return
+			}
+
+			Set<PatternData> foundPatterns = []
+
+			searchForPatterns file, foundPatterns
+			adjustForNegativeSearch foundPatterns
+
+			if (foundPatterns.size() != patternData.size()) {
+				allPatternsFound = false
+			}
+
+			if (doReplace && !dryRun && allPatternsFound) {
+				replaceInFile(file)
+			}
+		}
+
+		if (allPatternsFound) {
+			resultsPrinter.printFoundLines filePath, linesCollector.foundLines
+		}
+	}
+
+	private void searchForPatterns(File file, Set foundPatterns) {
+		(file ?: System.in).eachLine { line, int lineNr ->
+			def lineType = CONTEXT_LINE
+			def lineVisibility = HIDE
+
+			if (!(excludeLinePatterns.any { line =~ it })) {
+				patternData.each { patternData ->
+					if (line =~ patternData.searchPattern) {
+						foundPatterns << patternData
+
+						if (!patternData.negativeSearch) {
+							lineType = FOUND_LINE
+							lineVisibility = patternData.hidePattern ? lineVisibility : SHOW
+						}
+					}
+				}
+			}
+
+			if (lineType == FOUND_LINE) {
+				linesCollector.storeFoundLine lineNr, line, lineVisibility
+			}
+			else {
+				linesCollector.storeContextLine line
+			}
+		}
+	}
+
+	private void adjustForNegativeSearch(Set foundPatterns) {
+		patternData.each { patternData ->
+			if (patternData.negativeSearch) {
+				if (patternData in foundPatterns) {
+					foundPatterns.remove patternData
+				}
+				else {
+					foundPatterns << patternData
+				}
+			}
+		}
+	}
+
+	// TODO 2013-07-29/rkrisztian: Replace is done by re-opening the same file twice at the moment.
+	private void replaceInFile(File file) {
+		if (!file.canWrite()) {
+			log.fatal "File '${file.path}' is not writable."
+		}
+
+		def replaceTmpFile = new File(REPLACE_TMP_FILE_PATH)
+
+		replaceTmpFile.withWriter { writer ->
+			file.eachLine { line ->
+				if (!(excludeLinePatterns.any { line =~ it })) {
+					patternData.each { patternData ->
+						if (line =~ patternData.searchPattern) {
+							if (patternData.replace) {
+								line = line.replaceAll patternData.searchPattern, patternData.replaceText
+							}
+						}
+					}
+				}
+
+				writer.writeLine line
+			}
+		}
+
+		def origFilePath = file.toPath()
+		def tmpFilePathObj = replaceTmpFile.toPath()
+
+		move tmpFilePathObj, origFilePath, REPLACE_EXISTING
+	}
+
+}
