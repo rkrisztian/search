@@ -16,6 +16,7 @@ gradle-app.setting
 # IntelliJ IDEA
 .idea
 *.iml
+out/
 
 # Eclipse
 bin
