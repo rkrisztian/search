@@ -128,7 +128,7 @@ $ gw assemble
 Optionally, to ensure you got a working revision:
 
 ```text
-$ gw test
+$ gw test integrationTest
 ```
 
 Then to make it easier to use, see next section.
@@ -210,6 +210,7 @@ excludeFilePatterns = [
 	$/\.\#(.+?)(\.\d+)+/$,
 	$//.git//$,
 	$//build//$,
+	$//out//$,
 	$//bin//$,
 	$//dist//$,
 	$//target(.+?)//$,
@@ -296,7 +297,7 @@ that are temporary files created by Eclipse to show history.)
 1. Import project in IntelliJ IDEA.
 2. Before committing:
 	```text
-	$ gw clean assemble test
+	$ gw clean assemble test integrationTest
 	```
 3. How to commit:
 	Please send a PR. :)

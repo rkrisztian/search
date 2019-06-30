@@ -85,7 +85,7 @@ class Search {
 
 		resultsPrinter.withResultsPrinter {
 			if (conf.paths) {
-				BinaryFileChecker binaryFileChecker = new BinaryFileChecker(log)
+				BinaryFileChecker binaryFileChecker = new BinaryFileChecker()
 				FileFinder fileFinder = new FileFinder(conf, log, binaryFileChecker)
 
 				fileFinder.find { foundFile -> lineFinder.findLines foundFile }

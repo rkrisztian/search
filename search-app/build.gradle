@@ -1,4 +1,7 @@
-apply plugin: 'groovy'
+plugins {
+	id 'groovy'
+	id 'org.unbroken-dome.test-sets' version '2.1.1'
+}
 
 dependencies {
 	implementation 'org.codehaus.groovy:groovy-all:2.4.15'
@@ -39,9 +42,17 @@ task setSearchScriptPerms(type: Exec) {
 generateSearchScript.finalizedBy setSearchScriptPerms
 assemble.dependsOn fatJar, generateSearchScript
 
-test {
-	useJUnitPlatform()
-	testLogging {
-		events 'skipped', 'failed'
+testSets {
+	integrationTest
+}
+
+check.dependsOn integrationTest
+
+[test, integrationTest].each { task ->
+	task.with {
+		useJUnitPlatform()
+		testLogging {
+			events 'skipped', 'failed'
+		}
 	}
 }

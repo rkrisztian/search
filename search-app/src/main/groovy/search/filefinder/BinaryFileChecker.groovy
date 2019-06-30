@@ -1,85 +1,69 @@
 package search.filefinder
-
-import search.log.ILog
-
 /**
- * Perl's binary file detector ("-B <file-path>") is excellent, but we got no competent alternative
- * in Groovy. So for now we are cheating by using Perl a bit. Please note: only core Perl is used,
- * no modules!
+ * Perl's binary file detector ("-B <file-path>") is excellent, but I found no similar library in Java or Groovy.
+ *
+ * The following code is a derivative of Ficando Itucan's "File is Text or Binary – Java Decision Engine":
+ *     * https://www.build-business-websites.co.uk/java-is-file-text-or-binary/
+ *     * https://www.build-business-websites.co.uk/file-is-text-or-binary-java-decision-engine/
+ *
+ * Alternatively, if needed we can look into this as well:
+ *     * https://binaryornot.readthedocs.io/en/latest/readme.html
  */
 class BinaryFileChecker {
 
-	private static final String TEXT = '0'
-	private static final String BINARY = '1'
+	private static final int TAB_CHARACTER = 0x09
+	private static final int LINE_FEED_CHARACTER = 0x0A
+	private static final int FORM_FEED_CHARACTER = 0x0C
+	private static final int CARRIAGE_RETURN_CHARACTER = 0x0D
 
-	private ILog log
-	private Process process
-	private InputStreamReader reader
-	private OutputStreamWriter writer
-
-	BinaryFileChecker(ILog log) {
-		this.log = log
-	}
+	private final static int ASCII_TEXT_SYMBOLS_LOWER_BOUND = 0x20
+	private final static int ASCII_TEXT_SYMBOLS_UPPER_BOUND = 0x7E
+	private final static int LATIN_CHARSET_LOWER_BOUND = 0xA0
+	private final static int LATIN_CHARSET_UPPER_BOUND = 0xEE
+	private final static int LATIN_IN_UTF_8_LOWER_BOUND = 0x2E2E
+	private static final int LATIN_IN_UTF_8_UPPER_BOUND = 0xC3BF
 
 	boolean checkIfBinary(File file) {
-		lazyInit()
-
-		def line = null
-
-		try {
-			writer.write file.path + '\n'
-			writer.flush()
-			line = reader.readLine()
-		}
-		catch (IOException e) {
-			handleStreamError line
-		}
-
-		if (!(line in [TEXT, BINARY])) {
-			handleLineError line
-		}
-
-		line == BINARY
-	}
-
-	private void lazyInit() {
-		if (process) {
-			return
-		}
-
-		process = new ProcessBuilder([
-			'perl',
-			'-e',
-			'$| = 1; while (<>) { chomp(my $f = $_); print (-B $f ? 1 : 0); print "\n" }'
-		]).redirectErrorStream(true).start();
-
-		reader = new InputStreamReader(process.inputStream)
-		writer = new OutputStreamWriter(process.outputStream)
-	}
-
-	private void handleStreamError(String line) {
-		/*
-		 * This error may happen due to streams being closed after an INT/TERM signal, in which
-		 * case we should not report any errors. But if a Perl error happens we can still report on
-		 * that.
-		 */
-		if (line == null) {
-			try {
-				line = reader.readLine()
-			}
-			catch (IOException e2) {
-				// We do not know what caused it, and if we just hit CTRL+C, we must not log it.
+		checkEachChunk(file, 512, 1) { byte[] buffer, int count ->
+			checkEachByte(buffer, count) { int unsignedByte, int utf8value ->
+				!isCharacterText(unsignedByte, utf8value)
 			}
 		}
-
-		handleLineError line
 	}
 
-	private void handleLineError(String line) {
-		if (line == null) {
-			System.exit 2
+	private boolean checkEachChunk(File file, int bufferSize, int times, Closure checkChunk) {
+		def buffer = new byte[bufferSize]
+
+		file.withDataInputStream { stream ->
+			[1..times].any {
+				def count = stream.read buffer
+
+				checkChunk buffer, count
+			}
 		}
-
-		log.fatal "Perl process error: ${line}"
 	}
+
+	private boolean checkEachByte(byte[] buffer, int count, Closure checkByte) {
+		int lastByteTranslated = 0
+
+		for (int i in 0..count - 1) {
+			int unsignedByte = buffer[i] & 0xff
+			int utf8value = lastByteTranslated + unsignedByte
+			lastByteTranslated = unsignedByte << 8
+
+			if (checkByte(unsignedByte, utf8value)) {
+				return true
+			}
+
+			false
+		}
+	}
+
+	private boolean isCharacterText(int unsignedByte, int utf8value) {
+		unsignedByte in [TAB_CHARACTER, LINE_FEED_CHARACTER, FORM_FEED_CHARACTER, CARRIAGE_RETURN_CHARACTER] ||
+				(unsignedByte >= ASCII_TEXT_SYMBOLS_LOWER_BOUND && unsignedByte <= ASCII_TEXT_SYMBOLS_UPPER_BOUND) ||
+				(unsignedByte >= LATIN_CHARSET_LOWER_BOUND && unsignedByte <= LATIN_CHARSET_UPPER_BOUND) ||
+				(utf8value >= LATIN_IN_UTF_8_LOWER_BOUND && utf8value <= LATIN_IN_UTF_8_UPPER_BOUND)
+	}
+
 }
