@@ -1,4 +1,4 @@
-# search
+# search [![Build Status](https://travis-ci.org/rkrisztian/search.svg?branch=master)](https://travis-ci.org/rkrisztian/search)
 
 ## Overview
 
