@@ -19,10 +19,10 @@ class FileFinder {
 
 	protected final BinaryFileChecker binaryFileChecker
 
-	FileFinder(Conf conf, ILog log, BinaryFileChecker fileUtil) {
+	FileFinder(Conf conf, ILog log, BinaryFileChecker binaryFileChecker) {
 		this.conf = conf
 		this.log = log
-		this.binaryFileChecker = fileUtil
+		this.binaryFileChecker = binaryFileChecker
 	}
 
 	void find(@ClosureParams(value = SimpleType, options = ['File']) Closure foundFileHandler) {

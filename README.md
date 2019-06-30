@@ -6,6 +6,9 @@
 
 A simple search tool supporting multiple file patterns and keywords, and the ability to also do replaces.
 
+Written primarily for use on Linux & Mac. The binary file detection works there only, as [text encoding on Windows is quite
+different](https://superuser.com/questions/294219/what-are-the-differences-between-linux-and-windows-txt-files-unicode-encoding).
+
 ### What it does
 
 Recursively searches for files in the current directory matching the given file patterns, and having
@@ -159,7 +162,7 @@ Then to make it easier to use, see next section.
 	}
 
 	# Also add a much shorter alias because we hate typing.
-	alias s search
+	alias s=search
 	```
 
 ### Command line flags
