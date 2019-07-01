@@ -6,7 +6,8 @@
 
 A simple search tool supporting multiple file patterns and keywords, and the ability to also do replaces.
 
-Written primarily for use on Linux & Mac. The binary file detection works there only, as [text encoding on Windows is quite
+Written primarily for use on Linux & Mac, but git bash for Windows is also supported. The implemented binary file detection does
+not work natively on Windows, as [text encoding on there is quite
 different](https://superuser.com/questions/294219/what-are-the-differences-between-linux-and-windows-txt-files-unicode-encoding).
 
 ### What it does

@@ -4,4 +4,4 @@ if [[ \${SEARCH_DEBUG} == true ]]; then
 	JAVA_OPTS="\${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
 fi
 
-${System.env.JAVA_HOME}/bin/java \${JAVA_OPTS} -jar ${fatJar.archivePath} "\$@"
+"\${JAVA_HOME}"/bin/java \${JAVA_OPTS} -jar "${fatJar.archivePath}" "\$@"
