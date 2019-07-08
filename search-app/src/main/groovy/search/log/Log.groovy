@@ -1,8 +1,10 @@
 package search.log
 
+import groovy.transform.CompileStatic
 import search.colors.AnsiColors
 import search.colors.ColorType
 
+@CompileStatic
 class Log implements ILog {
 
 	AnsiColors colors
@@ -41,7 +43,7 @@ class Log implements ILog {
 	}
 
 	/** For search results. */
-	void rawPrintf(message = '', args) {
+	void rawPrintf(String message = '', args) {
 		printf message, args
 	}
 

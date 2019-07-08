@@ -1,5 +1,12 @@
 package search.linefinder
 
+import groovy.transform.CompileStatic
+import search.conf.PatternData
+import search.log.ILog
+import search.resultsprinter.IResultsPrinter
+
+import java.util.regex.Pattern
+
 import static LineType.CONTEXT_LINE
 import static LineType.FOUND_LINE
 import static LineVisibility.HIDE
@@ -9,12 +16,7 @@ import static java.nio.file.Files.move
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import static search.conf.Constants.REPLACE_TMP_FILE_PATH
 
-import java.util.regex.Pattern
-
-import search.conf.PatternData
-import search.log.ILog
-import search.resultsprinter.IResultsPrinter
-
+@CompileStatic
 class LineFinder {
 
 	private final Set<PatternData> patternData
@@ -54,7 +56,7 @@ class LineFinder {
 				return
 			}
 
-			Set<PatternData> foundPatterns = []
+			def foundPatterns = [] as Set<PatternData>
 
 			searchForPatterns file, foundPatterns
 			adjustForNegativeSearch foundPatterns
@@ -74,29 +76,40 @@ class LineFinder {
 	}
 
 	private void searchForPatterns(File file, Set foundPatterns) {
-		(file ?: System.in).eachLine { line, int lineNr ->
-			def lineType = CONTEXT_LINE
-			def lineVisibility = HIDE
+		if (file) {
+			file.eachLine { String line, int lineNr ->
+				searchForPatternsOnLine line, lineNr, foundPatterns
+			}
+		}
+		else {
+			System.in.eachLine { String line, int lineNr ->
+				searchForPatternsOnLine line, lineNr, foundPatterns
+			}
+		}
+	}
 
-			if (!(excludeLinePatterns.any { line =~ it })) {
-				patternData.each { patternData ->
-					if (line =~ patternData.searchPattern) {
-						foundPatterns << patternData
+	private void searchForPatternsOnLine(String line, int lineNr, Set foundPatterns) {
+		def lineType = CONTEXT_LINE
+		def lineVisibility = HIDE
 
-						if (!patternData.negativeSearch) {
-							lineType = FOUND_LINE
-							lineVisibility = patternData.hidePattern ? lineVisibility : SHOW
-						}
+		if (!(excludeLinePatterns.any { line =~ it })) {
+			patternData.each { patternData ->
+				if (line =~ patternData.searchPattern) {
+					foundPatterns << patternData
+
+					if (!patternData.negativeSearch) {
+						lineType = FOUND_LINE
+						lineVisibility = patternData.hidePattern ? lineVisibility : SHOW
 					}
 				}
 			}
+		}
 
-			if (lineType == FOUND_LINE) {
-				linesCollector.storeFoundLine lineNr, line, lineVisibility
-			}
-			else {
-				linesCollector.storeContextLine line
-			}
+		if (lineType == FOUND_LINE) {
+			linesCollector.storeFoundLine lineNr, line, lineVisibility
+		}
+		else {
+			linesCollector.storeContextLine line
 		}
 	}
 

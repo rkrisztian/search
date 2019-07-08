@@ -1,5 +1,8 @@
 package search.colors
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class HtmlColors {
 
 	// =================
@@ -38,7 +41,7 @@ class HtmlColors {
 			(ColorType.CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR): [BOLD, CYAN],
 			(ColorType.ERROR_COLOR)                             : [RED],
 			(ColorType.WARNING_COLOR)                           : [MAGENTA]
-	]
+	] as EnumMap
 
 	private boolean disableColors
 

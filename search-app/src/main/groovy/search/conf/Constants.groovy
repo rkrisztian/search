@@ -1,5 +1,8 @@
 package search.conf
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class Constants {
 
 	public static String REPLACE_TMP_FILE_PATH = '/tmp/search.pl.out'

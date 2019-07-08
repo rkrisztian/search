@@ -1,5 +1,6 @@
 package search
 
+import groovy.transform.CompileStatic
 import search.colors.AnsiColors
 import search.conf.ArgumentsParser
 import search.conf.Conf
@@ -11,6 +12,7 @@ import search.linefinder.LinesCollector
 import search.log.Log
 import search.resultsprinter.ResultsPrinterFactory
 
+@CompileStatic
 class Search {
 
 	protected final Conf conf
@@ -88,7 +90,7 @@ class Search {
 				BinaryFileChecker binaryFileChecker = new BinaryFileChecker()
 				FileFinder fileFinder = new FileFinder(conf, log, binaryFileChecker)
 
-				fileFinder.find { foundFile -> lineFinder.findLines foundFile }
+				fileFinder.find { foundFile -> lineFinder.findLines foundFile as File }
 			}
 			else {
 				lineFinder.findLines()

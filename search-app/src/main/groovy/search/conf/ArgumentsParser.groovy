@@ -1,9 +1,12 @@
 package search.conf
 
+import groovy.transform.CompileStatic
+
 import static java.util.regex.Pattern.quote
 
 import search.log.ILog
 
+@CompileStatic
 class ArgumentsParser {
 
 	private static final usage = '''

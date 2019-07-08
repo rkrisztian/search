@@ -1,5 +1,8 @@
 package search.linefinder
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 interface ILinesCollector {
 
 	void reset()

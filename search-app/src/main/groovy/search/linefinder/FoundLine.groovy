@@ -1,7 +1,9 @@
 package search.linefinder
 
+import groovy.transform.CompileStatic
 import search.conf.Dumpable
 
+@CompileStatic
 class FoundLine implements Dumpable {
 
 	public String line

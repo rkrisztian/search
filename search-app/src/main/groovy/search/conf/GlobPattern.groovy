@@ -1,9 +1,12 @@
 package search.conf
 
+import groovy.transform.CompileStatic
+
 import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
 
+@CompileStatic
 class GlobPattern implements PathMatcher {
 
 	protected final PathMatcher pathMatcher

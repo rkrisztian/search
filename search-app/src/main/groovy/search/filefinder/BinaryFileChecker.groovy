@@ -1,4 +1,7 @@
 package search.filefinder
+
+import groovy.transform.CompileStatic
+
 /**
  * Perl's binary file detector ("-B <file-path>") is excellent, but I found no similar library in Java or Groovy.
  *
@@ -9,6 +12,7 @@ package search.filefinder
  * Alternatively, if needed we can look into this as well:
  *     * https://binaryornot.readthedocs.io/en/latest/readme.html
  */
+@CompileStatic
 class BinaryFileChecker {
 
 	private static final int TAB_CHARACTER = 0x09

@@ -1,20 +1,16 @@
 package search.resultsprinter
 
-import static search.colors.ColorType.CONTEXT_LINES_COLOR
-import static search.colors.ColorType.CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR
-import static search.colors.ColorType.DRY_REPLACE_COLOR
-import static search.colors.ColorType.FILE_PATH_COLOR
-import static search.colors.ColorType.LINE_NUMBER_COLOR
-import static search.colors.ColorType.MATCH_COLOR
-import static search.colors.ColorType.REPLACE_COLOR
-import static search.colors.ColorType.SKIPPED_LINES_MARKER_COLOR
-import static search.conf.Constants.SKIPPED_LINES_MARKER
 
+import groovy.transform.CompileStatic
 import search.colors.AnsiColors
 import search.conf.PatternData
 import search.linefinder.FoundLine
 import search.log.ILog
 
+import static search.colors.ColorType.*
+import static search.conf.Constants.SKIPPED_LINES_MARKER
+
+@CompileStatic
 class ConsoleResultsPrinter implements IResultsPrinter {
 
 	private final Set<PatternData> patternData
@@ -70,8 +66,8 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 					}
 
 					if (!doReplace || !patternData.replace) {
-						foundLine.line = foundLine.line.replaceAll(
-								patternData.colorReplacePattern) { match -> colors.format MATCH_COLOR, match }
+						foundLine.line = foundLine.line.replaceAll patternData.colorReplacePattern,
+								colors.format(MATCH_COLOR, '$0')
 					}
 					else {
 						foundLine.line = foundLine.line.replaceAll patternData.colorReplacePattern,

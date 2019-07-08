@@ -1,7 +1,9 @@
 package search.conf
 
+import groovy.transform.CompileStatic
 import search.log.ILog
 
+@CompileStatic
 class ConfigParser {
 
 	protected static final String PROPERTY_EXCLUDE_FILE_PATTERNS = 'excludeFilePatterns'
@@ -58,13 +60,13 @@ class ConfigParser {
 
 			if (currentConfig[PROPERTY_EXCLUDE_FILE_PATTERNS]) {
 				conf.excludeFilePatterns.addAll 0,
-						currentConfig[PROPERTY_EXCLUDE_FILE_PATTERNS].collect { it -> ~it }
+						currentConfig[PROPERTY_EXCLUDE_FILE_PATTERNS].collect { String it -> ~it }
 			}
 			if (currentConfig[PROPERTY_EXCLUDE_PATTERNS]) {
 				log.warn "Property '${PROPERTY_EXCLUDE_PATTERNS}' is deprecated, use " +
 						"'${PROPERTY_EXCLUDE_FILE_PATTERNS}' instead"
 				conf.excludeFilePatterns.addAll 0,
-						currentConfig[PROPERTY_EXCLUDE_PATTERNS].collect { it -> ~it }
+						currentConfig[PROPERTY_EXCLUDE_PATTERNS].collect { String it -> ~it }
 			}
 			if (currentConfig[PROPERTY_MAX_CONTEXT_LINES] && (conf.maxContextLines == null)) {
 				conf.maxContextLines = currentConfig[PROPERTY_MAX_CONTEXT_LINES] as Integer
@@ -73,7 +75,7 @@ class ConfigParser {
 				conf.printHtml = true
 			}
 			if (currentConfig[PROPERTY_INCLUDE_CONFIG]) {
-				currentConfig[PROPERTY_INCLUDE_CONFIG].collect { it ->
+				currentConfig[PROPERTY_INCLUDE_CONFIG].collect { String it ->
 					readConfig new File(it)
 				}.each { stack.push it }
 			}

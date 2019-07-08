@@ -1,10 +1,12 @@
 package search.resultsprinter
 
+import groovy.transform.CompileStatic
 import search.colors.AnsiColors
 import search.colors.HtmlColors
 import search.conf.Conf
 import search.log.ILog
 
+@CompileStatic
 class ResultsPrinterFactory {
 
 	static IResultsPrinter createResultsPrinter(Conf conf, ILog log) {

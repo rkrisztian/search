@@ -1,5 +1,8 @@
 package search.colors
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 enum ColorType {
 
 	MATCH_COLOR,

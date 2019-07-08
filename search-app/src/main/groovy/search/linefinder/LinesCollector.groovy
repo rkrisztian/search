@@ -1,5 +1,7 @@
 package search.linefinder
 
+import groovy.transform.CompileStatic
+
 import static LineVisibility.SHOW
 
 import search.annotations.VisibleForTesting
@@ -7,6 +9,7 @@ import search.annotations.VisibleForTesting
 /**
  * Collects matched lines with context for displaying search results later.
  */
+@CompileStatic
 class LinesCollector implements ILinesCollector {
 
 	private final Integer maxContextLines

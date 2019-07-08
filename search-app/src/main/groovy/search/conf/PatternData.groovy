@@ -1,10 +1,10 @@
 package search.conf
 
+import groovy.transform.CompileStatic
+
 import java.util.regex.Pattern
 
-import groovy.transform.TypeChecked
-
-@TypeChecked
+@CompileStatic
 class PatternData implements Dumpable {
 
 	Pattern searchPattern
