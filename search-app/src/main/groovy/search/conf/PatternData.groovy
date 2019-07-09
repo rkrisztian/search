@@ -20,13 +20,13 @@ class PatternData implements Dumpable {
 	boolean negativeSearch
 
 	@Override
-	public int hashCode() {
-		final int prime = 31
-		prime + (searchPattern ? searchPattern.pattern().hashCode() : 0)
+	int hashCode() {
+		final int PRIME = 31
+		PRIME + (searchPattern ? searchPattern.pattern().hashCode() : 0)
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	boolean equals(Object obj) {
 		if (this.is(obj)) {
 			return true
 		}
@@ -36,7 +36,7 @@ class PatternData implements Dumpable {
 		if (!getClass().is(obj.class)) {
 			return false
 		}
-		PatternData other = (PatternData) obj;
+		def other = obj as PatternData
 		if (!searchPattern) {
 			if (other.searchPattern) {
 				return false

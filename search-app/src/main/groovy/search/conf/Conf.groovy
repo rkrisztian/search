@@ -10,7 +10,7 @@ class Conf implements Dumpable {
 	public static final int DEFAULT_MAX_CONTEXT_LINES = 0
 
 	/** Maximum length of a displayed line (type -1 for no limit) */
-	public static final int maxDisplayedLineLength = 500
+	public static final int MAX_DISPLAYED_LINE_LENGTH = 500
 
 	public int debug
 

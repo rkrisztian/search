@@ -1,9 +1,8 @@
 package search.linefinder
 
-import groovy.transform.CompileStatic
-
 import static LineVisibility.SHOW
 
+import groovy.transform.CompileStatic
 import search.annotations.VisibleForTesting
 
 /**
@@ -41,29 +40,29 @@ class LinesCollector implements ILinesCollector {
 
 		if (lineVisibility == SHOW) {
 			if (canDisplayMoreFoundLines()) {
-				// If line too long, trim it before printing
+				// If line too long, truncate it before printing
 				if ((maxDisplayedLineLength > 0) && (line.size() > maxDisplayedLineLength)) {
-					line = line.substring(0, maxDisplayedLineLength) + '...'
+					line = "${line[0..maxDisplayedLineLength - 1]}..."
 				}
 
-				foundLines.add createFoundLineWithContextLinesBefore(lineNr, line)
+				foundLines.add makeFoundLineWithContextLinesBefore(lineNr, line)
 			}
 			else if (hasPreviouslyFoundTheLastDisplayableLine()) {
-				foundLines.add createSkippedLinesMarker()
+				foundLines.add makeSkippedLinesMarker()
 			}
 		}
 
 		resetContextLinesBefore()
 	}
 
-	private FoundLine createFoundLineWithContextLinesBefore(int lineNr, String line) {
+	private FoundLine makeFoundLineWithContextLinesBefore(int lineNr, String line) {
 		new FoundLine(
 				lineNr: lineNr, line: line, contextLinesBefore: currentContextLinesBefore,
 				contextLinesBeforeOverflow: currentContextLinesBeforeOverflow,
 				contextLinesAfter: new LinkedList<String>(), contextLinesAfterOverflow: false)
 	}
 
-	private FoundLine createSkippedLinesMarker() {
+	private FoundLine makeSkippedLinesMarker() {
 		new FoundLine(
 				lineNr: -1, line: '', contextLinesBefore: new LinkedList<String>(),
 				contextLinesBeforeOverflow: false,
@@ -83,8 +82,7 @@ class LinesCollector implements ILinesCollector {
 		boolean addedToContextLinesAfter = false
 
 		if (foundLines) {
-			def lastFoundLine = foundLines.getLast()
-			addedToContextLinesAfter = addToContextLinesAfterIfNotOverflow line, lastFoundLine
+			addedToContextLinesAfter = addToContextLinesAfterIfNotOverflow line, foundLines.last
 		}
 
 		if (!addedToContextLinesAfter && !hasPreviouslyFoundTheLastDisplayableLine()) {
@@ -114,7 +112,7 @@ class LinesCollector implements ILinesCollector {
 		}
 
 		foundLine.contextLinesAfterOverflow = true
-		return false
+		false
 	}
 
 	private void addToContextLinesBefore(String line) {
@@ -142,6 +140,6 @@ class LinesCollector implements ILinesCollector {
 	}
 
 	List<FoundLine> getFoundLines() {
-		return foundLines
+		foundLines
 	}
 }

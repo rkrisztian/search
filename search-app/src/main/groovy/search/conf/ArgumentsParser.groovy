@@ -1,15 +1,14 @@
 package search.conf
 
-import groovy.transform.CompileStatic
-
 import static java.util.regex.Pattern.quote
 
+import groovy.transform.CompileStatic
 import search.log.ILog
 
 @CompileStatic
 class ArgumentsParser {
 
-	private static final usage = '''
+	private static final USAGE = '''
 	Usage:
 	
 		\$ search [<options...>] <file-patterns...> - \\
@@ -184,7 +183,7 @@ class ArgumentsParser {
 		}
 
 		if (showHelp) {
-			log.info usage
+			log.info USAGE
 			return false
 		}
 

@@ -5,10 +5,10 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class Constants {
 
-	public static String REPLACE_TMP_FILE_PATH = '/tmp/search.pl.out'
+	public static final String REPLACE_TMP_FILE_PATH = '/tmp/search.pl.out'
 
-	public static String HTML_TMP_FILE_PATH = '/tmp/searchResults.html'
+	public static final String HTML_TMP_FILE_PATH = '/tmp/searchResults.html'
 
-	public static String SKIPPED_LINES_MARKER = '(...)'
+	public static final String SKIPPED_LINES_MARKER = '(...)'
 
 }

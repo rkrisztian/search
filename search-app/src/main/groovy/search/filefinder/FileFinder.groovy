@@ -1,5 +1,9 @@
 package search.filefinder
 
+import static groovy.io.FileType.FILES
+import static groovy.io.FileVisitResult.CONTINUE
+import static groovy.io.FileVisitResult.SKIP_SUBTREE
+
 import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
@@ -7,10 +11,6 @@ import search.conf.Conf
 import search.log.ILog
 
 import java.nio.file.Files
-
-import static groovy.io.FileType.FILES
-import static groovy.io.FileVisitResult.CONTINUE
-import static groovy.io.FileVisitResult.SKIP_SUBTREE
 
 @CompileStatic
 class FileFinder {
@@ -37,9 +37,9 @@ class FileFinder {
 				preDir: { File file ->
 					filterDir(file) ? CONTINUE : SKIP_SUBTREE
 				}
-		] as Map
+		]
 
-		new File('.').traverse(options) {
+		new File('.').traverse(options as Map) {
 			if (!filterFile(it)) {
 				return SKIP_SUBTREE
 			}

@@ -30,7 +30,7 @@ class HtmlColors {
 	// =================
 	private static final String BOLD = 'font-weight: bold'
 
-	private static final EnumMap<ColorType, List<String>> colorMappings = [
+	private static final EnumMap<ColorType, List<String>> COLOR_MAPPINGS = [
 			(ColorType.MATCH_COLOR)                             : [BOLD, RED],
 			(ColorType.REPLACE_COLOR)                           : [ON_RED, WHITE],
 			(ColorType.DRY_REPLACE_COLOR)                       : [ON_GREEN, WHITE],
@@ -54,7 +54,7 @@ class HtmlColors {
 			return [:]
 		}
 
-		['style': colorMappings[color].join('; ')]
+		['style': COLOR_MAPPINGS[color].join('; ')]
 	}
 
 }

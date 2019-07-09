@@ -15,7 +15,7 @@ import search.log.ILog
 
 class HtmlResultsPrinter implements IResultsPrinter {
 
-	private final String HTML_STYLE = '''
+	private final String htmlStyle = '''
 			body {
 				/* TODO 01-Jul-2018/rkrisztian: Black-on-white for now. Make it configurable. */
 				background-color: #000000;
@@ -63,7 +63,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 					head {
 						meta 'charset': 'utf-8'
 						title 'Search results'
-						style type: 'text/css', HTML_STYLE
+						style type: 'text/css', htmlStyle
 					}
 					body {
 						htmlBodyParts.each {
@@ -166,7 +166,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 				println err
 			}
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			log.error "Can't open HTML file '${htmlFile}': ${e}"
 		}
 	}

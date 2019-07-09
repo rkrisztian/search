@@ -9,7 +9,7 @@ import search.log.ILog
 @CompileStatic
 class ResultsPrinterFactory {
 
-	static IResultsPrinter createResultsPrinter(Conf conf, ILog log) {
+	static IResultsPrinter makeResultsPrinter(Conf conf, ILog log) {
 		if (conf.printHtml) {
 			return new HtmlResultsPrinter(log, new HtmlColors(conf.disableColors))
 		}

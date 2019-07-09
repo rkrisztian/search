@@ -18,7 +18,7 @@ class GlobPattern implements PathMatcher {
 	}
 
 	protected static PathMatcher toPathMatcher(String globPattern) {
-		FileSystems.getDefault().getPathMatcher 'glob:' + globPattern
+		FileSystems.default.getPathMatcher 'glob:' + globPattern
 	}
 
 	@Override
@@ -28,6 +28,6 @@ class GlobPattern implements PathMatcher {
 
 	@Override
 	String toString() {
-		return globPattern
+		globPattern
 	}
 }

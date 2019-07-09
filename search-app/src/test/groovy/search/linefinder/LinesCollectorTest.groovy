@@ -1,10 +1,9 @@
 package search.linefinder
 
-import org.junit.jupiter.api.Test
-import search.linefinder.LinesCollector
-
 import static search.linefinder.LineVisibility.HIDE
 import static search.linefinder.LineVisibility.SHOW
+
+import org.junit.jupiter.api.Test
 
 class LinesCollectorTest {
 
@@ -68,6 +67,22 @@ class LinesCollectorTest {
 			assert !contextLinesAfterOverflow
 		}
 		assert !linesCollector.currentContextLinesBefore
+	}
+
+	@Test
+	void oneMatchedLongLine_shouldYieldOneTruncatedLine() {
+		// given
+		linesCollector = new LinesCollector(1, 0, 20)
+
+		// when
+		linesCollector.storeFoundLine TEST_LINENR, 'this is a very long line that should be truncated', SHOW
+
+		// then
+		assert linesCollector.foundLines.size() == 1
+		linesCollector.foundLines[0].with {
+			assert line == 'this is a very long ...'
+			assert lineNr == TEST_LINENR
+		}
 	}
 
 	@Test

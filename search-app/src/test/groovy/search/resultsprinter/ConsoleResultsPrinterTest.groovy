@@ -18,8 +18,8 @@ class ConsoleResultsPrinterTest {
 	@Test
 	void canPrintSearchWithoutSubgroups_withColors() {
 		// Given
-		def patternData = createPatternData([pattern: ~/Te?s+t/])
-		def foundLines = createFoundLines('This is a Test!')
+		def patternData = makePatternData([pattern: ~/Te?s+t/])
+		def foundLines = makeFoundLines('This is a Test!')
 		def consoleResultsPrinter = new ConsoleResultsPrinter(patternData, false, false, log, false,
 				new AnsiColors(false))
 
@@ -33,8 +33,8 @@ class ConsoleResultsPrinterTest {
 	@Test
 	void canPrintSearchWithoutSubgroups_withoutColors() {
 		// Given
-		def patternData = createPatternData([pattern: ~/Te?s+t/])
-		def foundLines = createFoundLines('This is a Test!')
+		def patternData = makePatternData([pattern: ~/Te?s+t/])
+		def foundLines = makeFoundLines('This is a Test!')
 		def consoleResultsPrinter = new ConsoleResultsPrinter(patternData, false, false, log, true,
 				new AnsiColors(true))
 
@@ -48,8 +48,8 @@ class ConsoleResultsPrinterTest {
 	@Test
 	void canPrintSearchWithSubgroups_withColors() {
 		// Given
-		def patternData = createPatternData([pattern: ~/(T)(e?)(s+)t/])
-		def foundLines = createFoundLines('This is a Test!')
+		def patternData = makePatternData([pattern: ~/(T)(e?)(s+)t/])
+		def foundLines = makeFoundLines('This is a Test!')
 		def consoleResultsPrinter = new ConsoleResultsPrinter(patternData, false, false, log, false,
 				new AnsiColors(false))
 
@@ -63,8 +63,8 @@ class ConsoleResultsPrinterTest {
 	@Test
 	void canPrintSearchWithSubgroups_withoutColors() {
 		// Given
-		def patternData = createPatternData([pattern: ~/(T)(e?)(s+)t/])
-		def foundLines = createFoundLines('This is a Test!')
+		def patternData = makePatternData([pattern: ~/(T)(e?)(s+)t/])
+		def foundLines = makeFoundLines('This is a Test!')
 		def consoleResultsPrinter = new ConsoleResultsPrinter(patternData, false, false, log, true,
 				new AnsiColors(true))
 
@@ -78,8 +78,8 @@ class ConsoleResultsPrinterTest {
 	@Test
 	void canPrintReplaceWithoutSubgroups_withColors() {
 		// Given
-		def patternData = createPatternData([pattern: ~/Te?s+t/, replaceText: 'test'])
-		def foundLines = createFoundLines('This is a Test!')
+		def patternData = makePatternData([pattern: ~/Te?s+t/, replaceText: 'test'])
+		def foundLines = makeFoundLines('This is a Test!')
 		def consoleResultsPrinter = new ConsoleResultsPrinter(patternData, true, false, log, false,
 				new AnsiColors(false))
 
@@ -93,8 +93,8 @@ class ConsoleResultsPrinterTest {
 	@Test
 	void canPrintReplaceWithoutSubgroups_withoutColors() {
 		// Given
-		def patternData = createPatternData([pattern: ~/Te?s+t/, replaceText: 'test'])
-		def foundLines = createFoundLines('This is a Test!')
+		def patternData = makePatternData([pattern: ~/Te?s+t/, replaceText: 'test'])
+		def foundLines = makeFoundLines('This is a Test!')
 		def consoleResultsPrinter = new ConsoleResultsPrinter(patternData, true, false, log, true,
 				new AnsiColors(true))
 
@@ -108,8 +108,8 @@ class ConsoleResultsPrinterTest {
 	@Test
 	void canPrintReplaceWithSubgroups_withColors() {
 		// Given
-		def patternData = createPatternData([pattern: ~/(T)(e?)(s+)t/, replaceText: 'test'])
-		def foundLines = createFoundLines('This is a Test!')
+		def patternData = makePatternData([pattern: ~/(T)(e?)(s+)t/, replaceText: 'test'])
+		def foundLines = makeFoundLines('This is a Test!')
 		def consoleResultsPrinter = new ConsoleResultsPrinter(patternData, true, false, log, false,
 				new AnsiColors(false))
 
@@ -123,8 +123,8 @@ class ConsoleResultsPrinterTest {
 	@Test
 	void canPrintReplaceWithSubgroups_withoutColors() {
 		// Given
-		def patternData = createPatternData([pattern: ~/(T)(e?)(s+)t/, replaceText: 'test'])
-		def foundLines = createFoundLines('This is a Test!')
+		def patternData = makePatternData([pattern: ~/(T)(e?)(s+)t/, replaceText: 'test'])
+		def foundLines = makeFoundLines('This is a Test!')
 		def consoleResultsPrinter = new ConsoleResultsPrinter(patternData, true, false, log, true,
 				new AnsiColors(true))
 
@@ -135,7 +135,7 @@ class ConsoleResultsPrinterTest {
 		assert log.loggedLines.any { it =~ /This is a test!/ }
 	}
 
-	private Set<PatternData> createPatternData(Map[] patterns) {
+	private Set<PatternData> makePatternData(Map[] patterns) {
 		patterns.collect { pattern ->
 			[
 					searchPattern      : pattern.pattern,
@@ -146,7 +146,7 @@ class ConsoleResultsPrinterTest {
 		}
 	}
 
-	private List<FoundLine> createFoundLines(String[] lines) {
+	private List<FoundLine> makeFoundLines(String[] lines) {
 		lines.collect { line ->
 			[line: line] as FoundLine
 		}

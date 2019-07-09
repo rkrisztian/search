@@ -1,7 +1,6 @@
 package search.conf
 
 import org.junit.jupiter.api.Test
-import search.conf.GlobPattern
 
 class GlobPatternTest {
 

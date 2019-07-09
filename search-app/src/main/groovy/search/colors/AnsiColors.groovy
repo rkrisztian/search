@@ -35,7 +35,7 @@ class AnsiColors {
 	// =================
 	public static final String RESET = '\u001B[0m'
 
-	private static final EnumMap<ColorType, String> colorMappings = [
+	private static final EnumMap<ColorType, String> COLOR_MAPPINGS = [
 			(ColorType.MATCH_COLOR)                             : BOLD + RED,
 			(ColorType.REPLACE_COLOR)                           : ON_RED + WHITE,
 			(ColorType.DRY_REPLACE_COLOR)                       : ON_GREEN + WHITE,
@@ -59,7 +59,7 @@ class AnsiColors {
 			return message
 		}
 
-		colorMappings[color] + message + RESET
+		COLOR_MAPPINGS[color] + message + RESET
 	}
 
 }

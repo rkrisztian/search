@@ -76,12 +76,12 @@ class Search {
 				log.debug '*** Searching in files...'
 			}
 			else {
-				log.debug('*** Searching in standard input...');
+				log.debug '*** Searching in standard input...'
 			}
 		}
 
-		def linesCollector = new LinesCollector(conf.maxMatchedLinesPerFile, conf.maxContextLines, Conf.maxDisplayedLineLength)
-		def resultsPrinter = ResultsPrinterFactory.createResultsPrinter conf, log
+		def linesCollector = new LinesCollector(conf.maxMatchedLinesPerFile, conf.maxContextLines, Conf.MAX_DISPLAYED_LINE_LENGTH)
+		def resultsPrinter = ResultsPrinterFactory.makeResultsPrinter conf, log
 		def lineFinder = new LineFinder(conf.patternData, conf.excludeLinePatterns, conf.doReplace, conf.dryRun, linesCollector,
 				resultsPrinter, log)
 

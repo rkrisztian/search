@@ -296,23 +296,24 @@ that are temporary files created by Eclipse to show history.)
 ## How to contribute
 
 1. Import project in IntelliJ IDEA.
-2. Before committing:
+2. Import Project Code Style for Groovy as current scheme from `config/codeStyle.xml`. (This is needed to make sure the formatting
+   is compatible with CodeNarc.)
+3. Before committing:
 	```text
-	$ gw clean assemble test integrationTest
+	$ gw clean && gw build
 	```
-3. How to commit:
+4. How to commit:
 	Please send a PR. :)
 
 	I will carefully review it during my free time. (This is not a paid project.)
 
-4. Read some docs:
+5. Read some docs:
 
 	* [Groovy Language Documentation](http://docs.groovy-lang.org/latest/html/documentation/)
 	* [Style guide](www.groovy-lang.org/style-guide.html) (not followed entirely yet)
 
 ## To do
 
-* Integration tests.
-* More test coverage. `LineFinder.groovy` has no tests at all.
+* More integration tests.
+* More test coverage. E.g. `LineFinder.groovy` has no tests at all.
 * Unit test coverage report (no clue if it works with Groovy code).
-* Consider a linter tool.

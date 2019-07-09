@@ -1,12 +1,5 @@
 package search.linefinder
 
-import groovy.transform.CompileStatic
-import search.conf.PatternData
-import search.log.ILog
-import search.resultsprinter.IResultsPrinter
-
-import java.util.regex.Pattern
-
 import static LineType.CONTEXT_LINE
 import static LineType.FOUND_LINE
 import static LineVisibility.HIDE
@@ -15,6 +8,13 @@ import static java.nio.file.Files.isReadable
 import static java.nio.file.Files.move
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import static search.conf.Constants.REPLACE_TMP_FILE_PATH
+
+import groovy.transform.CompileStatic
+import search.conf.PatternData
+import search.log.ILog
+import search.resultsprinter.IResultsPrinter
+
+import java.util.regex.Pattern
 
 @CompileStatic
 class LineFinder {
