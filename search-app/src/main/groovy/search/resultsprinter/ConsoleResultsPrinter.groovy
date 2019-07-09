@@ -60,7 +60,7 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 			return
 		}
 
-		if (!disableColors) {
+		if (!disableColors || doReplace) {
 			def replaceColor = dryRun ? DRY_REPLACE_COLOR : REPLACE_COLOR
 
 			foundLines.each { foundLine ->
