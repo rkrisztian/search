@@ -12,11 +12,11 @@ dependencies {
 
 task fatJar(type: Jar) {
 	dependsOn jar
-	baseName = "${project.name}-standalone"
+	archiveBaseName = "${project.name}-standalone"
 
 	manifest {
 		attributes 'Implementation-Title': 'Search App (Standalone)',
-				'Implementation-Version': version,
+				'Implementation-Version': archiveVersion,
 				'Main-Class': 'search.Search'
 	}
 
