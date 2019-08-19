@@ -30,15 +30,11 @@ task fatJar(type: Jar) {
 }
 
 task generateSearchScript(type: Copy) {
-	finalizedBy 'setSearchScriptPerms'
 	from 'etc/search_tmpl'
 	into "${buildDir}/${distsDirName}"
 	rename { file -> 'search' }
 	expand System: System, fatJar: fatJar
-}
-
-task setSearchScriptPerms(type: Exec) {
-	commandLine 'chmod', '+x', file("${buildDir}/${distsDirName}/search")
+	fileMode = 0755
 }
 
 assemble.dependsOn fatJar, generateSearchScript
