@@ -15,19 +15,18 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class BinaryFileChecker {
 
-	private static final int TAB_CHARACTER = 0x09
-	private static final int LINE_FEED_CHARACTER = 0x0A
-	private static final int FORM_FEED_CHARACTER = 0x0C
-	private static final int CARRIAGE_RETURN_CHARACTER = 0x0D
+	private static final int TAB_CHAR = 0x09
+	private static final int LINE_FEED_CHAR = 0x0A
+	private static final int FORM_FEED_CHAR = 0x0C
+	private static final int CARRIAGE_RETURN_CHAR = 0x0D
+	private static final int ASCII_TEXT_START = 0x20
+	private static final int ASCII_TEXT_END = 0x7E
+	private final static int LATIN_CHARSET_START = 0xA0
+	private final static int LATIN_CHARSET_END = 0xEE
+	private final static int LATIN_IN_UTF_8_START = 0x2E2E
+	private static final int LATIN_IN_UTF_8_END = 0xC3BF
 
-	private final static int ASCII_TEXT_SYMBOLS_LOWER_BOUND = 0x20
-	private final static int ASCII_TEXT_SYMBOLS_UPPER_BOUND = 0x7E
-	private final static int LATIN_CHARSET_LOWER_BOUND = 0xA0
-	private final static int LATIN_CHARSET_UPPER_BOUND = 0xEE
-	private final static int LATIN_IN_UTF_8_LOWER_BOUND = 0x2E2E
-	private static final int LATIN_IN_UTF_8_UPPER_BOUND = 0xC3BF
-
-	boolean checkIfBinary(File file) {
+	static boolean checkIfBinary(File file) {
 		checkEachChunk(file, 512, 1) { byte[] buffer, int count ->
 			checkEachByte(buffer, count) { int unsignedByte, int utf8value ->
 				!isCharacterText(unsignedByte, utf8value)
@@ -35,7 +34,7 @@ class BinaryFileChecker {
 		}
 	}
 
-	private boolean checkEachChunk(File file, int bufferSize, int times, Closure checkChunk) {
+	private static boolean checkEachChunk(File file, int bufferSize, int times, Closure checkChunk) {
 		def buffer = new byte[bufferSize]
 
 		file.withDataInputStream { stream ->
@@ -47,7 +46,7 @@ class BinaryFileChecker {
 		}
 	}
 
-	private boolean checkEachByte(byte[] buffer, int count, Closure checkByte) {
+	private static boolean checkEachByte(byte[] buffer, int count, Closure checkByte) {
 		int lastByteTranslated = 0
 
 		for (int i in 0..count - 1) {
@@ -58,16 +57,21 @@ class BinaryFileChecker {
 			if (checkByte(unsignedByte, utf8value)) {
 				return true
 			}
-
-			false
 		}
+
+		false
 	}
 
-	private boolean isCharacterText(int unsignedByte, int utf8value) {
-		unsignedByte in [TAB_CHARACTER, LINE_FEED_CHARACTER, FORM_FEED_CHARACTER, CARRIAGE_RETURN_CHARACTER] ||
-				(unsignedByte >= ASCII_TEXT_SYMBOLS_LOWER_BOUND && unsignedByte <= ASCII_TEXT_SYMBOLS_UPPER_BOUND) ||
-				(unsignedByte >= LATIN_CHARSET_LOWER_BOUND && unsignedByte <= LATIN_CHARSET_UPPER_BOUND) ||
-				(utf8value >= LATIN_IN_UTF_8_LOWER_BOUND && utf8value <= LATIN_IN_UTF_8_UPPER_BOUND)
+	private static boolean isCharacterText(int unsignedByte, int utf8value) {
+		if (unsignedByte == 0) {
+			return false
+		}
+
+		unsignedByte in [TAB_CHAR, LINE_FEED_CHAR, FORM_FEED_CHAR, CARRIAGE_RETURN_CHAR] ||
+				(unsignedByte >= ASCII_TEXT_START && unsignedByte <= ASCII_TEXT_END) ||
+				(unsignedByte >= LATIN_CHARSET_START && unsignedByte <= LATIN_CHARSET_END) ||
+				(utf8value >= LATIN_IN_UTF_8_START && utf8value <= LATIN_IN_UTF_8_END) ||
+				Character.isLetterOrDigit(utf8value)
 	}
 
 }

@@ -1,0 +1,11 @@
+Η Google υπολογίζει την εκτιμώμενη συχνότητα μέσα από τη λήψη δεδομένων από ένα δείγμα ομάδας.
+Google calculates the estimated frequency by obtaining data from a sample group.
+
+Η εκδήλωση ήταν μία από τις πέντε που οργανώνει το ΕΚ εν όψει των ευρωεκλογών του Μαΐου.
+The guns have now fallen silent and locals are more than content to sample the best of what both countries have to offer in terms
+of employment, housing and education.
+
+Χρήση του παρακάτω κειμένου για προεπισκόπηση της φωνής
+Displays the sample text spoken by the text-to-speech playback voice.
+
+(Source: https://en.bab.la/dictionary/english-greek/sample)

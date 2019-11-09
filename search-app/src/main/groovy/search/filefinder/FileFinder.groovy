@@ -19,12 +19,9 @@ class FileFinder {
 
 	protected final ILog log
 
-	protected final BinaryFileChecker binaryFileChecker
-
-	FileFinder(Conf conf, ILog log, BinaryFileChecker binaryFileChecker) {
+	FileFinder(Conf conf, ILog log) {
 		this.conf = conf
 		this.log = log
-		this.binaryFileChecker = binaryFileChecker
 	}
 
 	void find(@ClosureParams(value = SimpleType, options = ['File']) Closure foundFileHandler) {
@@ -82,7 +79,7 @@ class FileFinder {
 			return false
 		}
 
-		if (binaryFileChecker.checkIfBinary(file)) {
+		if (BinaryFileChecker.checkIfBinary(file)) {
 			return false
 		}
 
