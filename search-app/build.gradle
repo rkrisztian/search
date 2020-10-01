@@ -2,6 +2,7 @@ plugins {
 	id 'groovy'
 	id 'org.unbroken-dome.test-sets' version '3.0.1'
 	id 'codenarc'
+	id 'application'
 }
 
 dependencies {
@@ -10,36 +11,26 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
-tasks.register('fatJar', Jar) {
-	dependsOn 'jar'
-	archiveBaseName = "${project.name}-standalone"
+application {
+	applicationName = 'search'
+	mainClass = 'search.Search'
+}
 
-	manifest {
-		attributes 'Implementation-Title': 'Search App (Standalone)',
-				'Implementation-Version': archiveVersion,
-				'Main-Class': 'search.Search'
-	}
-
-	from {
-		configurations.compileClasspath.collect {
-			it.isDirectory() ? it : zipTree(it)
+distributions {
+	main {
+		contents {
+			from("$rootDir/README.md") {
+				into 'docs'
+			}
 		}
 	}
-
-	with jar
-	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.register('generateSearchScript', Copy) {
-	from 'etc/search_tmpl'
-	into "${buildDir}/${distsDirName}"
-	rename { file -> 'search' }
-	expand System: System, fatJar: fatJar
-	fileMode = 0755
-}
-
-tasks.named('assemble').configure {
-	dependsOn 'fatJar', 'generateSearchScript'
+tasks.named('jar').configure {
+	manifest {
+		attributes 'Implementation-Title': 'Search App',
+				'Implementation-Version': archiveVersion
+	}
 }
 
 testSets {

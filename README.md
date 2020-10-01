@@ -117,6 +117,16 @@ search for multiple patterns, Ack cannot replace text in files, and I don't care
 
 ## Installation
 
+### From release
+
+Unzip/untar the release package to a directory you prefer, e.g. `~/programs/`, and rename
+`~/programs/search-<VERSION>` to `~/programs/search`.
+
+Then the executable to run is `~/programs/search/bin/search`, however, please see
+chapter _Usage_ about how to make the tool easier to use.
+
+### From source
+
 Execute the following steps:
 
 ```text
@@ -126,13 +136,15 @@ $ cd search
 $ gw assemble
 ```
 
+Then either you can unpack the distribution package in `search-app/build/distributions` as described
+in the previous section, or you can run `gw installDist` and use `search-app/build/install/search`
+as the extracted location.
+
 Optionally, to ensure you got a working revision:
 
 ```text
 $ gw test integrationTest
 ```
-
-Then to make it easier to use, see next section.
 
 ## Usage
 
@@ -141,7 +153,7 @@ Then to make it easier to use, see next section.
 1. Create a configuration file at `~/.search.conf`, then put generic file path exclude patterns
 	there. See configuration example below.
 
-2. Optionally, create a configuration file for each project, eg. under `./!local`, and
+2. *Optionally*, create a configuration file for each project, eg. under `./.local`, and
 	put your project-specific exclude patterns in there. (Exclude everything that makes your
 	results shown practically twice. Usually you want to exclude build directories.)
 
@@ -155,11 +167,11 @@ Then to make it easier to use, see next section.
 	search() {
 		local args=''
 
-		if [ -f './!local/.search.conf' ]; then
-			args='-c ./!local/.search.conf'
+		if [ -f '.local/search.conf' ]; then
+			args='-c .local/search.conf'
 		fi
 
-		~/projects/search/search-app/build/distributions/search $args "$@"
+		~/programs/search/bin/search $args "$@"
 	}
 
 	# Also add a much shorter alias because we hate typing.
