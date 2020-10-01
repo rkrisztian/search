@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-	implementation 'org.codehaus.groovy:groovy-all:2.5.7'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
+	implementation 'org.codehaus.groovy:groovy-all:3.0.3'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
 tasks.register('fatJar', Jar) {
