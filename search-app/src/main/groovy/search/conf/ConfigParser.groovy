@@ -14,9 +14,6 @@ class ConfigParser {
 
 	protected static final String PROPERTY_PRINT_HTML = 'printHtml'
 
-	@Deprecated
-	protected static final String PROPERTY_EXCLUDE_PATTERNS = 'excludePatterns'
-
 	protected final Conf conf
 
 	protected final ILog log
@@ -61,12 +58,6 @@ class ConfigParser {
 			if (currentConfig[PROPERTY_EXCLUDE_FILE_PATTERNS]) {
 				conf.excludeFilePatterns.addAll 0,
 						currentConfig[PROPERTY_EXCLUDE_FILE_PATTERNS].collect { String it -> ~it }
-			}
-			if (currentConfig[PROPERTY_EXCLUDE_PATTERNS]) {
-				log.warn "Property '${PROPERTY_EXCLUDE_PATTERNS}' is deprecated, use " +
-						"'${PROPERTY_EXCLUDE_FILE_PATTERNS}' instead"
-				conf.excludeFilePatterns.addAll 0,
-						currentConfig[PROPERTY_EXCLUDE_PATTERNS].collect { String it -> ~it }
 			}
 			if (currentConfig[PROPERTY_MAX_CONTEXT_LINES] && (conf.maxContextLines == null)) {
 				conf.maxContextLines = currentConfig[PROPERTY_MAX_CONTEXT_LINES] as Integer

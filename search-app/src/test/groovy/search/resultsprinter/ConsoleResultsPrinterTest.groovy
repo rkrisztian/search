@@ -135,7 +135,7 @@ class ConsoleResultsPrinterTest {
 		assert log.loggedLines.any { it =~ /This is a test!/ }
 	}
 
-	private Set<PatternData> makePatternData(Map[] patterns) {
+	private static Set<PatternData> makePatternData(Map[] patterns) {
 		patterns.collect { pattern ->
 			[
 					searchPattern      : pattern.pattern,
@@ -146,7 +146,7 @@ class ConsoleResultsPrinterTest {
 		}
 	}
 
-	private List<FoundLine> makeFoundLines(String[] lines) {
+	private static List<FoundLine> makeFoundLines(String[] lines) {
 		lines.collect { line ->
 			[line: line] as FoundLine
 		}

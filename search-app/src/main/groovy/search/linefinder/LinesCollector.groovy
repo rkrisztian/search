@@ -62,7 +62,7 @@ class LinesCollector implements ILinesCollector {
 				contextLinesAfter: new LinkedList<String>(), contextLinesAfterOverflow: false)
 	}
 
-	private FoundLine makeSkippedLinesMarker() {
+	private static FoundLine makeSkippedLinesMarker() {
 		new FoundLine(
 				lineNr: -1, line: '', contextLinesBefore: new LinkedList<String>(),
 				contextLinesBeforeOverflow: false,

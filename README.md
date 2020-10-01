@@ -30,7 +30,7 @@ search for multiple patterns, Ack cannot replace text in files, and I don't care
 
 1. Ack was written in Perl, and requires no extra modules to install. Mine was first written in
 	Perl too, but had to rewrite it in Groovy because it did use extra modules, and CPAN started
-	becoming unusable. While the Groovy code can use any Java library we want. Also Perl can be very
+	becoming unusable. While the Groovy code can use any Java library we want. Also, Perl can be very
 	complex and hard to read, and maintain.
 
 	Groovy definitely can't beat the speed of Perl. This is an example, where `sP` was the Perl
@@ -184,8 +184,8 @@ Uses Groovy syntax, see [ConfigSlurper](http://docs.groovy-lang.org/latest/html/
 
 * `excludePatterns: List<String>`
 
-	List of regular expressions to exclude directory and file paths. You can of course use
-		slashy strings and dollar-slashy strings so you don't have to escape characters.
+	List of regular expressions to exclude directory paths and file paths. You can of course use
+		slashy strings and dollar-slashy strings, so you don't have to escape characters.
 
 * `includeConfig: List<String>`
 
@@ -268,7 +268,7 @@ that are temporary files created by Eclipse to show history.)
 	$ git blame someFile | search - someAuthor
 	```
 
-* Search in every files (including hidden ones):
+* Search in every file (including hidden ones):
 
 	```text
 	$ s -a - myproject
@@ -285,13 +285,13 @@ that are temporary files created by Eclipse to show history.)
 
 	```text
 	$ s \* - 'jQuery' -r '$'
-	``` 
+	```
 
 * Search for `jQuery` and replace each occurrence with `$`, but only in files including a script tag:
 
 	```text
 	$ s \* - 'jQuery' -r '$' '<script'
-	``` 
+	```
 
 ## How to contribute
 
@@ -310,7 +310,7 @@ that are temporary files created by Eclipse to show history.)
 5. Read some docs:
 
 	* [Groovy Language Documentation](http://docs.groovy-lang.org/latest/html/documentation/)
-	* [Style guide](www.groovy-lang.org/style-guide.html) (not followed entirely yet)
+	* [Style guide](http://www.groovy-lang.org/style-guide.html) (not followed entirely yet)
 
 ## To do
 
