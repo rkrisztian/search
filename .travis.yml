@@ -1,5 +1,7 @@
 language: java
 install: true
+dist: xenial
+os: linux
 
 jdk:
   - openjdk8
@@ -16,3 +18,14 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+deploy:
+  edge: true
+  provider: releases
+  token:
+    secure: iesk0NGm8gylnUNNfhqqiONLMbwWb38aX8phdDKUKf3V7QjunY0KWlXo86A7deD34s1qS+rNYfniUHsuQVXsS2y6ptRcNttUOATOyRKbJ31+6FNzYKnYWNSx7af2R0TjFCBZkQ0eCl30z2/npn8Bz4YF34heodNh2Z9w1eywcn3DNu6WwCBBLR9Xvo61mtPQkhb1N/4ZrPEY6+ovnjiCPFYrTLq6aWOodRcvFqrCSe8Pu7ciAQAoMiPMV6Oi6ltNrYO/pF0w4B63obhqynd0vJyli8+xhqItiw170YcoZweLQ9fHeZ3vPyCvelYijb56KmYeLP71Zb0qCYaCfMs00g1l/1r3cZYBBMkVovFtgQw2fxG8sae9xhn2AAiJXiXnppU2osGE1fHOiR5aLkj7Ju9XooiV8aLUk0La0mhbvGtzE1DQCsE3QUlmhh7jeTfbJLB7+AA+9+zMBfsvCpBVmoLaHgtKuBqyi8jYU4xv1GoozLrDAcdxepl32cikQsQJD0hnZOOMwxGLyKld7zi1J36nxCzuh6VYzSbAZmb1VSLSu1YW37toaNDB4QK0WE1Q91aMfgEjU6gfPFyH4oTnnn3/6Q5zKmAYiZP8hU/bCQRETSChq+i/thOAvk7FizYDW7Gbvjm1jfrKMS9Cc3x5mGsSGuKWIJ4htU0WfdThV5Y=
+  file: search-app/build/distributions/*
+  on:
+    repo: rkrisztian/search
+    tags: true
+  cleanup: false
