@@ -5,7 +5,6 @@ import search.colors.AnsiColors
 import search.conf.ArgumentsParser
 import search.conf.Conf
 import search.conf.ConfigParser
-import search.filefinder.BinaryFileChecker
 import search.filefinder.FileFinder
 import search.linefinder.LineFinder
 import search.linefinder.LinesCollector
