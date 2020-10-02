@@ -307,12 +307,11 @@ that are temporary files created by Eclipse to show history.)
 
 ## How to contribute
 
-1. Import project in IntelliJ IDEA.
-2. Import Project Code Style for Groovy as current scheme from `config/codeStyle.xml`. (This is needed to make sure the formatting
-   is compatible with CodeNarc.)
+1. Import project in IntelliJ IDEA (e.g. the Community Edition).
+2. Make sure Project Code Style is used as set in `.editorconfig` (This is needed to keep formatting compatible with CodeNarc.)
 3. Before committing:
 	```text
-	$ gw clean && gw build
+	$ gw clean build
 	```
 4. How to commit:
 	Please send a PR. :)

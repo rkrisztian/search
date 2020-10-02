@@ -10,19 +10,19 @@ class ArgumentsParser {
 
 	private static final USAGE = '''
 	Usage:
-	
+
 		\$ search [<options...>] <file-patterns...> - \\
 					[ [<text-pattern-options>] <text-patterns>
 					  [<after-text-pattern-options>] ...]
-	
+
 		Patterns:
-	
+
 			<file-patterns> are the usual shell glob patterns. If no files are specified, the standard input channel
 			    will be read.
 			<text-patterns> are AND-connected, and are regular expressions, where you do NOT need to escape slashes (/).
-	
+
 		Options:
-	
+
 			-a            Match all files including hidden files (same as {,.}\\* in bash).
 			-c <file>     Specify configuration file (default: ~/.search_pl.conf).
 			-C            Disable colored output.
@@ -37,19 +37,19 @@ class ArgumentsParser {
 			-D            Dry run for the replace functionality (see "-r"). Useful for testing backreferences.
 			-H            Print results in HTML format and open in a browser. (Colors not fully supported yet.)
 			--help        Show this help.
-	
+
 		Text pattern options:
-	
+
 			-e            Search in EL expressions (only suitable for JSF code, in which EL expressions are not
 			                  multi-line.) (This is purely a convenience option.)
 			-h            Hide next text pattern from results.
 			-s            Skip lines matching the given pattern. Use when easier than having to do negative lookaheads.
 			-n            Negative search (counts as a match if no lines contain this pattern).
-	
+
 		After-text-pattern options:
-	
+
 			-r <text>     Perform a replace on the previous pattern. Supports backreferences.
-'''
+	'''.stripIndent(true)
 
 	private final Conf conf
 	private final ILog log
@@ -70,7 +70,8 @@ class ArgumentsParser {
 		def regexOptions = ''
 		def nextPatternIsNegativeSearch = false
 
-		argLoop: while (argsIterator.hasNext()) {
+		argLoop:
+		while (argsIterator.hasNext()) {
 			def arg = argsIterator.next()
 
 			showHelp = false

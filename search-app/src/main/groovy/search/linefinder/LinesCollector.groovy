@@ -17,7 +17,8 @@ class LinesCollector implements ILinesCollector {
 
 	private LinkedList<FoundLine> foundLines
 	private boolean initialized
-	@VisibleForTesting protected LinkedList<String> currentContextLinesBefore
+	@VisibleForTesting
+	protected LinkedList<String> currentContextLinesBefore
 	private boolean currentContextLinesBeforeOverflow
 
 	LinesCollector(int maxMatchedLinesPerFile, Integer maxContextLines, int maxDisplayedLineLength) {
