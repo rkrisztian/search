@@ -1,30 +1,28 @@
 package search.filefinder
 
-import org.junit.jupiter.api.Test
+
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
+
+import java.util.stream.Stream
 
 class BinaryFileCheckerIntTest {
 
-	@Test
-	void shouldDetectClassFileAsBinary() {
-		def classFile = new File(this.class.classLoader.getResource('example.class').toURI())
-		assert BinaryFileChecker.checkIfBinary(classFile)
+	@ParameterizedTest
+	@MethodSource('shouldDetectFileAsBinaryOrTextArgs')
+	void shouldDetectFileAsBinaryOrText(String fileName, boolean expectBinary) {
+		def classFile = new File(this.class.classLoader.getResource(fileName).toURI())
+		assert BinaryFileChecker.checkIfBinary(classFile) == expectBinary
 	}
 
-	@Test
-	void shouldDetectSourceFileAsText() {
-		def sourceFile = new File(this.class.classLoader.getResource('example.groovy').toURI())
-		assert !BinaryFileChecker.checkIfBinary(sourceFile)
+	static Stream<Arguments> shouldDetectFileAsBinaryOrTextArgs() {
+		Stream.of(
+				Arguments.of('example.class', true),
+				Arguments.of('example.groovy', false),
+				Arguments.of('russian.txt', false),
+				Arguments.of('greek.txt', false)
+		)
 	}
 
-	@Test
-	void shouldDetectCyrillicAsText() {
-		def sourceFile = new File(this.class.classLoader.getResource('russian.txt').toURI())
-		assert !BinaryFileChecker.checkIfBinary(sourceFile)
-	}
-
-	@Test
-	void shouldDetectGreekAsText() {
-		def sourceFile = new File(this.class.classLoader.getResource('greek.txt').toURI())
-		assert !BinaryFileChecker.checkIfBinary(sourceFile)
-	}
 }
