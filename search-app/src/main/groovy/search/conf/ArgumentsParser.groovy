@@ -1,7 +1,5 @@
 package search.conf
 
-import static java.util.regex.Pattern.quote
-
 import groovy.transform.CompileStatic
 import search.log.ILog
 
@@ -40,8 +38,6 @@ class ArgumentsParser {
 
 		Text pattern options:
 
-			-e            Search in EL expressions (only suitable for JSF code, in which EL expressions are not
-			                  multi-line.) (This is purely a convenience option.)
 			-h            Hide next text pattern from results.
 			-s            Skip lines matching the given pattern. Use when easier than having to do negative lookaheads.
 			-n            Negative search (counts as a match if no lines contain this pattern).
@@ -66,7 +62,6 @@ class ArgumentsParser {
 		def showHelp = true
 		def beforeHypen = true
 		def hideNextTextPattern = false
-		def searchNextPatternInElExps = false
 		def regexOptions = ''
 		def nextPatternIsNegativeSearch = false
 
@@ -133,9 +128,6 @@ class ArgumentsParser {
 			else {
 				// Process the rest of the arguments.
 				switch (arg) {
-					case '-e':
-						searchNextPatternInElExps = true
-						break
 					case '-h':
 						hideNextTextPattern = true
 						break
@@ -166,10 +158,6 @@ class ArgumentsParser {
 						def searchPatternStr = arg
 						def colorReplacePatternStr = searchPatternStr
 
-						if (searchNextPatternInElExps) {
-							searchPatternStr = /[\$#]\{.*?/ + quote(searchPatternStr) + /.*?\}/
-						}
-
 						conf.patternData << new PatternData(
 								searchPattern: ~(regexOptions + searchPatternStr),
 								colorReplacePattern: ~(regexOptions + colorReplacePatternStr),
@@ -177,7 +165,6 @@ class ArgumentsParser {
 								negativeSearch: nextPatternIsNegativeSearch)
 
 						hideNextTextPattern = false
-						searchNextPatternInElExps = false
 						nextPatternIsNegativeSearch = false
 				}
 			}
