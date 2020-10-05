@@ -19,6 +19,12 @@ class ArgumentsParserTest {
 	}
 
 	@Test
+	void showsHelpWithoutArguments() {
+		assert !argumentsParser.parseArgs()
+		assert argumentsParser.showHelp
+	}
+
+	@Test
 	void argAllFiles() {
 		assert argumentsParser.parseArgs('-a')
 		assert conf.paths.size() == 2
@@ -73,7 +79,7 @@ class ArgumentsParserTest {
 
 	@Test
 	void argHelpStopsParsing() {
-		assert !argumentsParser.parseArgs('--help', '-', '-a')
+		assert !argumentsParser.parseArgs('--help', '-', 'abc')
 		assert conf.patternData.size() == 0
 	}
 
@@ -91,5 +97,20 @@ class ArgumentsParserTest {
 		assert conf.patternData.size() == 2
 		assert conf.patternData[0].hidePattern
 		assert !conf.patternData[1].hidePattern
+	}
+
+	@Test
+	void ignoresReplaceTextWithoutPattern() {
+		assert argumentsParser.parseArgs('some.file', '-', '-r', 'abc')
+		assert conf.patternData.empty
+	}
+
+	@Test
+	void replaceTextWithoutPatternDoesNotAffectOtherArgs() {
+		assert argumentsParser.parseArgs('some.file', '-', '-r', 'abc', 'def')
+		assert conf.patternData.size() == 1
+		assert !conf.patternData[0].replace
+		assert !conf.patternData[0].replaceText
+		assert conf.patternData[0].searchPattern.pattern() == /def/
 	}
 }

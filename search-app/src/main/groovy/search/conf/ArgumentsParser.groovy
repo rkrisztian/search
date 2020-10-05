@@ -1,7 +1,13 @@
 package search.conf
 
 import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
+import search.annotations.VisibleForTesting
 import search.log.ILog
+
+/*
+ * Not using a 3rd-party library to parse arguments because of the unconventional syntax.
+ */
 
 @CompileStatic
 class ArgumentsParser {
@@ -10,8 +16,7 @@ class ArgumentsParser {
 	Usage:
 
 		\$ search [<options...>] <file-patterns...> - \\
-					[ [<text-pattern-options>] <text-patterns>
-					  [<after-text-pattern-options>] ...]
+					[ [<text-pattern-options>] <text-patterns> [<after-text-pattern-options>] ...]
 
 		Patterns:
 
@@ -50,122 +55,36 @@ class ArgumentsParser {
 	private final Conf conf
 	private final ILog log
 
+	@VisibleForTesting
+	@PackageScope
+	boolean showHelp = false
+
+	private boolean beforeHypen = true
+	private boolean hideNextTextPattern = false
+	private String regexOptions = ''
+	private boolean nextPatternIsNegativeSearch = false
+	private Iterator<String> argsIterator
+
 	ArgumentsParser(Conf conf, ILog log) {
 		this.conf = conf
 		this.log = log
 	}
 
 	boolean parseArgs(String[] args) {
-		// TODO 12-Nov-2015/rkrisztian: Learn CliBuilder, and try to use it here.
-		def argsIterator = args.iterator()
+		if (!args) {
+			showHelp = true
+		}
+		else {
+			argsIterator = args.iterator()
 
-		def showHelp = true
-		def beforeHypen = true
-		def hideNextTextPattern = false
-		def regexOptions = ''
-		def nextPatternIsNegativeSearch = false
+			while (argsIterator.hasNext() && !showHelp) {
+				def arg = argsIterator.next()
 
-		argLoop:
-		while (argsIterator.hasNext()) {
-			def arg = argsIterator.next()
-
-			showHelp = false
-
-			if (beforeHypen) {
-				// Process option arguments.
-				switch (arg) {
-					case '-a':
-						conf.paths << new GlobPattern('*')
-						conf.paths << new GlobPattern('.*')
-						break
-					case '-c':
-						conf.configFile = argsIterator.next()
-						break
-					case '-C':
-						conf.disableColors = true
-						break
-					case '-d':
-						conf.debug++
-						break
-					case '-D':
-						conf.dryRun = true
-						break
-					case '-H':
-						conf.printHtml = true
-						break
-					case '-i':
-						regexOptions = '(?i)'
-						break
-					case '-l':
-						conf.maxMatchedLinesPerFile = argsIterator.next() as int
-						break
-					case '-s':
-						conf.excludeFilePatterns << ~argsIterator.next()
-						break
-					case '-t':
-						conf.maxContextLines = argsIterator.next() as int
-						break
-					case '-w':
-						conf.paths << new GlobPattern('*.html')
-						conf.paths << new GlobPattern('*.xhtml')
-						conf.paths << new GlobPattern('*.js')
-						conf.paths << new GlobPattern('*.css')
-						break
-					case '--help':
-						showHelp = true
-						break argLoop
-					case '-':
-						beforeHypen = false
-						break
-					default:
-						if (arg =~ /^-/) {
-							log.warn "Argument ${arg} looks like an option, it is interpreted as a file pattern."
-						}
-
-						conf.paths << new GlobPattern(arg)
+				if (beforeHypen) {
+					parseOptionOrFilePattern arg
 				}
-			}
-			else {
-				// Process the rest of the arguments.
-				switch (arg) {
-					case '-h':
-						hideNextTextPattern = true
-						break
-					case '-r':
-						def replaceText = argsIterator.next()
-
-						if (!conf.paths) {
-							log.fatal 'Cannot replace in STDIN.'
-						}
-						if (!conf.patternData) {
-							log.warn "No search pattern specified for replace pattern, ignoring argument ${arg}."
-							continue argLoop
-						}
-
-						def lastPatternData = conf.patternData.last() as PatternData
-
-						lastPatternData.replace = true
-						lastPatternData.replaceText = replaceText
-						conf.doReplace = true
-						break
-					case '-s':
-						conf.excludeLinePatterns << ~argsIterator.next()
-						break
-					case '-n':
-						nextPatternIsNegativeSearch = true
-						break
-					default:
-						def searchPatternStr = arg
-						def colorReplacePatternStr = searchPatternStr
-
-						conf.patternData << new PatternData(
-								searchPattern: ~(regexOptions + searchPatternStr),
-								colorReplacePattern: ~(regexOptions + colorReplacePatternStr),
-								hidePattern: hideNextTextPattern,
-								negativeSearch: nextPatternIsNegativeSearch)
-
-						hideNextTextPattern = false
-						nextPatternIsNegativeSearch = false
+				else {
+					parseTextOptionOrTextPattern arg
 				}
 			}
 		}
@@ -176,5 +95,103 @@ class ArgumentsParser {
 		}
 
 		true
+	}
+
+	private parseOptionOrFilePattern(String arg) {
+		switch (arg) {
+			case '-a':
+				conf.paths << new GlobPattern('*')
+				conf.paths << new GlobPattern('.*')
+				break
+			case '-c':
+				conf.configFile = argsIterator.next()
+				break
+			case '-C':
+				conf.disableColors = true
+				break
+			case '-d':
+				conf.debug++
+				break
+			case '-D':
+				conf.dryRun = true
+				break
+			case '-H':
+				conf.printHtml = true
+				break
+			case '-i':
+				regexOptions = '(?i)'
+				break
+			case '-l':
+				conf.maxMatchedLinesPerFile = argsIterator.next() as int
+				break
+			case '-s':
+				conf.excludeFilePatterns << ~argsIterator.next()
+				break
+			case '-t':
+				conf.maxContextLines = argsIterator.next() as int
+				break
+			case '-w':
+				conf.paths << new GlobPattern('*.html')
+				conf.paths << new GlobPattern('*.xhtml')
+				conf.paths << new GlobPattern('*.js')
+				conf.paths << new GlobPattern('*.css')
+				break
+			case '--help':
+				showHelp = true
+				break
+			case '-':
+				beforeHypen = false
+				break
+			default:
+				if (arg =~ /^-/) {
+					log.warn "Argument ${arg} looks like an option, it is interpreted as a file pattern."
+				}
+
+				conf.paths << new GlobPattern(arg)
+		}
+	}
+
+	private parseTextOptionOrTextPattern(String arg) {
+		switch (arg) {
+			case '-h':
+				hideNextTextPattern = true
+				break
+			case '-r':
+				def replaceText = argsIterator.next()
+
+				if (!conf.paths) {
+					log.fatal 'Cannot replace in STDIN.'
+				}
+				if (!conf.patternData) {
+					log.warn "No search pattern specified for replace pattern, ignoring argument ${arg}."
+					break
+				}
+
+				conf.patternData.last().with {
+					replace = true
+					it.replaceText = replaceText
+				}
+
+				conf.doReplace = true
+				break
+			case '-s':
+				conf.excludeLinePatterns << ~argsIterator.next()
+				break
+			case '-n':
+				nextPatternIsNegativeSearch = true
+				break
+			default:
+				def searchPatternStr = arg
+				def colorReplacePatternStr = searchPatternStr
+
+				conf.patternData << new PatternData(
+						searchPattern: ~(regexOptions + searchPatternStr),
+						colorReplacePattern: ~(regexOptions + colorReplacePatternStr),
+						hidePattern: hideNextTextPattern,
+						negativeSearch: nextPatternIsNegativeSearch)
+
+				hideNextTextPattern = false
+				nextPatternIsNegativeSearch = false
+		}
 	}
 }
