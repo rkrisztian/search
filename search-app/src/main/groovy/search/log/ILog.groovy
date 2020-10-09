@@ -22,4 +22,6 @@ interface ILog {
 	void rawPrintln(message)
 
 	void rawPrintf(String message, args)
+	
+	void debugException(Exception e)
 }

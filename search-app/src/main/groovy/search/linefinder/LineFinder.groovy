@@ -4,7 +4,6 @@ import static LineType.CONTEXT_LINE
 import static LineType.FOUND_LINE
 import static LineVisibility.HIDE
 import static LineVisibility.SHOW
-import static java.nio.file.Files.isReadable
 import static java.nio.file.Files.move
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import static search.conf.Constants.REPLACE_TMP_FILE_PATH
@@ -50,12 +49,6 @@ class LineFinder {
 		boolean allPatternsFound = true
 
 		if (patternData) {
-			if (file && !isReadable(file.toPath())) {
-				log.error "${filePath} : Not readable"
-				log.rawPrintln()
-				return
-			}
-
 			def foundPatterns = [] as Set<PatternData>
 
 			searchForPatterns file, foundPatterns

@@ -47,4 +47,11 @@ class Log implements ILog {
 		printf message, args
 	}
 
+	void debugException(Exception e) {
+		def sw = new StringWriter()
+		sw.withPrintWriter {
+			e.printStackTrace it
+		}
+		debug sw
+	}
 }

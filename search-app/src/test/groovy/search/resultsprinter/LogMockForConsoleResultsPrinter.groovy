@@ -8,27 +8,22 @@ class LogMockForConsoleResultsPrinter implements ILog {
 
 	@Override
 	void info(Object message) {
-
 	}
 
 	@Override
 	void debug(Object message) {
-
 	}
 
 	@Override
 	void warn(Object message) {
-
 	}
 
 	@Override
 	void error(Object message) {
-
 	}
 
 	@Override
 	void fatal(Object message) {
-
 	}
 
 	@Override
@@ -46,4 +41,7 @@ class LogMockForConsoleResultsPrinter implements ILog {
 		rawPrint sprintf(message, args)
 	}
 
+	@Override
+	void debugException(Exception e) {
+	}
 }
