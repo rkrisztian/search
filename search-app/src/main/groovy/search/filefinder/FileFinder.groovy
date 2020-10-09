@@ -61,24 +61,15 @@ class FileFinder {
 	}
 
 	protected boolean filterFile(File file) {
-		// search.Search only in regular files!
 		if (Files.isSymbolicLink(file.toPath())) {
 			return false
 		}
-
 		if (isExcluded(file.path)) {
 			return false
 		}
-
-		def fileNameAsPath = new File(file.name).toPath()
-
-		if (!conf.paths.any { it.matches(fileNameAsPath) }) {
-			if (conf.debug > 1) {
-				log.debug "*** SKIPPING: ${file.path}"
-			}
+		if (!isIncluded(file)) {
 			return false
 		}
-
 		if (BinaryFileChecker.checkIfBinary(file)) {
 			return false
 		}
@@ -91,7 +82,7 @@ class FileFinder {
 	}
 
 	protected boolean isExcluded(String filePath) {
-		if (conf.excludeFilePatterns.any { filePath =~ it }) {
+		if (conf.excludeFilePatterns.any {filePath =~ it }) {
 			if (conf.debug > 1) {
 				log.debug "*** SKIPPING: ${filePath}"
 			}
@@ -100,5 +91,19 @@ class FileFinder {
 		}
 
 		false
+	}
+
+	protected boolean isIncluded(File file) {
+		def fileNameAsPath = new File(file.name).toPath()
+
+		if (!conf.paths.any { it.matches(fileNameAsPath) }) {
+			if (conf.debug > 1) {
+				log.debug "*** SKIPPING: ${file.path}"
+			}
+
+			return false
+		}
+
+		true
 	}
 }
