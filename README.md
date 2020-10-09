@@ -1,4 +1,4 @@
-# search [![Build Status](https://travis-ci.org/rkrisztian/search.svg?branch=master)](https://travis-ci.org/rkrisztian/search)
+# search [![Build Status](https://travis-ci.org/rkrisztian/search.svg?branch=master)](https://travis-ci.org/rkrisztian/search) ![SL Scan](https://github.com/rkrisztian/search/workflows/SL%20Scan/badge.svg)
 
 ## Overview
 
