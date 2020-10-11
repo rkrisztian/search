@@ -54,7 +54,7 @@ class HtmlColors {
 			return [:]
 		}
 
-		['style': COLOR_MAPPINGS[color].join('; ')]
+		[style: COLOR_MAPPINGS[color].join('; ')]
 	}
 
 }

@@ -10,8 +10,10 @@ import static search.conf.Constants.SKIPPED_LINES_MARKER
 
 import groovy.xml.MarkupBuilder
 import search.colors.HtmlColors
+import search.conf.PatternData
 import search.linefinder.FoundLine
 import search.log.ILog
+import search.resultsprinter.linepart.ILinePartitioner
 
 class HtmlResultsPrinter implements IResultsPrinter {
 
@@ -20,6 +22,9 @@ class HtmlResultsPrinter implements IResultsPrinter {
 				/* TODO 01-Jul-2018/rkrisztian: Black-on-white for now. Make it configurable. */
 				background-color: #000000;
 				color: #C0C0C0;
+			}
+			h4 {
+				white-space: pre;
 			}
 			.code {
 				font-family: "Courier New", Courier, monospace;
@@ -38,7 +43,11 @@ class HtmlResultsPrinter implements IResultsPrinter {
 			pre {
 				padding: 0 0 0 0;
 				margin: 0 0 0 0;
+				display: inline-flex;
+			}
 	'''.stripIndent()
+
+	private final Set<PatternData> patternData
 
 	private final ILog log
 
@@ -46,9 +55,13 @@ class HtmlResultsPrinter implements IResultsPrinter {
 
 	private final List<String> htmlBodyParts = []
 
-	HtmlResultsPrinter(ILog log, HtmlColors colors) {
+	private ILinePartitioner partitioner
+
+	HtmlResultsPrinter(Set<PatternData> patternData, ILog log, HtmlColors colors, ILinePartitioner partitioner) {
+		this.patternData = patternData
 		this.log = log
 		this.colors = colors
+		this.partitioner = partitioner
 	}
 
 	@Override
@@ -62,7 +75,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 			htmlFile.withWriter('utf-8') { writer ->
 				new MarkupBuilder(writer).html {
 					head {
-						meta 'charset': 'utf-8'
+						meta charset: 'utf-8'
 						title 'Search results'
 						style type: 'text/css', htmlStyle
 					}
@@ -84,7 +97,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 		def builder = new MarkupBuilder(bodyPartWriter)
 
 		builder.div {
-			h4(['class': 'code'] + colors.format(FILE_PATH_COLOR), filePath)
+			h4([class: 'code'] + colors.format(FILE_PATH_COLOR), filePath)
 
 			if (foundLines) {
 				table {
@@ -99,16 +112,16 @@ class HtmlResultsPrinter implements IResultsPrinter {
 
 						tr {
 							if (foundLine.lineNr != -1) {
-								td(['class': 'lineNr'] + colors.format(LINE_NUMBER_COLOR)) {
-									pre foundLine.lineNr
+								td([class: 'lineNr'] + colors.format(LINE_NUMBER_COLOR)) {
+									pre([class: 'code'], foundLine.lineNr)
 								}
 								td {
-									pre foundLine.line
+									colorLine builder, foundLine.line
 								}
 							}
 							else {
-								td 'class': 'lineNr'
-								td(['class': 'marker'] + colors.format(SKIPPED_LINES_MARKER_COLOR), SKIPPED_LINES_MARKER)
+								td class: 'lineNr'
+								td([class: 'marker'] + colors.format(SKIPPED_LINES_MARKER_COLOR), SKIPPED_LINES_MARKER)
 							}
 						}
 
@@ -140,16 +153,24 @@ class HtmlResultsPrinter implements IResultsPrinter {
 
 		contextLines.each { contextLine ->
 			builder.tr {
-				td 'class': 'lineNr'
+				td class: 'lineNr'
 
 				if (contextLine == SKIPPED_LINES_MARKER) {
-					td(['class': 'marker'] + colors.format(CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR), contextLine)
+					td([class: 'marker'] + colors.format(CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR), contextLine)
 				}
 				else {
 					td {
-						pre colors.format(CONTEXT_LINES_COLOR), contextLine
+						pre([class: 'code'] + colors.format(CONTEXT_LINES_COLOR), contextLine)
 					}
 				}
+			}
+		}
+	}
+
+	private void colorLine(MarkupBuilder builder, String line) {
+		builder.pre([class: 'code']) {
+			partitioner.partition(line).each { lp ->
+				span lp.colorType ? colors.format(lp.colorType) : [:], lp.text
 			}
 		}
 	}

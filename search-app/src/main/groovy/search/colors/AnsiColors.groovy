@@ -62,4 +62,6 @@ class AnsiColors {
 		COLOR_MAPPINGS[color] + message + RESET
 	}
 
+
+
 }

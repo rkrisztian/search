@@ -1,4 +1,4 @@
-package search.resultsprinter
+package search.resultsprinter.testutil
 
 import search.log.ILog
 

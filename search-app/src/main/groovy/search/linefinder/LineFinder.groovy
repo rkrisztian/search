@@ -131,10 +131,8 @@ class LineFinder {
 			file.eachLine { line ->
 				if (!(excludeLinePatterns.any { line =~ it })) {
 					patternData.each { patternData ->
-						if (line =~ patternData.searchPattern) {
-							if (patternData.replace) {
-								line = line.replaceAll patternData.searchPattern, patternData.replaceText
-							}
+						if (patternData.replace && line =~ patternData.searchPattern) {
+							line = line.replaceAll patternData.searchPattern, patternData.replaceText
 						}
 					}
 				}

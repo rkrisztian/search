@@ -1,11 +1,13 @@
 package search.conf
 
 import groovy.transform.CompileStatic
+import groovy.transform.ToString
 
 import java.util.regex.Pattern
 
 @CompileStatic
-class Conf implements Dumpable {
+@ToString(includeFields = true, includePackage = false, includeNames = true)
+class Conf {
 
 	public static final int DEFAULT_MAX_CONTEXT_LINES = 0
 

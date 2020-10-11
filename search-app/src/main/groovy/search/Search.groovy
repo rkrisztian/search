@@ -59,7 +59,7 @@ class Search {
 		conf.setDefaults()
 
 		if (conf.debug) {
-			log.debug 'Configuration:\n' + conf.dump()
+			log.debug "Configuration:\n$conf"
 		}
 	}
 

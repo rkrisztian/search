@@ -1,12 +1,10 @@
 package search.resultsprinter
 
+
 import static search.colors.ColorType.CONTEXT_LINES_COLOR
 import static search.colors.ColorType.CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR
-import static search.colors.ColorType.DRY_REPLACE_COLOR
 import static search.colors.ColorType.FILE_PATH_COLOR
 import static search.colors.ColorType.LINE_NUMBER_COLOR
-import static search.colors.ColorType.MATCH_COLOR
-import static search.colors.ColorType.REPLACE_COLOR
 import static search.colors.ColorType.SKIPPED_LINES_MARKER_COLOR
 import static search.conf.Constants.SKIPPED_LINES_MARKER
 
@@ -15,15 +13,12 @@ import search.colors.AnsiColors
 import search.conf.PatternData
 import search.linefinder.FoundLine
 import search.log.ILog
+import search.resultsprinter.linepart.ILinePartitioner
 
 @CompileStatic
 class ConsoleResultsPrinter implements IResultsPrinter {
 
 	private final Set<PatternData> patternData
-
-	private final boolean doReplace
-
-	private final boolean dryRun
 
 	private final boolean disableColors
 
@@ -31,14 +26,15 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 
 	private final AnsiColors colors
 
-	ConsoleResultsPrinter(Set<PatternData> patternData, boolean doReplace, boolean dryRun, ILog log, boolean disableColors,
-			AnsiColors colors) {
+	private ILinePartitioner partitioner
+
+	ConsoleResultsPrinter(Set<PatternData> patternData, ILog log, boolean disableColors, AnsiColors colors,
+			ILinePartitioner partitioner) {
 		this.patternData = patternData
-		this.doReplace = doReplace
-		this.dryRun = dryRun
 		this.log = log
 		this.disableColors = disableColors
 		this.colors = colors
+		this.partitioner = partitioner
 	}
 
 	@Override
@@ -64,27 +60,6 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 			return
 		}
 
-		if (!disableColors || doReplace) {
-			def replaceColor = dryRun ? DRY_REPLACE_COLOR : REPLACE_COLOR
-
-			foundLines.each { foundLine ->
-				patternData.each { patternData ->
-					if (patternData.hidePattern) {
-						return
-					}
-
-					if (!doReplace || !patternData.replace) {
-						foundLine.line = foundLine.line.replaceAll patternData.searchPattern,
-								colors.format(MATCH_COLOR, '$0')
-					}
-					else {
-						foundLine.line = foundLine.line.replaceAll patternData.searchPattern,
-								colors.format(replaceColor, patternData.replaceText)
-					}
-				}
-			}
-		}
-
 		boolean prevContextLineAfterOverflow = false
 
 		foundLines.each { foundLine ->
@@ -99,7 +74,7 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 				def lineNr = sprintf '%6d', foundLine.lineNr
 				lineNr = colors.format LINE_NUMBER_COLOR, lineNr
 
-				log.rawPrintln "${lineNr} : ${foundLine.line}"
+				log.rawPrintln "${lineNr} : ${colorLine(foundLine.line)}"
 			}
 			else {
 				def skippedLinesMarker = sprintf '%6s', SKIPPED_LINES_MARKER
@@ -139,6 +114,16 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 			contextLine = colors.format CONTEXT_LINES_COLOR, contextLine
 			log.rawPrintln contextLine
 		}
+	}
+
+	private String colorLine(String line) {
+		def coloredLine = ''
+
+		partitioner.partition(line).each { lp ->
+			coloredLine += (lp.colorType) ? colors.format(lp.colorType, lp.text) : lp.text
+		}
+
+		coloredLine
 	}
 
 }

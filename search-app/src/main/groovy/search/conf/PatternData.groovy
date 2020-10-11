@@ -1,11 +1,13 @@
 package search.conf
 
 import groovy.transform.CompileStatic
+import groovy.transform.ToString
 
 import java.util.regex.Pattern
 
 @CompileStatic
-class PatternData implements Dumpable {
+@ToString(includeFields = true, includePackage = false, includeNames = true)
+class PatternData {
 
 	Pattern searchPattern
 
