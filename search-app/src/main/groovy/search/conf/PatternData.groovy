@@ -9,8 +9,6 @@ class PatternData implements Dumpable {
 
 	Pattern searchPattern
 
-	Pattern colorReplacePattern
-
 	boolean hidePattern
 
 	boolean replace

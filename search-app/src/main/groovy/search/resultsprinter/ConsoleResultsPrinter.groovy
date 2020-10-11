@@ -41,6 +41,7 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 		this.colors = colors
 	}
 
+	@Override
 	void withResultsPrinter(Closure action) {
 		if (!disableColors) {
 			Runtime.runtime.addShutdownHook {
@@ -52,6 +53,7 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 		action()
 	}
 
+	@Override
 	void printFoundLines(String filePath, List<FoundLine> foundLines) {
 		def filePathLine = filePath + (foundLines ? ' :' : '')
 		filePathLine = colors.format FILE_PATH_COLOR, filePathLine
@@ -72,11 +74,11 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 					}
 
 					if (!doReplace || !patternData.replace) {
-						foundLine.line = foundLine.line.replaceAll patternData.colorReplacePattern,
+						foundLine.line = foundLine.line.replaceAll patternData.searchPattern,
 								colors.format(MATCH_COLOR, '$0')
 					}
 					else {
-						foundLine.line = foundLine.line.replaceAll patternData.colorReplacePattern,
+						foundLine.line = foundLine.line.replaceAll patternData.searchPattern,
 								colors.format(replaceColor, patternData.replaceText)
 					}
 				}

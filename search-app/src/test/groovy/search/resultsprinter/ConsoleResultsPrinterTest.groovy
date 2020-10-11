@@ -74,7 +74,6 @@ class ConsoleResultsPrinterTest {
 		patterns.collect { pattern ->
 			[
 					searchPattern      : pattern.pattern,
-					colorReplacePattern: pattern.pattern,
 					replace            : pattern.replaceText as boolean,
 					replaceText        : pattern.replaceText
 			] as PatternData

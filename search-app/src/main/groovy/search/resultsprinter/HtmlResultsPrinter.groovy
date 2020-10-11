@@ -51,6 +51,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 		this.colors = colors
 	}
 
+	@Override
 	void withResultsPrinter(Closure action) {
 		try {
 			action()
@@ -77,6 +78,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 		}
 	}
 
+	@Override
 	void printFoundLines(String filePath, List<FoundLine> foundLines) {
 		def bodyPartWriter = new StringWriter()
 		def builder = new MarkupBuilder(bodyPartWriter)

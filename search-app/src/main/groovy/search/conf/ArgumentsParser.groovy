@@ -182,11 +182,9 @@ class ArgumentsParser {
 				break
 			default:
 				def searchPatternStr = arg
-				def colorReplacePatternStr = searchPatternStr
 
 				conf.patternData << new PatternData(
 						searchPattern: ~(regexOptions + searchPatternStr),
-						colorReplacePattern: ~(regexOptions + colorReplacePatternStr),
 						hidePattern: hideNextTextPattern,
 						negativeSearch: nextPatternIsNegativeSearch)
 
