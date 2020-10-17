@@ -1,0 +1,16 @@
+_Short summary_
+
+**Breaking Changes:**
+- ...
+
+**Features:**
+- ...
+
+**Bugfixes:**
+- ...
+
+**Improvements:**
+- ...
+
+**Other Changes:**
+- ...
