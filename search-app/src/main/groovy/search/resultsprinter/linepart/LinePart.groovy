@@ -10,7 +10,7 @@ import search.colors.ColorType
  */
 @CompileStatic
 @EqualsAndHashCode(includeFields = true)
-@ToString(includeFields = true, includePackage = false)
+@ToString(includeFields = true, includePackage = false, ignoreNulls = true)
 class LinePart {
 	String text
 	ColorType colorType

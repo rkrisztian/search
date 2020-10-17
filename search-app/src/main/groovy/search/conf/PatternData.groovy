@@ -6,7 +6,8 @@ import groovy.transform.ToString
 import java.util.regex.Pattern
 
 @CompileStatic
-@ToString(includeFields = true, includePackage = false, includeNames = true)
+@ToString(includeFields = true, includes = ['searchPattern', 'replaceText', 'hidePattern'],
+		includePackage = false, includeNames = true, ignoreNulls = true)
 class PatternData {
 
 	Pattern searchPattern

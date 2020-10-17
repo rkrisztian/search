@@ -71,11 +71,10 @@ class LinePartitioner implements ILinePartitioner {
 					def newEnd = m.end() + offset
 					offset += patternData.replaceText.size() - (newEnd - newStart)
 
-					line = replaceSubstring line, newStart, newEnd + offset, patternData.replaceText
+					line = replaceSubstring line, newStart, newEnd, patternData.replaceText
 
 					if (!disableColors) {
-						colorMap = replaceSublist colorMap, newStart, newEnd + offset,
-								[replaceColor] * patternData.replaceText.size()
+						colorMap = replaceSublist colorMap, newStart, newEnd, [replaceColor] * patternData.replaceText.size()
 					}
 				}
 			}
