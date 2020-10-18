@@ -1,18 +1,21 @@
 package search.linefinder
 
 import groovy.transform.CompileStatic
-import search.conf.Dumpable
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 @CompileStatic
-class FoundLine implements Dumpable {
+@ToString(includeFields = true, includePackage = false, ignoreNulls = true)
+@EqualsAndHashCode(includeFields = true)
+class FoundLine {
 
 	public String line
 
 	public int lineNr
 
-	public List<String> contextLinesBefore
+	public List<String> contextLinesBefore = []
 
-	public List<String> contextLinesAfter
+	public List<String> contextLinesAfter = []
 
 	public boolean contextLinesBeforeOverflow
 

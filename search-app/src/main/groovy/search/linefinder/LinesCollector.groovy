@@ -30,7 +30,7 @@ class LinesCollector implements ILinesCollector {
 	}
 
 	void reset() {
-		foundLines = new LinkedList<FoundLine>()
+		foundLines = [] as LinkedList<FoundLine>
 		initialized = false
 		currentContextLinesBefore = null
 		currentContextLinesBeforeOverflow = false
@@ -59,15 +59,11 @@ class LinesCollector implements ILinesCollector {
 	private FoundLine makeFoundLineWithContextLinesBefore(int lineNr, String line) {
 		new FoundLine(
 				lineNr: lineNr, line: line, contextLinesBefore: currentContextLinesBefore,
-				contextLinesBeforeOverflow: currentContextLinesBeforeOverflow,
-				contextLinesAfter: new LinkedList<String>(), contextLinesAfterOverflow: false)
+				contextLinesBeforeOverflow: currentContextLinesBeforeOverflow)
 	}
 
 	private static FoundLine makeSkippedLinesMarker() {
-		new FoundLine(
-				lineNr: -1, line: '', contextLinesBefore: new LinkedList<String>(),
-				contextLinesBeforeOverflow: false,
-				contextLinesAfter: new LinkedList<String>(), contextLinesAfterOverflow: false)
+		new FoundLine(lineNr: -1, line: '')
 	}
 
 	void storeContextLine(String line) {

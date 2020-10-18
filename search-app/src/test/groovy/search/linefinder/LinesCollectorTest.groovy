@@ -2,6 +2,7 @@ package search.linefinder
 
 import static search.linefinder.LineVisibility.HIDE
 import static search.linefinder.LineVisibility.SHOW
+import static search.testutil.GroovyAssertions.assertAll
 
 import org.junit.jupiter.api.Test
 
@@ -18,238 +19,241 @@ class LinesCollectorTest {
 
 	@Test
 	void matchedLinesAndContextDisabled_shouldYieldEmptyList() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(0, 0, 100)
 
-		// when
+		// When
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
 		linesCollector.storeFoundLine TEST_LINENR, TEST_LINE, SHOW
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_AFTER
 
-		// then
-		assert !linesCollector.foundLines.size()
-		assert !linesCollector.currentContextLinesBefore
+		// Then
+		assertAll(
+				{ assert !linesCollector.foundLines },
+				{ assert !linesCollector.currentContextLinesBefore }
+		)
 	}
 
 	@Test
 	void noMatchedLinesAndOneContextLineEnabled_singleMatch() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(0, 1, 100)
 
-		// when
+		// When
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
 		linesCollector.storeFoundLine TEST_LINENR, TEST_LINE, SHOW
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_AFTER
 
-		// then
-		assert !linesCollector.foundLines.size()
-		assert !linesCollector.currentContextLinesBefore
+		// Then
+		assertAll(
+				{ assert !linesCollector.foundLines },
+				{ assert !linesCollector.currentContextLinesBefore }
+		)
 	}
 
 	@Test
 	void oneMatchedLineAndNoContextEnabled_shouldYieldOneLine() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(1, 0, 100)
 
-		// when
+		// When
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
 		linesCollector.storeFoundLine TEST_LINENR, TEST_LINE, SHOW
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_AFTER
 
-		// then
-		assert linesCollector.foundLines.size() == 1
-		linesCollector.foundLines[0].with {
-			assert line == TEST_LINE
-			assert lineNr == TEST_LINENR
-			assert contextLinesBefore == []
-			assert contextLinesAfter == []
-			assert !contextLinesBeforeOverflow
-			assert !contextLinesAfterOverflow
-		}
-		assert !linesCollector.currentContextLinesBefore
+		// Then
+		assertAll(
+				{ assert linesCollector.foundLines == [new FoundLine(line: TEST_LINE, lineNr: TEST_LINENR)] },
+				{ assert !linesCollector.currentContextLinesBefore }
+		)
 	}
 
 	@Test
 	void oneMatchedLongLine_shouldYieldOneTruncatedLine() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(1, 0, 20)
 
-		// when
+		// When
 		linesCollector.storeFoundLine TEST_LINENR, 'this is a very long line that should be truncated', SHOW
 
-		// then
-		assert linesCollector.foundLines.size() == 1
-		linesCollector.foundLines[0].with {
-			assert line == 'this is a very long ...'
-			assert lineNr == TEST_LINENR
-		}
+		// Then
+		assert linesCollector.foundLines == [new FoundLine(line: 'this is a very long ...', lineNr: TEST_LINENR)]
 	}
 
 	@Test
 	void oneMatchedLineAndOneContextLineEnabled_singleMatch_withoutOverflow() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(1, 1, 100)
 
-		// when
+		// When
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
 		linesCollector.storeFoundLine TEST_LINENR, TEST_LINE, SHOW
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_AFTER
 
-		// then
-		assert linesCollector.foundLines.size() == 1
-		linesCollector.foundLines[0].with {
-			assert line == TEST_LINE
-			assert lineNr == TEST_LINENR
-			assert contextLinesBefore == [TEST_LINE_CONTEXT_BEFORE]
-			assert contextLinesAfter == [TEST_LINE_CONTEXT_AFTER]
-			assert !contextLinesBeforeOverflow
-			assert !contextLinesAfterOverflow
-		}
-		assert !linesCollector.currentContextLinesBefore
+		// Then
+		assertAll(
+				{
+					assert linesCollector.foundLines == [new FoundLine(
+							line: TEST_LINE,
+							lineNr: TEST_LINENR,
+							contextLinesBefore: [TEST_LINE_CONTEXT_BEFORE],
+							contextLinesAfter: [TEST_LINE_CONTEXT_AFTER]
+					)]
+				},
+				{ assert !linesCollector.currentContextLinesBefore }
+		)
 	}
 
 	@Test
 	void oneMatchedLineAndOneContextLineEnabled_singleMatch_withOverflow() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(1, 1, 100)
 
-		// when
+		// When
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE_BEFORE
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
 		linesCollector.storeFoundLine TEST_LINENR, TEST_LINE, SHOW
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_AFTER
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_AFTER_AFTER
 
-		// then
-		assert linesCollector.foundLines.size() == 1
-		linesCollector.foundLines[0].with {
-			assert line == TEST_LINE
-			assert lineNr == TEST_LINENR
-			assert contextLinesBefore == [TEST_LINE_CONTEXT_BEFORE]
-			assert contextLinesAfter == [TEST_LINE_CONTEXT_AFTER]
-			assert contextLinesBeforeOverflow
-			assert contextLinesAfterOverflow
-		}
-		assert !linesCollector.currentContextLinesBefore
+		// Then
+		assertAll(
+				{
+					assert linesCollector.foundLines == [new FoundLine(
+							line: TEST_LINE,
+							lineNr: TEST_LINENR,
+							contextLinesBefore: [TEST_LINE_CONTEXT_BEFORE],
+							contextLinesAfter: [TEST_LINE_CONTEXT_AFTER],
+							contextLinesBeforeOverflow: true,
+							contextLinesAfterOverflow: true
+					)]
+				},
+				{ assert !linesCollector.currentContextLinesBefore }
+		)
 	}
 
 	@Test
 	void oneMatchedLineAndOneContextLineEnabled_reset() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(1, 1, 100)
 
-		// when
+		// When
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
 		linesCollector.storeFoundLine TEST_LINENR, TEST_LINE, SHOW
 		linesCollector.storeContextLine TEST_LINE_CONTEXT_AFTER
 		linesCollector.reset()
 
-		// then
-		assert linesCollector.foundLines.size() == 0
-		assert !linesCollector.currentContextLinesBefore
+		// Then
+		assertAll(
+				{ assert !linesCollector.foundLines },
+				{ assert !linesCollector.currentContextLinesBefore }
+		)
 	}
 
 	@Test
 	void oneMatchedLineAndOneContextLineEnabled_twoMatches() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(1, 1, 100)
 
-		// when
+		// When
 		linesCollector.storeContextLine 'c1'
 		linesCollector.storeFoundLine 2, 'f1', SHOW
 		linesCollector.storeContextLine 'c2'
 		linesCollector.storeFoundLine 4, 'f2', SHOW
 		linesCollector.storeContextLine 'c3'
 
-		// then
-		assert linesCollector.foundLines.size() == 2
-		linesCollector.foundLines[0].with {
-			assert line == 'f1'
-			assert lineNr == 2
-			assert contextLinesBefore == ['c1']
-			assert contextLinesAfter == ['c2']
-			assert !contextLinesBeforeOverflow
-			assert !contextLinesAfterOverflow
-		}
-		linesCollector.foundLines[1].with {
-			assert line == ''
-			assert lineNr == -1
-			assert contextLinesBefore == []
-			assert contextLinesAfter == []
-			assert !contextLinesBeforeOverflow
-			assert !contextLinesAfterOverflow
-		}
-		assert !linesCollector.currentContextLinesBefore
+		// Then
+		assertAll(
+				{
+					assert linesCollector.foundLines == [
+							new FoundLine(
+									line: 'f1',
+									lineNr: 2,
+									contextLinesBefore: ['c1'],
+									contextLinesAfter: ['c2']
+							),
+							new FoundLine(
+									line: '',
+									lineNr: -1
+							)
+					]
+				},
+				{ assert !linesCollector.currentContextLinesBefore }
+		)
 	}
 
 	@Test
 	void oneMatchedLineAndOneContextLineEnabled_oneMatch_hidden() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(1, 1, 100)
 
-		// when
+		// When
 		linesCollector.storeContextLine 'c1'
 		linesCollector.storeFoundLine 2, 'f1', HIDE
 		linesCollector.storeContextLine 'c2'
 
-		assert !linesCollector.foundLines.size()
+		// Then
+		assert !linesCollector.foundLines
 	}
 
 	@Test
 	void oneMatchedLineAndOneContextLineEnabled_twoMatches_oneHidden() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(1, 1, 100)
 
-		// when
+		// When
 		linesCollector.storeContextLine 'c1'
 		linesCollector.storeFoundLine 2, 'f1', SHOW
 		linesCollector.storeContextLine 'c2'
 		linesCollector.storeFoundLine 4, 'f2', HIDE
 		linesCollector.storeContextLine 'c3'
 
-		// then
-		assert linesCollector.foundLines.size() == 1
-		linesCollector.foundLines[0].with {
-			assert line == 'f1'
-			assert lineNr == 2
-			assert contextLinesBefore == ['c1']
-			assert contextLinesAfter == ['c2']
-			assert !contextLinesBeforeOverflow
-			assert contextLinesAfterOverflow
-		}
-		assert !linesCollector.currentContextLinesBefore
+		// Then
+		assertAll(
+				{
+					assert linesCollector.foundLines == [new FoundLine(
+							line: 'f1',
+							lineNr: 2,
+							contextLinesBefore: ['c1'],
+							contextLinesAfter: ['c2'],
+							contextLinesAfterOverflow: true
+					)]
+				},
+				{ assert !linesCollector.currentContextLinesBefore }
+		)
 	}
 
 	@Test
 	void twoMatchedLinesAndOneContextLineEnabled() {
-		// given
+		// Given
 		linesCollector = new LinesCollector(2, 1, 100)
 
-		// when
+		// When
 		linesCollector.storeContextLine 'c1'
 		linesCollector.storeFoundLine 2, 'f1', SHOW
 		linesCollector.storeContextLine 'c2'
 		linesCollector.storeFoundLine 4, 'f2', SHOW
 		linesCollector.storeContextLine 'c3'
 
-		// then
-		assert linesCollector.foundLines.size() == 2
-		linesCollector.foundLines[0].with {
-			assert line == 'f1'
-			assert lineNr == 2
-			assert contextLinesBefore == ['c1']
-			assert contextLinesAfter == ['c2']
-			assert !contextLinesBeforeOverflow
-			assert !contextLinesAfterOverflow
-		}
-		linesCollector.foundLines[1].with {
-			assert line == 'f2'
-			assert lineNr == 4
-			assert contextLinesBefore == []
-			assert contextLinesAfter == ['c3']
-			assert !contextLinesBeforeOverflow
-			assert !contextLinesAfterOverflow
-		}
-		assert !linesCollector.currentContextLinesBefore
+		// Then
+		assertAll(
+				{
+					assert linesCollector.foundLines == [
+							new FoundLine(
+									line: 'f1',
+									lineNr: 2,
+									contextLinesBefore: ['c1'],
+									contextLinesAfter: ['c2']
+							),
+							new FoundLine(
+									line: 'f2',
+									lineNr: 4,
+									contextLinesBefore: [],
+									contextLinesAfter: ['c3']
+							)
+					]
+				},
+				{ assert !linesCollector.currentContextLinesBefore }
+		)
 	}
 }
