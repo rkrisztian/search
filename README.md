@@ -1,4 +1,8 @@
-# search [![Build Status](https://travis-ci.org/rkrisztian/search.svg?branch=master)](https://travis-ci.org/rkrisztian/search) ![SL Scan](https://github.com/rkrisztian/search/workflows/SL%20Scan/badge.svg)
+# search
+
+[![Build Status](https://travis-ci.org/rkrisztian/search.svg?branch=master)](https://travis-ci.org/rkrisztian/search)
+![SL Scan](https://github.com/rkrisztian/search/workflows/SL%20Scan/badge.svg)
+[![codecov](https://codecov.io/gh/rkrisztian/search/branch/master/graph/badge.svg?token=02E6VF5NTQ)](https://codecov.io/gh/rkrisztian/search)
 
 ## Overview
 
@@ -321,7 +325,7 @@ that are temporary files created by Eclipse to show history.)
 5. Read some docs:
 
 	* [Groovy Language Documentation](http://docs.groovy-lang.org/latest/html/documentation/)
-	* [Style guide](http://www.groovy-lang.org/style-guide.html) (not followed entirely yet)
+	* [Style guide](http://www.groovy-lang.org/style-guide.html)
 
 ## To do
 
