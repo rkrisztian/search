@@ -1,8 +1,9 @@
 plugins {
 	id 'groovy'
+	id 'application'
 	id 'org.unbroken-dome.test-sets' version '3.0.1'
 	id 'codenarc'
-	id 'application'
+	id 'jacoco'
 }
 
 dependencies {
@@ -48,16 +49,23 @@ tasks.named('check').configure {
 	dependsOn 'integrationTest'
 }
 
-['test', 'integrationTest'].each { taskName ->
-	tasks.named(taskName) {
-		useJUnitPlatform()
-		testLogging {
-			events 'skipped', 'failed'
-		}
+tasks.withType(Test).configureEach {
+	useJUnitPlatform()
+	testLogging { events 'skipped', 'failed' }
+	finalizedBy "jacoco${it.name.capitalize()}Report"
+}
+
+tasks.withType(JacocoReport).configureEach {
+	reports {
+		xml.enabled true
 	}
 }
 
 codenarc {
 	configFile = file 'config/codenarc/rules.groovy'
 	reportFormat = 'html'
+}
+
+jacoco {
+	toolVersion = '0.8.6'
 }

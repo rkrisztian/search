@@ -1,11 +1,10 @@
-language: java
+language: groovy
 install: true
 dist: xenial
 os: linux
 
 jdk:
   - openjdk8
-  - openjdk11
 
 script:
   - ./gradlew build -s
@@ -29,3 +28,6 @@ deploy:
     repo: rkrisztian/search
     tags: true
   cleanup: false
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
