@@ -6,7 +6,7 @@ import groovy.transform.CompileStatic
 import search.annotations.VisibleForTesting
 
 /**
- * Collects matched lines with context for displaying search results later.
+ * Collects {@link FoundLine}s for displaying search results later.
  */
 @CompileStatic
 class LinesCollector implements ILinesCollector {
@@ -15,10 +15,10 @@ class LinesCollector implements ILinesCollector {
 	private final int maxMatchedLinesPerFile
 	private final int maxDisplayedLineLength
 
-	private LinkedList<FoundLine> foundLines
+	private List<FoundLine> foundLines
 	private boolean initialized
 	@VisibleForTesting
-	protected LinkedList<String> currentContextLinesBefore
+	protected List<String> currentContextLinesBefore
 	private boolean currentContextLinesBeforeOverflow
 
 	LinesCollector(int maxMatchedLinesPerFile, Integer maxContextLines, int maxDisplayedLineLength) {
@@ -41,12 +41,11 @@ class LinesCollector implements ILinesCollector {
 
 		if (lineVisibility == SHOW) {
 			if (canDisplayMoreFoundLines()) {
-				// If line too long, truncate it before printing
-				if ((maxDisplayedLineLength > 0) && (line.size() > maxDisplayedLineLength)) {
-					line = "${line[0..maxDisplayedLineLength - 1]}..."
-				}
+				String truncatedLine = ((maxDisplayedLineLength > 0) && (line.size() > maxDisplayedLineLength))
+						? "${line[0..maxDisplayedLineLength - 1]}..."
+						: line
 
-				foundLines.add makeFoundLineWithContextLinesBefore(lineNr, line)
+				foundLines.add makeFoundLineWithContextLinesBefore(lineNr, truncatedLine)
 			}
 			else if (hasPreviouslyFoundTheLastDisplayableLine()) {
 				foundLines.add makeSkippedLinesMarker()
@@ -79,7 +78,7 @@ class LinesCollector implements ILinesCollector {
 		boolean addedToContextLinesAfter = false
 
 		if (foundLines) {
-			addedToContextLinesAfter = addToContextLinesAfterIfNotOverflow line, foundLines.last
+			addedToContextLinesAfter = addToContextLinesAfterIfNotOverflow line, foundLines.last()
 		}
 
 		if (!addedToContextLinesAfter && !hasPreviouslyFoundTheLastDisplayableLine()) {
@@ -119,7 +118,7 @@ class LinesCollector implements ILinesCollector {
 			currentContextLinesBeforeOverflow = false
 		}
 		else {
-			currentContextLinesBefore.removeFirst()
+			currentContextLinesBefore.pop()
 			currentContextLinesBeforeOverflow = true
 		}
 	}

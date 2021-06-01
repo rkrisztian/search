@@ -1,6 +1,5 @@
 package search.resultsprinter
 
-
 import static search.colors.ColorType.CONTEXT_LINES_COLOR
 import static search.colors.ColorType.CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR
 import static search.colors.ColorType.FILE_PATH_COLOR
@@ -15,6 +14,9 @@ import search.linefinder.FoundLine
 import search.log.ILog
 import search.resultsprinter.linepart.ILinePartitioner
 
+/**
+ * Displays search results in the console output.
+ */
 @CompileStatic
 class ConsoleResultsPrinter implements IResultsPrinter {
 
@@ -26,7 +28,7 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 
 	private final AnsiColors colors
 
-	private ILinePartitioner partitioner
+	private final ILinePartitioner partitioner
 
 	ConsoleResultsPrinter(Set<PatternData> patternData, ILog log, boolean disableColors, AnsiColors colors,
 			ILinePartitioner partitioner) {
@@ -111,8 +113,7 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 			log.rawPrint '\t'
 			log.rawPrintf '%6s', ''
 			log.rawPrint '   '
-			contextLine = colors.format CONTEXT_LINES_COLOR, contextLine
-			log.rawPrintln contextLine
+			log.rawPrintln colors.format(CONTEXT_LINES_COLOR, contextLine)
 		}
 	}
 

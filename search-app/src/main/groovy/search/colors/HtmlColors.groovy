@@ -2,6 +2,9 @@ package search.colors
 
 import groovy.transform.CompileStatic
 
+/**
+ * Color codes for HTML output.
+ */
 @CompileStatic
 class HtmlColors {
 
@@ -43,7 +46,7 @@ class HtmlColors {
 			(ColorType.WARNING_COLOR)                           : [MAGENTA]
 	] as EnumMap
 
-	private boolean disableColors
+	private final boolean disableColors
 
 	HtmlColors(boolean disableColors) {
 		this.disableColors = disableColors

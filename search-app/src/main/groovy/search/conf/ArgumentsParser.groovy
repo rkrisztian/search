@@ -5,14 +5,13 @@ import groovy.transform.PackageScope
 import search.annotations.VisibleForTesting
 import search.log.ILog
 
-/*
+/**
  * Not using a 3rd-party library to parse arguments because of the unconventional syntax.
  */
-
 @CompileStatic
 class ArgumentsParser {
 
-	private static final USAGE = '''
+	private static final String USAGE = '''
 	Usage:
 
 		\$ search [<options...>] <file-patterns...> - \\
@@ -71,10 +70,7 @@ class ArgumentsParser {
 	}
 
 	boolean parseArgs(String[] args) {
-		if (!args) {
-			showHelp = true
-		}
-		else {
+		if (args) {
 			argsIterator = args.iterator()
 
 			while (argsIterator.hasNext() && !showHelp) {
@@ -88,6 +84,9 @@ class ArgumentsParser {
 				}
 			}
 		}
+		else {
+			showHelp = true
+		}
 
 		if (showHelp) {
 			log.info USAGE
@@ -97,7 +96,7 @@ class ArgumentsParser {
 		true
 	}
 
-	private parseOptionOrFilePattern(String arg) {
+	private void parseOptionOrFilePattern(String arg) {
 		switch (arg) {
 			case '-a':
 				conf.paths << new GlobPattern('*')
@@ -151,7 +150,7 @@ class ArgumentsParser {
 		}
 	}
 
-	private parseTextOptionOrTextPattern(String arg) {
+	private void parseTextOptionOrTextPattern(String arg) {
 		switch (arg) {
 			case '-h':
 				hideNextTextPattern = true

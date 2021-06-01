@@ -2,6 +2,9 @@ package search.linefinder
 
 import groovy.transform.CompileStatic
 
+/**
+ * Stores {@link FoundLine}s for displaying search results later.
+ */
 @CompileStatic
 interface ILinesCollector {
 

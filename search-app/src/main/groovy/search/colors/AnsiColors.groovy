@@ -2,6 +2,9 @@ package search.colors
 
 import groovy.transform.CompileStatic
 
+/**
+ * Color codes for Linux console output.
+ */
 @CompileStatic
 class AnsiColors {
 
@@ -48,13 +51,13 @@ class AnsiColors {
 			(ColorType.WARNING_COLOR)                           : MAGENTA
 	] as EnumMap
 
-	private boolean disableColors
+	private final boolean disableColors
 
 	AnsiColors(boolean disableColors) {
 		this.disableColors = disableColors
 	}
 
-	String format(ColorType color, message) {
+	String format(ColorType color, Object message) {
 		if (disableColors) {
 			return message
 		}

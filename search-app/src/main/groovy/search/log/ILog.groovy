@@ -2,26 +2,29 @@ package search.log
 
 import groovy.transform.CompileStatic
 
+/**
+ * A simple logger class suitable for this console app.
+ */
 @CompileStatic
 interface ILog {
 
-	void info(message)
+	void info(Object message)
 
-	void debug(message)
+	void debug(Object message)
 
-	void warn(message)
+	void warn(Object message)
 
-	void error(message)
+	void error(Object message)
 
-	void fatal(message)
+	void fatal(Object message)
 
-	void rawPrint(message)
+	void rawPrint(Object message)
 
 	void rawPrintln()
 
-	void rawPrintln(message)
+	void rawPrintln(Object message)
 
-	void rawPrintf(String message, args)
-	
+	void rawPrintf(String message, Object... args)
+
 	void debugException(Exception e)
 }

@@ -7,6 +7,9 @@ import search.conf.Conf
 import search.log.ILog
 import search.resultsprinter.linepart.LinePartitioner
 
+/**
+ * For selecting the right {@link IResultsPrinter}.
+ */
 @CompileStatic
 class ResultsPrinterFactory {
 

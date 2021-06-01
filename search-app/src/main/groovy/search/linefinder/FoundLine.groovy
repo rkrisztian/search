@@ -4,6 +4,9 @@ import groovy.transform.CompileStatic
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
+/**
+ * Represents a matched line with contextual lines around it.
+ */
 @CompileStatic
 @ToString(includeFields = true, includePackage = false, ignoreNulls = true)
 @EqualsAndHashCode(includeFields = true)

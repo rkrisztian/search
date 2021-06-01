@@ -2,6 +2,9 @@ package search.conf
 
 import groovy.transform.CompileStatic
 
+/**
+ * Various constants.
+ */
 @CompileStatic
 class Constants {
 

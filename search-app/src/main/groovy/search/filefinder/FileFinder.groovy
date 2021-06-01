@@ -11,6 +11,9 @@ import groovy.transform.stc.SimpleType
 import search.conf.Conf
 import search.log.ILog
 
+/**
+ * Searches for files based on the given include and exclude patterns.
+ */
 @CompileStatic
 class FileFinder {
 

@@ -8,6 +8,7 @@ import static search.colors.ColorType.SKIPPED_LINES_MARKER_COLOR
 import static search.conf.Constants.HTML_TMP_FILE_PATH
 import static search.conf.Constants.SKIPPED_LINES_MARKER
 
+import groovy.transform.CompileDynamic
 import groovy.xml.MarkupBuilder
 import search.colors.HtmlColors
 import search.conf.PatternData
@@ -15,6 +16,10 @@ import search.linefinder.FoundLine
 import search.log.ILog
 import search.resultsprinter.linepart.ILinePartitioner
 
+/**
+ * Saves the search results into an HTML file.
+ */
+@CompileDynamic
 class HtmlResultsPrinter implements IResultsPrinter {
 
 	private final String htmlStyle = '''
@@ -55,7 +60,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 
 	private final List<String> htmlBodyParts = []
 
-	private ILinePartitioner partitioner
+	private final ILinePartitioner partitioner
 
 	HtmlResultsPrinter(Set<PatternData> patternData, ILog log, HtmlColors colors, ILinePartitioner partitioner) {
 		this.patternData = patternData
@@ -175,7 +180,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 		}
 	}
 
-	private void openHtmlFile(htmlFile) {
+	private void openHtmlFile(File htmlFile) {
 		try {
 			Process process = ['/usr/bin/xdg-open', htmlFile.absolutePath].execute()
 			def out = new StringBuffer()

@@ -3,6 +3,9 @@ package search.resultsprinter
 import groovy.transform.CompileStatic
 import search.linefinder.FoundLine
 
+/**
+ * Outputs search results.
+ */
 @CompileStatic
 interface IResultsPrinter {
 

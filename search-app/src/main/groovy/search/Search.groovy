@@ -11,6 +11,9 @@ import search.linefinder.LinesCollector
 import search.log.Log
 import search.resultsprinter.ResultsPrinterFactory
 
+/**
+ * Main class.
+ */
 @CompileStatic
 class Search {
 
@@ -37,14 +40,14 @@ class Search {
 		new Search(conf, log, colors, args).doSearch()
 	}
 
-	protected doSearch() {
+	protected void doSearch() {
 		parseArgs()
 		loadConfig()
 		addColorsToLogger()
 		findFiles()
 	}
 
-	protected parseArgs() {
+	protected void parseArgs() {
 		def argumentsParser = new ArgumentsParser(conf, log)
 
 		if (!argumentsParser.parseArgs(args)) {
@@ -52,7 +55,7 @@ class Search {
 		}
 	}
 
-	protected loadConfig() {
+	protected void loadConfig() {
 		def configParser = new ConfigParser(conf, log)
 
 		configParser.parseConfig new File(conf.configFile)
@@ -63,13 +66,13 @@ class Search {
 		}
 	}
 
-	protected addColorsToLogger() {
+	protected void addColorsToLogger() {
 		if (!conf.disableColors) {
 			log.colors = colors
 		}
 	}
 
-	protected findFiles() {
+	protected void findFiles() {
 		if (conf.debug) {
 			if (conf.paths) {
 				log.debug '*** Searching in files...'

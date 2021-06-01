@@ -3,6 +3,9 @@ package search.conf
 import groovy.transform.CompileStatic
 import search.log.ILog
 
+/**
+ * Parses configuration files.
+ */
 @CompileStatic
 class ConfigParser {
 

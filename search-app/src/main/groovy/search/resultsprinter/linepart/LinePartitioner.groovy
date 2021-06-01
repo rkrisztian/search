@@ -8,6 +8,9 @@ import groovy.transform.CompileStatic
 import search.colors.ColorType
 import search.conf.PatternData
 
+/**
+ * Helps coloring matched/replaced parts of a line.
+ */
 @CompileStatic
 class LinePartitioner implements ILinePartitioner {
 

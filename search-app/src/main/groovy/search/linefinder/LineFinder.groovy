@@ -15,6 +15,9 @@ import search.resultsprinter.IResultsPrinter
 
 import java.util.regex.Pattern
 
+/**
+ * Searches for {@link FoundLine}s, storing them in a {@link ILinesCollector}, and performs string replacements where needed.
+ */
 @CompileStatic
 class LineFinder {
 
@@ -129,15 +132,19 @@ class LineFinder {
 
 		replaceTmpFile.withWriter { writer ->
 			file.eachLine { line ->
-				if (!(excludeLinePatterns.any { line =~ it })) {
-					patternData.each { patternData ->
-						if (patternData.replace && line =~ patternData.searchPattern) {
-							line = line.replaceAll patternData.searchPattern, patternData.replaceText
-						}
+				if (excludeLinePatterns.any { line =~ it }) {
+					return
+				}
+
+				def replacedLine = line
+
+				patternData.each { patternData ->
+					if (patternData.replace && replacedLine =~ patternData.searchPattern) {
+						replacedLine = replacedLine.replaceAll patternData.searchPattern, patternData.replaceText
 					}
 				}
 
-				writer.writeLine line
+				writer.writeLine replacedLine
 			}
 		}
 

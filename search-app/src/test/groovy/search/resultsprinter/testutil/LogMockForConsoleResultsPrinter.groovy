@@ -37,7 +37,7 @@ class LogMockForConsoleResultsPrinter implements ILog {
 	}
 
 	@Override
-	void rawPrintf(String message, Object args) {
+	void rawPrintf(String message, Object... args) {
 		rawPrint sprintf(message, args)
 	}
 

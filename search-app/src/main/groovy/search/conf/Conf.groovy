@@ -5,6 +5,9 @@ import groovy.transform.ToString
 
 import java.util.regex.Pattern
 
+/**
+ * Stores the configuration data.
+ */
 @CompileStatic
 @ToString(includeFields = true, includePackage = false, includeNames = true)
 class Conf {

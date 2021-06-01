@@ -5,6 +5,11 @@ import groovy.transform.ToString
 
 import java.util.regex.Pattern
 
+/**
+ * Stores information about a pattern to search for or replace.
+ *
+ * <p>{@link groovy.transform.EqualsAndHashCode} is not used here, because {@link Pattern} does not have an equals contract.</p>
+ */
 @CompileStatic
 @ToString(includeFields = true, includes = ['searchPattern', 'replaceText', 'hidePattern'],
 		includePackage = false, includeNames = true, ignoreNulls = true)

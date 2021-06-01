@@ -6,6 +6,9 @@ import java.nio.file.FileSystems
 import java.nio.file.Path
 import java.nio.file.PathMatcher
 
+/**
+ * Represents a glob pattern with helper logic for checking for matches.
+ */
 @CompileStatic
 class GlobPattern implements PathMatcher {
 
@@ -14,11 +17,7 @@ class GlobPattern implements PathMatcher {
 
 	GlobPattern(String globPattern) {
 		this.globPattern = globPattern
-		pathMatcher = toPathMatcher globPattern
-	}
-
-	protected static PathMatcher toPathMatcher(String globPattern) {
-		FileSystems.default.getPathMatcher 'glob:' + globPattern
+		pathMatcher = FileSystems.default.getPathMatcher 'glob:' + globPattern
 	}
 
 	@Override
