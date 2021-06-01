@@ -22,8 +22,8 @@ class PatternData {
 
 	@Override
 	int hashCode() {
-		final int PRIME = 31
-		PRIME + (searchPattern ? searchPattern.pattern().hashCode() : 0)
+		final int prime = 31
+		prime + (searchPattern ? searchPattern.pattern().hashCode() : 0)
 	}
 
 	@Override

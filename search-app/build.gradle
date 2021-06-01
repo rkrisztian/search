@@ -7,15 +7,15 @@ plugins {
 }
 
 dependencies {
-	def groovyVersion = '3.0.6'
-	def junitVersion = '5.7.0'
+	def groovyVersion = '3.0.8'
+	def junitVersion = '5.7.2'
 
 	implementation platform("org.codehaus.groovy:groovy-bom:$groovyVersion")
 	implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
 	testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
 	testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
 	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-	codenarc 'org.codenarc:CodeNarc:1.6.1'
+	codenarc 'org.codenarc:CodeNarc:2.1.0'
 	codenarc "org.codehaus.groovy:groovy-all:$groovyVersion"
 }
 
@@ -67,5 +67,5 @@ codenarc {
 }
 
 jacoco {
-	toolVersion = '0.8.6'
+	toolVersion = '0.8.7'
 }
