@@ -6,6 +6,7 @@ class LogMock {
 		[info: { message -> },
 		 debug: { message -> },
 		 warn: { message -> },
+		 rawPrintln: { message -> },
 		 fatal: { message -> }] as ILog
 	}
 

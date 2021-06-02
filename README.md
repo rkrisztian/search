@@ -330,5 +330,3 @@ that are temporary files created by Eclipse to show history.)
 ## To do
 
 * More integration tests.
-* More test coverage. E.g. `LineFinder.groovy` has no tests at all.
-* Unit test coverage report (no clue if it works with Groovy code).
