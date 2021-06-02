@@ -43,4 +43,5 @@ class ExcludePatternsTest {
 		assert conf.excludeFilePatterns[2].pattern() == /some.file.1/
 		assert conf.excludeFilePatterns[3].pattern() == /some.file.2/
 	}
+
 }

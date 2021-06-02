@@ -44,4 +44,5 @@ class LogMockForConsoleResultsPrinter implements ILog {
 	@Override
 	void debugException(Exception e) {
 	}
+
 }

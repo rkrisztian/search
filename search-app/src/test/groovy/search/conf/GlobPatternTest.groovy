@@ -8,4 +8,5 @@ class GlobPatternTest {
 	void globPatternWorks() {
 		assert new GlobPattern('*.java').matches(new File('Test.java').toPath())
 	}
+
 }

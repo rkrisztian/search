@@ -1,11 +1,13 @@
 package search.conf
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import static search.conf.Conf.DEFAULT_MAX_CONTEXT_LINES
 import static search.conf.ConfigParser.PROPERTY_EXCLUDE_FILE_PATTERNS
 import static search.conf.ConfigParser.PROPERTY_MAX_CONTEXT_LINES
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 import search.log.ILog
 import search.log.LogMock
 
@@ -24,7 +26,9 @@ class ConfigParserTest {
 
 	@Test
 	void nullConfigsAreIgnored() {
-		configParser.parseConfigObject(null)
+		assertDoesNotThrow({
+			configParser.parseConfigObject(null)
+		} as Executable)
 	}
 
 	@Test
@@ -88,4 +92,5 @@ class ConfigParserTest {
 		assert conf.excludeFilePatterns[0].pattern() == /pattern.1/
 		assert conf.excludeFilePatterns[1].pattern() == /pattern.2/
 	}
+
 }

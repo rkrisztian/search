@@ -29,4 +29,5 @@ class GlobPattern implements PathMatcher {
 	String toString() {
 		globPattern
 	}
+
 }

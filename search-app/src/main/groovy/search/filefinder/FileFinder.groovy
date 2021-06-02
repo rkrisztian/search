@@ -31,8 +31,8 @@ class FileFinder {
 			a.file == b.file ? a.name <=> b.name : b.file <=> a.file
 		}
 		def options = [
-				type  : FILES,
-				sort  : sortByFilesFirstThenByName,
+				type: FILES,
+				sort: sortByFilesFirstThenByName,
 				preDir: { File file ->
 					filterDir(file) ? CONTINUE : SKIP_SUBTREE
 				}

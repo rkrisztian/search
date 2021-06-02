@@ -1,13 +1,11 @@
 package search.filefinder
 
-import groovy.transform.CompileStatic
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
 import java.util.stream.Stream
 
-@CompileStatic
 class BinaryFileCheckerIntTest {
 
 	@ParameterizedTest
@@ -17,7 +15,9 @@ class BinaryFileCheckerIntTest {
 		assert BinaryFileChecker.checkIfBinary(classFile) == expectBinary
 	}
 
-	static Stream<Arguments> shouldDetectFileAsBinaryOrTextArgs() {
+	// codenarc-disable UnusedPrivateMethod
+	@SuppressWarnings('unused')
+	private static Stream<Arguments> shouldDetectFileAsBinaryOrTextArgs() {
 		Stream.of(
 				Arguments.of('example.class', true),
 				Arguments.of('example.groovy', false),

@@ -53,4 +53,5 @@ class PatternData {
 		}
 		true
 	}
+
 }

@@ -3,9 +3,10 @@ package search.log
 class LogMock {
 
 	static ILog get() {
-		[info : { message -> },
+		[info: { message -> },
 		 debug: { message -> },
-		 warn : { message -> },
+		 warn: { message -> },
 		 fatal: { message -> }] as ILog
 	}
+
 }

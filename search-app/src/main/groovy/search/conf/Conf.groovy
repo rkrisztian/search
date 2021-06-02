@@ -48,4 +48,5 @@ class Conf {
 			maxContextLines = DEFAULT_MAX_CONTEXT_LINES
 		}
 	}
+
 }

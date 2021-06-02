@@ -96,6 +96,8 @@ class HtmlResultsPrinter implements IResultsPrinter {
 		}
 	}
 
+	// See false positive for `MarkupBuilder(...).div {}` (https://github.com/CodeNarc/CodeNarc/issues/623)
+	// codenarc-disable ExplicitCallToDivMethod
 	@Override
 	void printFoundLines(String filePath, List<FoundLine> foundLines) {
 		def bodyPartWriter = new StringWriter()

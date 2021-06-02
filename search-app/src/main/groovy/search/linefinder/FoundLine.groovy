@@ -23,4 +23,5 @@ class FoundLine {
 	public boolean contextLinesBeforeOverflow
 
 	public boolean contextLinesAfterOverflow
+
 }

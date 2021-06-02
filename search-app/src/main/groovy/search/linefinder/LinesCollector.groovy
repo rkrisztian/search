@@ -17,8 +17,10 @@ class LinesCollector implements ILinesCollector {
 
 	private List<FoundLine> foundLines
 	private boolean initialized
+
 	@VisibleForTesting
 	protected List<String> currentContextLinesBefore
+
 	private boolean currentContextLinesBeforeOverflow
 
 	LinesCollector(int maxMatchedLinesPerFile, Integer maxContextLines, int maxDisplayedLineLength) {
@@ -96,7 +98,7 @@ class LinesCollector implements ILinesCollector {
 	}
 
 	private void resetContextLinesBefore() {
-		currentContextLinesBefore = new LinkedList<String>()
+		currentContextLinesBefore = [] as LinkedList<String>
 		currentContextLinesBeforeOverflow = false
 	}
 
@@ -138,4 +140,5 @@ class LinesCollector implements ILinesCollector {
 	List<FoundLine> getFoundLines() {
 		foundLines
 	}
+
 }

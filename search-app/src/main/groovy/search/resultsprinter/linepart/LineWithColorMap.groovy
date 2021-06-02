@@ -10,6 +10,8 @@ import search.colors.ColorType
 @CompileStatic
 @ToString(includeFields = true, includeNames = false, includePackage = false, ignoreNulls = true)
 class LineWithColorMap {
+
 	String line
 	List<ColorType> colorMap
+
 }

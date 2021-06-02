@@ -6,4 +6,5 @@ import groovy.transform.CompileStatic
 enum ContextPosition {
 
 	BEFORE, AFTER
+
 }

@@ -57,4 +57,5 @@ class Log implements ILog {
 		}
 		debug sw
 	}
+
 }

@@ -8,4 +8,5 @@ import java.lang.annotation.RetentionPolicy
  */
 @Retention(RetentionPolicy.SOURCE)
 @interface VisibleForTesting {
+
 }

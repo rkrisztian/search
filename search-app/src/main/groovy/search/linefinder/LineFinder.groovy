@@ -9,6 +9,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import static search.conf.Constants.REPLACE_TMP_FILE_PATH
 
 import groovy.transform.CompileStatic
+import search.conf.Conf
 import search.conf.PatternData
 import search.log.ILog
 import search.resultsprinter.IResultsPrinter
@@ -35,12 +36,11 @@ class LineFinder {
 
 	private final ILog log
 
-	LineFinder(Set<PatternData> patternData, List<Pattern> excludeLinePatterns, boolean doReplace,
-			boolean dryRun, ILinesCollector linesCollector, IResultsPrinter resultsPrinter, ILog log) {
-		this.patternData = patternData
-		this.excludeLinePatterns = excludeLinePatterns
-		this.doReplace = doReplace
-		this.dryRun = dryRun
+	LineFinder(Conf conf, ILinesCollector linesCollector, IResultsPrinter resultsPrinter, ILog log) {
+		this.patternData = conf.patternData
+		this.excludeLinePatterns = conf.excludeLinePatterns
+		this.doReplace = conf.doReplace
+		this.dryRun = conf.dryRun
 		this.linesCollector = linesCollector
 		this.resultsPrinter = resultsPrinter
 		this.log = log

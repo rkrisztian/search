@@ -85,8 +85,7 @@ class Search {
 		def linesCollector = new LinesCollector(conf.maxMatchedLinesPerFile, conf.maxContextLines,
 				Conf.MAX_DISPLAYED_LINE_LENGTH)
 		def resultsPrinter = ResultsPrinterFactory.makeResultsPrinter conf, log
-		def lineFinder = new LineFinder(conf.patternData, conf.excludeLinePatterns, conf.doReplace, conf.dryRun, linesCollector,
-				resultsPrinter, log)
+		def lineFinder = new LineFinder(conf, linesCollector, resultsPrinter, log)
 
 		resultsPrinter.withResultsPrinter {
 			if (conf.paths) {

@@ -15,4 +15,5 @@ interface ILinesCollector {
 	void storeContextLine(String line)
 
 	List<FoundLine> getFoundLines()
+
 }

@@ -12,6 +12,8 @@ import search.colors.ColorType
 @EqualsAndHashCode(includeFields = true)
 @ToString(includeFields = true, includePackage = false, ignoreNulls = true)
 class LinePart {
+
 	String text
 	ColorType colorType
+
 }

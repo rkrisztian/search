@@ -113,4 +113,5 @@ class ArgumentsParserTest {
 		assert !conf.patternData[0].replaceText
 		assert conf.patternData[0].searchPattern.pattern() == /def/
 	}
+
 }
