@@ -46,10 +46,6 @@ tasks.named('jar').configure {
 	}
 }
 
-tasks.named('check').configure {
-	dependsOn 'integrationTest'
-}
-
 tasks.withType(Test).configureEach {
 	useJUnitPlatform()
 	testLogging { events 'skipped', 'failed' }
@@ -69,4 +65,23 @@ codenarc {
 
 jacoco {
 	toolVersion = '0.8.7'
+}
+
+tasks.register('codeCoverageReport', JacocoReport) {
+	sourceSets sourceSets.main
+
+	tasks.matching({ t -> t.extensions.findByType(JacocoTaskExtension) }).forEach { testTask ->
+		executionData testTask
+		dependsOn testTask
+	}
+
+	reports {
+		xml.enabled false
+		html.enabled true
+	}
+}
+
+tasks.named('check').configure {
+	dependsOn 'integrationTest'
+	dependsOn 'codeCoverageReport'
 }
