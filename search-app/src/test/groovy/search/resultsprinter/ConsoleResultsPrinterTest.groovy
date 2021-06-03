@@ -5,8 +5,10 @@ import static search.resultsprinter.testutil.ResultsPrinterTestConstants.NO_DRY_
 import static search.resultsprinter.testutil.ResultsPrinterTestConstants.NO_REPLACE
 import static search.resultsprinter.testutil.ResultsPrinterTestConstants.WITH_COLORS
 import static search.resultsprinter.testutil.ResultsPrinterTestConstants.WITH_REPLACE
+import static search.testutil.GroovyAssertions.assertAll
 
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -19,6 +21,7 @@ import search.resultsprinter.testutil.LogMockForConsoleResultsPrinter
 import java.util.regex.Pattern
 import java.util.stream.Stream
 
+// codenarc-disable ClosureAsLastMethodParameter
 class ConsoleResultsPrinterTest {
 
 	private LogMockForConsoleResultsPrinter log
@@ -28,24 +31,43 @@ class ConsoleResultsPrinterTest {
 		log = new LogMockForConsoleResultsPrinter()
 	}
 
-	@ParameterizedTest(name = '[{index}] {0}; colors: {1}')
-	@MethodSource('canPrintSearchArgs')
-	void canPrintSearch(Pattern pattern, boolean disableColors, String expectedLine) {
+	@Test
+	void doesNothingIfNoFoundLines() {
 		// Given
-		def patternData = [new PatternData(searchPattern: pattern)] as Set
-		def foundLines = [new FoundLine(line: 'This is a Test!')]
-		def partitioner = new LinePartitioner(patternData, NO_REPLACE, NO_DRY_RUN, disableColors)
-		def consoleResultsPrinter = new ConsoleResultsPrinter(patternData, log, disableColors, new AnsiColors(disableColors),
-				partitioner)
+		def patternData = [new PatternData(searchPattern: ~/Te?s+t/)] as Set
+		def foundLines = []
+		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, WITH_COLORS)
 
 		// When
 		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
 
 		// Then
-		assert log.loggedLines.any { it =~ expectedLine }
+		assertAll(
+				{ assert log.loggedLines.any { it =~ /test\.txt/ } },
+				{ assert !log.loggedLines.any { it =~ /test\.txt :/ } }
+		)
 	}
 
-	static Stream<Arguments> canPrintSearchArgs() {
+	@ParameterizedTest(name = '[{index}] {0}; colors: {1}')
+	@MethodSource('printsSearchResultsArgs')
+	void printsSearchResults(Pattern pattern, boolean disableColors, String expectedLine) {
+		// Given
+		def patternData = [new PatternData(searchPattern: pattern)] as Set
+		def foundLines = [new FoundLine(line: 'This is a Test!')]
+		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, disableColors)
+
+		// When
+		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
+
+		// Then
+		assertAll(
+				{ assert log.loggedLines.any { it =~ /test\.txt :/ } },
+				{ assert log.loggedLines.any { it =~ expectedLine } }
+		)
+	}
+
+	@SuppressWarnings('unused')
+	static Stream<Arguments> printsSearchResultsArgs() {
 		Stream.of(
 				Arguments.of(~/Te?s+t/, WITH_COLORS, /This is a .+?Test.+?!/),
 				Arguments.of(~/Te?s+t/, NO_COLORS, /This is a Test!/),
@@ -55,14 +77,12 @@ class ConsoleResultsPrinterTest {
 	}
 
 	@ParameterizedTest(name = '[{index}] {0}; colors: {1}')
-	@MethodSource('canPrintReplaceArgs')
-	void canPrintReplace(Pattern pattern, boolean disableColors, String expectedLine) {
+	@MethodSource('printsReplaceArgs')
+	void printsReplace(Pattern pattern, boolean disableColors, String expectedLine) {
 		// Given
 		def patternData = [new PatternData(searchPattern: pattern, replace: true, replaceText: 'test')] as Set
 		def foundLines = [new FoundLine(line: 'This is a Test!')]
-		def partitioner = new LinePartitioner(patternData, WITH_REPLACE, NO_DRY_RUN, disableColors)
-		def consoleResultsPrinter = new ConsoleResultsPrinter(patternData, log, disableColors, new AnsiColors(disableColors),
-				partitioner)
+		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, WITH_REPLACE, NO_DRY_RUN, disableColors)
 
 		// When
 		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
@@ -71,13 +91,57 @@ class ConsoleResultsPrinterTest {
 		assert log.loggedLines.any { it =~ expectedLine }
 	}
 
-	static Stream<Arguments> canPrintReplaceArgs() {
+	@SuppressWarnings('unused')
+	static Stream<Arguments> printsReplaceArgs() {
 		Stream.of(
 				Arguments.of(~/Te?s+t/, WITH_COLORS, /This is a .+?test.+?!/),
 				Arguments.of(~/Te?s+t/, NO_COLORS, /This is a test!/),
 				Arguments.of(~/(T)(e?)(s+)t/, WITH_COLORS, /This is a .+?test.+?!/),
 				Arguments.of(~/(T)(e?)(s+)t/, NO_COLORS, /This is a test!/)
 		)
+	}
+
+	@Test
+	void printsContextLines() {
+		// Given
+		def patternData = [new PatternData(searchPattern: ~/Te?s+t/)] as Set
+		def foundLines = [
+				new FoundLine(
+						lineNr: 5,
+						line: 'This is a Test!',
+						contextLinesBefore: ['context1', 'context2'],
+						contextLinesBeforeOverflow: true,
+						contextLinesAfter: ['context3', 'context4'],
+						contextLinesAfterOverflow: true
+				),
+				new FoundLine(
+						lineNr: -1
+				)
+		]
+		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS)
+
+		// When
+		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
+		println log.loggedLines
+
+		// Then
+		assertAll(
+				{ assert log.loggedLines[0] =~ /test\.txt :/ },
+				{ assert log.loggedLines[1] =~ /\(\.\.\.\)/ },
+				{ assert log.loggedLines[2] =~ /context1/ },
+				{ assert log.loggedLines[3] =~ /context2/ },
+				{ assert log.loggedLines[4] =~ /5\s+:\s+.*?Test/ },
+				{ assert log.loggedLines[5] =~ /context3/ },
+				{ assert log.loggedLines[6] =~ /context4/ },
+				{ assert log.loggedLines[7] =~ /\(\.\.\.\)/ },
+				{ assert log.loggedLines[8] =~ /\(\.\.\.\)/ },
+		)
+	}
+
+	private ConsoleResultsPrinter makeConsoleResultsPrinter(Set<PatternData> patternData, boolean replace, boolean dryRun,
+			boolean disableColors) {
+		def partitioner = new LinePartitioner(patternData, replace, dryRun, disableColors)
+		new ConsoleResultsPrinter(patternData, log, disableColors, new AnsiColors(disableColors), partitioner)
 	}
 
 }

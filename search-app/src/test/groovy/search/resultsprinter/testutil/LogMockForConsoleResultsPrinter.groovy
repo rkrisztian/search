@@ -28,7 +28,8 @@ class LogMockForConsoleResultsPrinter implements ILog {
 
 	@Override
 	void rawPrint(Object message) {
-		loggedLines.last() << message
+		def lastLoggedLine = loggedLines ? loggedLines.removeLast() : ''
+		loggedLines += lastLoggedLine + message
 	}
 
 	@Override
