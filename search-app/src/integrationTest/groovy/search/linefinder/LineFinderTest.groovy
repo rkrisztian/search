@@ -8,7 +8,6 @@ import search.conf.PatternData
 import search.log.LogMock
 import search.resultsprinter.IResultsPrinter
 
-// codenarc-disable ClosureAsLastMethodParameter
 class LineFinderTest {
 
 	private static final String EXAMPLE_GROOVY_FILE_NAME = 'example.groovy'

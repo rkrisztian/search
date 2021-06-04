@@ -17,7 +17,7 @@ class ResultsPrinterFactory {
 		def partitioner = new LinePartitioner(conf.patternData, conf.doReplace, conf.dryRun, conf.disableColors)
 
 		if (conf.printHtml) {
-			return new HtmlResultsPrinter(conf.patternData, log, new HtmlColors(conf.disableColors), partitioner)
+			return new HtmlResultsPrinter(conf.patternData, log, new HtmlColors(conf.disableColors), partitioner, conf.tmpDir)
 		}
 
 		new ConsoleResultsPrinter(conf.patternData, log, conf.disableColors, new AnsiColors(conf.disableColors), partitioner)

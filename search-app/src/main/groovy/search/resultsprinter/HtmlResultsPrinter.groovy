@@ -5,7 +5,7 @@ import static search.colors.ColorType.CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR
 import static search.colors.ColorType.FILE_PATH_COLOR
 import static search.colors.ColorType.LINE_NUMBER_COLOR
 import static search.colors.ColorType.SKIPPED_LINES_MARKER_COLOR
-import static search.conf.Constants.HTML_TMP_FILE_PATH
+import static search.conf.Constants.HTML_TMP_FILE_NAME
 import static search.conf.Constants.SKIPPED_LINES_MARKER
 
 import groovy.transform.CompileDynamic
@@ -62,11 +62,14 @@ class HtmlResultsPrinter implements IResultsPrinter {
 
 	private final ILinePartitioner partitioner
 
-	HtmlResultsPrinter(Set<PatternData> patternData, ILog log, HtmlColors colors, ILinePartitioner partitioner) {
+	private final File tmpDir
+
+	HtmlResultsPrinter(Set<PatternData> patternData, ILog log, HtmlColors colors, ILinePartitioner partitioner, File tmpDir) {
 		this.patternData = patternData
 		this.log = log
 		this.colors = colors
 		this.partitioner = partitioner
+		this.tmpDir = tmpDir
 	}
 
 	@Override
@@ -75,7 +78,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 			action()
 		}
 		finally {
-			def htmlFile = new File(HTML_TMP_FILE_PATH)
+			def htmlFile = new File(tmpDir, HTML_TMP_FILE_NAME)
 
 			htmlFile.withWriter('utf-8') { writer ->
 				new MarkupBuilder(writer).html {

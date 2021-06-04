@@ -17,6 +17,8 @@ class ConfigParser {
 
 	protected static final String PROPERTY_PRINT_HTML = 'printHtml'
 
+	protected static final String PROPERTY_TMP_DIR = 'tmpDir'
+
 	protected final Conf conf
 
 	protected final ILog log
@@ -72,6 +74,9 @@ class ConfigParser {
 				currentConfig[PROPERTY_INCLUDE_CONFIG].collect { String it ->
 					readConfig new File(it)
 				}.each { stack.push it }
+			}
+			if (currentConfig[PROPERTY_TMP_DIR]) {
+				conf.tmpDir = new File(currentConfig[PROPERTY_TMP_DIR] as String)
 			}
 		}
 	}

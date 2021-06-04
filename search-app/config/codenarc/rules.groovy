@@ -36,7 +36,10 @@ ruleset {
 		'SpaceAroundMapEntryColon' characterAfterColonRegex: /\s/
 	}
 	ruleset 'rulesets/generic.xml'
-	ruleset 'rulesets/groovyism.xml'
+	ruleset('rulesets/groovyism.xml') {
+		// "GroovyAssertions#assertAll" takes multiple closures, where this style does not make sense
+		'ClosureAsLastMethodParameter' doNotApplyToFilesMatching: /.*?Test\.groovy$/
+	}
 	ruleset 'rulesets/imports.xml'
 	ruleset('rulesets/junit.xml') {
 		// ParameterizedTest should be ignored too (see https://github.com/CodeNarc/CodeNarc/issues/624)

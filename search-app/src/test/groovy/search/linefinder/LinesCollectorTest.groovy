@@ -6,7 +6,6 @@ import static search.testutil.GroovyAssertions.assertAll
 
 import org.junit.jupiter.api.Test
 
-// codenarc-disable ClosureAsLastMethodParameter
 class LinesCollectorTest {
 
 	private static final String TEST_LINE_CONTEXT_BEFORE_BEFORE = 'context before before'

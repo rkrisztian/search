@@ -2,8 +2,11 @@ package search.conf
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import static search.conf.Conf.DEFAULT_MAX_CONTEXT_LINES
+import static search.conf.Conf.DEFAULT_TMP_DIR
 import static search.conf.ConfigParser.PROPERTY_EXCLUDE_FILE_PATTERNS
 import static search.conf.ConfigParser.PROPERTY_MAX_CONTEXT_LINES
+import static search.conf.ConfigParser.PROPERTY_TMP_DIR
+import static search.testutil.GroovyAssertions.assertAll
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -91,6 +94,24 @@ class ConfigParserTest {
 		assert conf.excludeFilePatterns.size() == 2
 		assert conf.excludeFilePatterns[0].pattern() == /pattern.1/
 		assert conf.excludeFilePatterns[1].pattern() == /pattern.2/
+	}
+
+	@Test
+	void tmpDirCanBeSetToNonDefault() {
+		// Given
+		def config = new ConfigSlurper().parse("""
+			${PROPERTY_TMP_DIR} = '/dummy/tmp/dir'
+		""")
+
+		// When
+		configParser.parseConfigObject config
+		conf.setDefaults()
+
+		// Then
+		assertAll(
+				{ assert conf.tmpDir == new File('/dummy/tmp/dir') },
+				{ assert conf.tmpDir != DEFAULT_TMP_DIR }
+		)
 	}
 
 }

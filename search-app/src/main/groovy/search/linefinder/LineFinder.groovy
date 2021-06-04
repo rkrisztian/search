@@ -6,7 +6,7 @@ import static LineVisibility.HIDE
 import static LineVisibility.SHOW
 import static java.nio.file.Files.move
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
-import static search.conf.Constants.REPLACE_TMP_FILE_PATH
+import static search.conf.Constants.REPLACE_TMP_FILE_NAME
 
 import groovy.transform.CompileStatic
 import search.conf.Conf
@@ -36,6 +36,8 @@ class LineFinder {
 
 	private final ILog log
 
+	private final File replaceTmpFilePath
+
 	LineFinder(Conf conf, ILinesCollector linesCollector, IResultsPrinter resultsPrinter, ILog log) {
 		this.patternData = conf.patternData
 		this.excludeLinePatterns = conf.excludeLinePatterns
@@ -44,6 +46,7 @@ class LineFinder {
 		this.linesCollector = linesCollector
 		this.resultsPrinter = resultsPrinter
 		this.log = log
+		this.replaceTmpFilePath = new File(conf.tmpDir, REPLACE_TMP_FILE_NAME)
 	}
 
 	void findLines(File file = null) {
@@ -128,9 +131,7 @@ class LineFinder {
 			log.fatal "File '${file.path}' is not writable."
 		}
 
-		def replaceTmpFile = new File(REPLACE_TMP_FILE_PATH)
-
-		replaceTmpFile.withWriter { writer ->
+		replaceTmpFilePath.withWriter { writer ->
 			file.eachLine { line ->
 				if (excludeLinePatterns.any { line =~ it }) {
 					return
@@ -148,10 +149,7 @@ class LineFinder {
 			}
 		}
 
-		def origFilePath = file.toPath()
-		def tmpFilePathObj = replaceTmpFile.toPath()
-
-		move tmpFilePathObj, origFilePath, REPLACE_EXISTING
+		move replaceTmpFilePath.toPath(), file.toPath(), REPLACE_EXISTING
 	}
 
 }

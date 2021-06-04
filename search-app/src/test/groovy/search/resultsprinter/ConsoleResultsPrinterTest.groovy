@@ -21,7 +21,6 @@ import search.resultsprinter.testutil.LogMockForConsoleResultsPrinter
 import java.util.regex.Pattern
 import java.util.stream.Stream
 
-// codenarc-disable ClosureAsLastMethodParameter
 class ConsoleResultsPrinterTest {
 
 	private LogMockForConsoleResultsPrinter log

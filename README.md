@@ -216,6 +216,11 @@ Uses Groovy syntax, see [ConfigSlurper](http://docs.groovy-lang.org/latest/html/
 
 	Print the results in HTML and open in a browser.
 
+* `tmpDir: String`
+
+  Location of the temporary directory used for replacements and HTML output. The default value is taken from Java system
+  property `java.io.tmpdir`.
+
 ### Example configuration
 
 The following is an actual config I use as a user-specific config (`~/.search.conf`):
