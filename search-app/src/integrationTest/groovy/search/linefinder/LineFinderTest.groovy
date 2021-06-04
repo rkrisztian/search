@@ -1,12 +1,17 @@
 package search.linefinder
 
+import static java.nio.file.Files.copy
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import static search.testutil.GroovyAssertions.assertAll
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import search.conf.Conf
 import search.conf.PatternData
 import search.log.LogMock
 import search.resultsprinter.IResultsPrinter
+
+import java.nio.file.Path
 
 class LineFinderTest {
 
@@ -24,7 +29,7 @@ class LineFinderTest {
 		def lineFinder = makeLineFinderFor(new Conf())
 
 		// When
-		lineFinder.findLines(exampleGroovyFile)
+		lineFinder.findLines exampleGroovyFile
 
 		// Then
 		assertAll(
@@ -44,7 +49,7 @@ class LineFinderTest {
 		))
 
 		// When
-		lineFinder.findLines(exampleGroovyFile)
+		lineFinder.findLines exampleGroovyFile
 
 		// Then
 		assertAll(
@@ -65,7 +70,7 @@ class LineFinderTest {
 		))
 
 		// When
-		lineFinder.findLines(exampleGroovyFile)
+		lineFinder.findLines exampleGroovyFile
 
 		println filePath
 
@@ -84,7 +89,7 @@ class LineFinderTest {
 		))
 
 		// When
-		lineFinder.findLines(exampleGroovyFile)
+		lineFinder.findLines exampleGroovyFile
 
 		println filePath
 
@@ -96,7 +101,7 @@ class LineFinderTest {
 	}
 
 	@Test
-	void shouldLeaveReplacementsToResultsPrinter() {
+	void shouldLetResultsPrinterShowReplacements() {
 		// Given
 		def lineFinder = makeLineFinderFor(new Conf(
 				patternData: [new PatternData(searchPattern: ~/private/, replace: true, replaceText: 'public')],
@@ -105,13 +110,35 @@ class LineFinderTest {
 		))
 
 		// When
-		lineFinder.findLines(exampleGroovyFile)
+		lineFinder.findLines exampleGroovyFile
 
 		// Then
 		assertAll(
 				{ assert new File(filePath).name == EXAMPLE_GROOVY_FILE_NAME },
 				{ assert foundLines.size() == 2 },
 				{ assert foundLines.every { it.line =~ /private static/ } }
+		)
+	}
+
+	@Test
+	void shouldDoReplacementsInFile(@TempDir Path tempDir) {
+		// Given
+		def exampleGroovyFileCopy = copyExampleGroovyFile tempDir
+		def lineFinder = makeLineFinderFor(new Conf(
+				patternData: [new PatternData(searchPattern: ~/private/, replace: true, replaceText: 'public')],
+				doReplace: true,
+				dryRun: false
+		))
+
+		// When
+		lineFinder.findLines exampleGroovyFileCopy.toFile()
+
+		// Then
+		assertAll(
+				{ assert new File(filePath).name == exampleGroovyFileCopy.fileName as String },
+				{ assert foundLines.size() == 2 },
+				{ assert foundLines.every { it.line =~ /private static/ } },
+				{ assert exampleGroovyFileCopy.readLines().every { !(it =~ /private static/) } }
 		)
 	}
 
@@ -126,6 +153,13 @@ class LineFinderTest {
 		def linesCollector = new LinesCollector(conf.maxMatchedLinesPerFile, conf.maxContextLines,
 				Conf.MAX_DISPLAYED_LINE_LENGTH)
 		new LineFinder(conf, linesCollector, mockResultsPrinter, LogMock.get())
+	}
+
+	private Path copyExampleGroovyFile(Path tempDir) {
+		def exampleGroovyFileCopy = tempDir.resolve(exampleGroovyFile.name)
+		copy exampleGroovyFile.toPath(), exampleGroovyFileCopy, REPLACE_EXISTING
+
+		exampleGroovyFileCopy
 	}
 
 }

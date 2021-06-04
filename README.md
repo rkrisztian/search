@@ -331,7 +331,3 @@ that are temporary files created by Eclipse to show history.)
 
 	* [Groovy Language Documentation](http://docs.groovy-lang.org/latest/html/documentation/)
 	* [Style guide](http://www.groovy-lang.org/style-guide.html)
-
-## To do
-
-* More integration tests.

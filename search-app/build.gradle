@@ -52,10 +52,8 @@ tasks.withType(Test).configureEach {
 	finalizedBy "jacoco${it.name.capitalize()}Report"
 }
 
-tasks.withType(JacocoReport).configureEach {
-	reports {
-		xml.enabled true
-	}
+tasks.named('integrationTest').configure { Test it ->
+	it.systemProperty 'java.io.tmpdir', "${buildDir}/tmp"
 }
 
 codenarc {
@@ -65,6 +63,12 @@ codenarc {
 
 jacoco {
 	toolVersion = '0.8.7'
+}
+
+tasks.withType(JacocoReport).configureEach {
+	reports {
+		xml.enabled true
+	}
 }
 
 tasks.register('codeCoverageReport', JacocoReport) {
