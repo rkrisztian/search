@@ -54,8 +54,31 @@ class LineFinderTest {
 		// Then
 		assertAll(
 				{ assert new File(filePath).name == EXAMPLE_GROOVY_FILE_NAME },
-				{ assert foundLines.size() == 2 },
-				{ assert foundLines.every { it.line =~ /private static/ } }
+				{ assert foundLines?.size() == 2 },
+				{ assert foundLines?.every { it.line =~ /private static/ } }
+		)
+	}
+
+	@Test
+	void mustFindAllPatternsEvenWithExcludePatternsAdded() {
+		// Given
+		def lineFinder = makeLineFinderFor(new Conf(
+				patternData: [
+						new PatternData(searchPattern: ~/class/),
+						new PatternData(searchPattern: ~/private/)
+				],
+				excludeLinePatterns: [~/static/]
+		))
+
+		// When
+		lineFinder.findLines exampleGroovyFile
+
+		println filePath
+
+		// Then
+		assertAll(
+				{ assert !filePath },
+				{ assert !foundLines }
 		)
 	}
 
@@ -115,8 +138,8 @@ class LineFinderTest {
 		// Then
 		assertAll(
 				{ assert new File(filePath).name == EXAMPLE_GROOVY_FILE_NAME },
-				{ assert foundLines.size() == 2 },
-				{ assert foundLines.every { it.line =~ /private static/ } }
+				{ assert foundLines?.size() == 2 },
+				{ assert foundLines?.every { it.line =~ /private static/ } }
 		)
 	}
 
@@ -136,8 +159,8 @@ class LineFinderTest {
 		// Then
 		assertAll(
 				{ assert new File(filePath).name == exampleGroovyFileCopy.fileName as String },
-				{ assert foundLines.size() == 2 },
-				{ assert foundLines.every { it.line =~ /private static/ } },
+				{ assert foundLines?.size() == 2 },
+				{ assert foundLines?.every { it.line =~ /private static/ } },
 				{ assert exampleGroovyFileCopy.readLines().every { !(it =~ /private static/) } }
 		)
 	}
