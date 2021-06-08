@@ -16,7 +16,6 @@ class LinesCollector implements ILinesCollector {
 	private final int maxDisplayedLineLength
 
 	private List<FoundLine> foundLines
-	private boolean initialized
 
 	@VisibleForTesting
 	protected List<String> currentContextLinesBefore
@@ -33,14 +32,15 @@ class LinesCollector implements ILinesCollector {
 
 	void reset() {
 		foundLines = [] as LinkedList<FoundLine>
-		initialized = false
-		currentContextLinesBefore = null
+		resetContextLinesBefore()
+	}
+
+	private void resetContextLinesBefore() {
+		currentContextLinesBefore = [] as LinkedList<String>
 		currentContextLinesBeforeOverflow = false
 	}
 
 	void storeFoundLine(int lineNr, String line, LineVisibility lineVisibility) {
-		lazyInit()
-
 		if (lineVisibility == SHOW) {
 			if (canDisplayMoreFoundLines()) {
 				String truncatedLine = ((maxDisplayedLineLength > 0) && (line.size() > maxDisplayedLineLength))
@@ -68,8 +68,6 @@ class LinesCollector implements ILinesCollector {
 	}
 
 	void storeContextLine(String line) {
-		lazyInit()
-
 		if (!maxMatchedLinesPerFile || !maxContextLines) {
 			return
 		}
@@ -86,20 +84,6 @@ class LinesCollector implements ILinesCollector {
 		if (!addedToContextLinesAfter && !hasPreviouslyFoundTheLastDisplayableLine()) {
 			addToContextLinesBefore line
 		}
-	}
-
-	private void lazyInit() {
-		if (initialized) {
-			return
-		}
-
-		resetContextLinesBefore()
-		initialized = true
-	}
-
-	private void resetContextLinesBefore() {
-		currentContextLinesBefore = [] as LinkedList<String>
-		currentContextLinesBeforeOverflow = false
 	}
 
 	private boolean addToContextLinesAfterIfNotOverflow(String line, FoundLine foundLine) {
