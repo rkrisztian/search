@@ -4,7 +4,6 @@ import static search.colors.ColorType.CONTEXT_LINES_COLOR
 import static search.colors.ColorType.CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR
 import static search.colors.ColorType.FILE_PATH_COLOR
 import static search.colors.ColorType.LINE_NUMBER_COLOR
-import static search.colors.ColorType.SKIPPED_LINES_MARKER_COLOR
 import static search.conf.Constants.HTML_TMP_FILE_NAME
 import static search.conf.Constants.SKIPPED_LINES_MARKER
 
@@ -121,17 +120,11 @@ class HtmlResultsPrinter implements IResultsPrinter {
 						}
 
 						tr {
-							if (foundLine.lineNr != -1) {
-								td([class: 'lineNr'] + colors.format(LINE_NUMBER_COLOR)) {
-									pre([class: 'code'], foundLine.lineNr)
-								}
-								td {
-									colorLine builder, foundLine.line
-								}
+							td([class: 'lineNr'] + colors.format(LINE_NUMBER_COLOR)) {
+								pre([class: 'code'], foundLine.lineNr)
 							}
-							else {
-								td class: 'lineNr'
-								td([class: 'marker'] + colors.format(SKIPPED_LINES_MARKER_COLOR), SKIPPED_LINES_MARKER)
+							td {
+								colorLine builder, foundLine.line
 							}
 						}
 

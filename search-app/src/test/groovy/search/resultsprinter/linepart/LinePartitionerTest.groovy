@@ -147,6 +147,7 @@ class LinePartitionerTest {
 		assert partitioner.partition('this is a test') == expectedLineParts
 	}
 
+	@SuppressWarnings('unused')
 	static Stream<Arguments> shouldCreateRightPartitionsWithDryReplaceArgs() {
 		Stream.of(
 				Arguments.of(

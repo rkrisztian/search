@@ -151,7 +151,7 @@ class LinesCollectorTest {
 	}
 
 	@Test
-	void oneMatchedLineAndOneContextLineEnabled_twoMatches() {
+	void oneMatchedLineAndOneContextLineEnabled_oneMatchDisplayed() {
 		// Given
 		linesCollector = new LinesCollector(1, 1, 100)
 
@@ -164,17 +164,15 @@ class LinesCollectorTest {
 
 		// Then
 		assertAll(
+				{ assert linesCollector.hasFinished() },
 				{
 					assert linesCollector.foundLines == [
 							new FoundLine(
 									line: 'f1',
 									lineNr: 2,
 									contextLinesBefore: ['c1'],
-									contextLinesAfter: ['c2']
-							),
-							new FoundLine(
-									line: '',
-									lineNr: -1
+									contextLinesAfter: ['c2'],
+									contextLinesAfterOverflow: true
 							)
 					]
 				},
@@ -255,6 +253,30 @@ class LinesCollectorTest {
 				},
 				{ assert !linesCollector.currentContextLinesBefore }
 		)
+	}
+
+	@Test
+	void matchedLineShouldBeDisplayedAsContextLineAfterTheLimit() {
+		// Given
+		linesCollector = new LinesCollector(1, 2, 100)
+
+		// When
+		linesCollector.storeContextLine 'c1'
+		linesCollector.storeFoundLine 2, 'f1', SHOW
+		linesCollector.storeContextLine 'c2'
+		linesCollector.storeFoundLine 4, 'f2', SHOW
+		linesCollector.storeContextLine 'c3'
+
+		// Then
+		assert linesCollector.foundLines == [
+				new FoundLine(
+						line: 'f1',
+						lineNr: 2,
+						contextLinesBefore: ['c1'],
+						contextLinesAfter: ['c2', 'f2'],
+						contextLinesAfterOverflow: true
+				)
+		]
 	}
 
 }

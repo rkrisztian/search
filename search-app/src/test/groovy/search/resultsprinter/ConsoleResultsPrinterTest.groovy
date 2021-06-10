@@ -112,19 +112,16 @@ class ConsoleResultsPrinterTest {
 						contextLinesBeforeOverflow: true,
 						contextLinesAfter: ['context3', 'context4'],
 						contextLinesAfterOverflow: true
-				),
-				new FoundLine(
-						lineNr: -1
 				)
 		]
 		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS)
 
 		// When
 		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
-		println log.loggedLines
 
 		// Then
 		assertAll(
+				{ assert log.loggedLines.size() == 9 },
 				{ assert log.loggedLines[0] =~ /test\.txt :/ },
 				{ assert log.loggedLines[1] =~ /\(\.\.\.\)/ },
 				{ assert log.loggedLines[2] =~ /context1/ },
@@ -133,7 +130,7 @@ class ConsoleResultsPrinterTest {
 				{ assert log.loggedLines[5] =~ /context3/ },
 				{ assert log.loggedLines[6] =~ /context4/ },
 				{ assert log.loggedLines[7] =~ /\(\.\.\.\)/ },
-				{ assert log.loggedLines[8] =~ /\(\.\.\.\)/ },
+				{ assert log.loggedLines[8] =~ /^$/ }
 		)
 	}
 

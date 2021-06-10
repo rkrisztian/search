@@ -16,4 +16,6 @@ interface ILinesCollector {
 
 	List<FoundLine> getFoundLines()
 
+	boolean hasFinished()
+
 }

@@ -7,6 +7,7 @@ import static LineVisibility.SHOW
 import static java.nio.file.Files.move
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import static search.conf.Constants.REPLACE_TMP_FILE_NAME
+import static search.linefinder.LinesReader.eachLineWhile
 
 import groovy.transform.CompileStatic
 import search.conf.Conf
@@ -76,18 +77,18 @@ class LineFinder {
 
 	private void searchForPatterns(File file, Set foundPatterns) {
 		if (file) {
-			file.eachLine { String line, int lineNr ->
+			eachLineWhile(file) { String line, int lineNr ->
 				searchForPatternsOnLine line, lineNr, foundPatterns
 			}
 		}
 		else {
-			System.in.eachLine { String line, int lineNr ->
+			eachLineWhile(System.in) { String line, int lineNr ->
 				searchForPatternsOnLine line, lineNr, foundPatterns
 			}
 		}
 	}
 
-	private void searchForPatternsOnLine(String line, int lineNr, Set foundPatterns) {
+	private boolean searchForPatternsOnLine(String line, int lineNr, Set foundPatterns) {
 		def lineType = CONTEXT_LINE
 		def lineVisibility = HIDE
 
@@ -110,6 +111,8 @@ class LineFinder {
 		else {
 			linesCollector.storeContextLine line
 		}
+
+		!linesCollector.hasFinished()
 	}
 
 	private void adjustForNegativeSearch(Set foundPatterns) {

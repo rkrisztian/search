@@ -4,7 +4,6 @@ import static search.colors.ColorType.CONTEXT_LINES_COLOR
 import static search.colors.ColorType.CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR
 import static search.colors.ColorType.FILE_PATH_COLOR
 import static search.colors.ColorType.LINE_NUMBER_COLOR
-import static search.colors.ColorType.SKIPPED_LINES_MARKER_COLOR
 import static search.conf.Constants.SKIPPED_LINES_MARKER
 
 import groovy.transform.CompileStatic
@@ -72,18 +71,10 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 
 			log.rawPrint '\t'
 
-			if (foundLine.lineNr != -1) {
-				def lineNr = sprintf '%6d', foundLine.lineNr
-				lineNr = colors.format LINE_NUMBER_COLOR, lineNr
+			def lineNr = sprintf '%6d', foundLine.lineNr
+			lineNr = colors.format LINE_NUMBER_COLOR, lineNr
 
-				log.rawPrintln "${lineNr} : ${colorLine(foundLine.line)}"
-			}
-			else {
-				def skippedLinesMarker = sprintf '%6s', SKIPPED_LINES_MARKER
-				skippedLinesMarker = colors.format SKIPPED_LINES_MARKER_COLOR, skippedLinesMarker
-
-				log.rawPrintln skippedLinesMarker
-			}
+			log.rawPrintln "${lineNr} : ${colorLine(foundLine.line)}"
 
 			if (foundLine.contextLinesAfter) {
 				printContextLines foundLine.contextLinesAfter, foundLine.contextLinesAfterOverflow, ContextPosition.AFTER, false

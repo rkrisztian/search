@@ -16,6 +16,7 @@ class LinesCollector implements ILinesCollector {
 	private final int maxDisplayedLineLength
 
 	private List<FoundLine> foundLines
+	private boolean finished
 
 	@VisibleForTesting
 	protected List<String> currentContextLinesBefore
@@ -33,6 +34,7 @@ class LinesCollector implements ILinesCollector {
 	void reset() {
 		foundLines = [] as LinkedList<FoundLine>
 		resetContextLinesBefore()
+		finished = false
 	}
 
 	private void resetContextLinesBefore() {
@@ -41,6 +43,11 @@ class LinesCollector implements ILinesCollector {
 	}
 
 	void storeFoundLine(int lineNr, String line, LineVisibility lineVisibility) {
+		if (!maxMatchedLinesPerFile) {
+			finished = true
+			return
+		}
+
 		if (lineVisibility == SHOW) {
 			if (canDisplayMoreFoundLines()) {
 				String truncatedLine = ((maxDisplayedLineLength > 0) && (line.size() > maxDisplayedLineLength))
@@ -50,7 +57,12 @@ class LinesCollector implements ILinesCollector {
 				foundLines.add makeFoundLineWithContextLinesBefore(lineNr, truncatedLine)
 			}
 			else if (hasPreviouslyFoundTheLastDisplayableLine()) {
-				foundLines.add makeSkippedLinesMarker()
+				if (foundLines.last().contextLinesAfterOverflow) {
+					finished = true
+					return
+				}
+
+				addToContextLinesAfterIfNotOverflow line
 			}
 		}
 
@@ -63,22 +75,28 @@ class LinesCollector implements ILinesCollector {
 				contextLinesBeforeOverflow: currentContextLinesBeforeOverflow)
 	}
 
-	private static FoundLine makeSkippedLinesMarker() {
-		new FoundLine(lineNr: -1, line: '')
-	}
-
 	void storeContextLine(String line) {
-		if (!maxMatchedLinesPerFile || !maxContextLines) {
+		if (!maxMatchedLinesPerFile) {
+			finished = true
 			return
 		}
-		if (hasDisplayedSkippedLinesMarker()) {
+
+		if (!maxContextLines) {
+			if (hasPreviouslyFoundTheLastDisplayableLine()) {
+				finished = true
+			}
+
 			return
 		}
 
 		boolean addedToContextLinesAfter = false
 
 		if (foundLines) {
-			addedToContextLinesAfter = addToContextLinesAfterIfNotOverflow line, foundLines.last()
+			addedToContextLinesAfter = addToContextLinesAfterIfNotOverflow line
+
+			if (!addedToContextLinesAfter && finished) {
+				return
+			}
 		}
 
 		if (!addedToContextLinesAfter && !hasPreviouslyFoundTheLastDisplayableLine()) {
@@ -86,7 +104,9 @@ class LinesCollector implements ILinesCollector {
 		}
 	}
 
-	private boolean addToContextLinesAfterIfNotOverflow(String line, FoundLine foundLine) {
+	private boolean addToContextLinesAfterIfNotOverflow(String line) {
+		def foundLine = foundLines.last()
+
 		if (foundLine.contextLinesAfter.size() < maxContextLines) {
 			foundLine.contextLinesAfter.add line
 			foundLine.contextLinesAfterOverflow = false
@@ -94,6 +114,11 @@ class LinesCollector implements ILinesCollector {
 		}
 
 		foundLine.contextLinesAfterOverflow = true
+
+		if (hasPreviouslyFoundTheLastDisplayableLine()) {
+			finished = true
+		}
+
 		false
 	}
 
@@ -117,12 +142,12 @@ class LinesCollector implements ILinesCollector {
 		(maxMatchedLinesPerFile > 0) && (foundLines.size() == maxMatchedLinesPerFile)
 	}
 
-	private boolean hasDisplayedSkippedLinesMarker() {
-		(maxMatchedLinesPerFile > 0) && (foundLines.size() > maxMatchedLinesPerFile)
-	}
-
 	List<FoundLine> getFoundLines() {
 		foundLines
+	}
+
+	boolean hasFinished() {
+		finished
 	}
 
 }
