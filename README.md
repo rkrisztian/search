@@ -1,7 +1,7 @@
 # search
 
-[![Build Status](https://travis-ci.org/rkrisztian/search.svg?branch=master)](https://travis-ci.org/rkrisztian/search)
-![SL Scan](https://github.com/rkrisztian/search/workflows/SL%20Scan/badge.svg)
+[![Build Status](https://github.com/rkrisztian/search/actions/workflows/gradle.yml/badge.svg)](https://github.com/rkrisztian/search/actions/workflows/gradle.yml)
+[![SL Scan](https://github.com/rkrisztian/search/workflows/SL%20Scan/badge.svg)](https://github.com/rkrisztian/search/actions/workflows/shiftleft-analysis.yml)
 [![codecov](https://codecov.io/gh/rkrisztian/search/branch/master/graph/badge.svg?token=02E6VF5NTQ)](https://codecov.io/gh/rkrisztian/search)
 
 ## Overview
