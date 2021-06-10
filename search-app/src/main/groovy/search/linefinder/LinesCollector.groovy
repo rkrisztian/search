@@ -43,6 +43,10 @@ class LinesCollector implements ILinesCollector {
 	}
 
 	void storeFoundLine(int lineNr, String line, LineVisibility lineVisibility) {
+		if (finished) {
+			throw new LinesCollectorException('Search finished')
+		}
+
 		if (!maxMatchedLinesPerFile) {
 			finished = true
 			return
@@ -56,12 +60,7 @@ class LinesCollector implements ILinesCollector {
 
 				foundLines.add makeFoundLineWithContextLinesBefore(lineNr, truncatedLine)
 			}
-			else if (hasPreviouslyFoundTheLastDisplayableLine()) {
-				if (foundLines.last().contextLinesAfterOverflow) {
-					finished = true
-					return
-				}
-
+			else {
 				addToContextLinesAfterIfNotOverflow line
 			}
 		}
@@ -76,50 +75,50 @@ class LinesCollector implements ILinesCollector {
 	}
 
 	void storeContextLine(String line) {
+		if (finished) {
+			throw new LinesCollectorException('Search finished')
+		}
+
 		if (!maxMatchedLinesPerFile) {
 			finished = true
 			return
 		}
 
 		if (!maxContextLines) {
-			if (hasPreviouslyFoundTheLastDisplayableLine()) {
+			if (!canDisplayMoreFoundLines()) {
 				finished = true
 			}
 
 			return
 		}
 
-		boolean addedToContextLinesAfter = false
-
 		if (foundLines) {
-			addedToContextLinesAfter = addToContextLinesAfterIfNotOverflow line
+			addToContextLinesAfterIfNotOverflow line
 
-			if (!addedToContextLinesAfter && finished) {
+			if (foundLines.last().contextLinesAfterOverflow && finished) {
 				return
 			}
 		}
 
-		if (!addedToContextLinesAfter && !hasPreviouslyFoundTheLastDisplayableLine()) {
+		if (!foundLines || (foundLines.last().contextLinesAfterOverflow && canDisplayMoreFoundLines())) {
 			addToContextLinesBefore line
 		}
 	}
 
-	private boolean addToContextLinesAfterIfNotOverflow(String line) {
+	private void addToContextLinesAfterIfNotOverflow(String line) {
 		def foundLine = foundLines.last()
 
 		if (foundLine.contextLinesAfter.size() < maxContextLines) {
 			foundLine.contextLinesAfter.add line
 			foundLine.contextLinesAfterOverflow = false
-			return true
 		}
+		else {
+			foundLine.contextLinesAfterOverflow = true
 
-		foundLine.contextLinesAfterOverflow = true
-
-		if (hasPreviouslyFoundTheLastDisplayableLine()) {
-			finished = true
+			if (!canDisplayMoreFoundLines()) {
+				finished = true
+			}
 		}
-
-		false
 	}
 
 	private void addToContextLinesBefore(String line) {
@@ -138,16 +137,20 @@ class LinesCollector implements ILinesCollector {
 		(maxMatchedLinesPerFile < 0) || (foundLines.size() < maxMatchedLinesPerFile)
 	}
 
-	private boolean hasPreviouslyFoundTheLastDisplayableLine() {
-		(maxMatchedLinesPerFile > 0) && (foundLines.size() == maxMatchedLinesPerFile)
-	}
-
 	List<FoundLine> getFoundLines() {
 		foundLines
 	}
 
 	boolean hasFinished() {
 		finished
+	}
+
+	static class LinesCollectorException extends RuntimeException {
+
+		LinesCollectorException(String message) {
+			super(message)
+		}
+
 	}
 
 }
