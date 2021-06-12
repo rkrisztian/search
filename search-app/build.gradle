@@ -1,9 +1,22 @@
 plugins {
 	id 'groovy'
 	id 'application'
-	id 'org.unbroken-dome.test-sets' version '3.0.1'
+	id 'org.unbroken-dome.test-sets' version '4.0.0'
 	id 'codenarc'
 	id 'jacoco'
+}
+
+version = BUILD_VERSION
+group = GROUP_ID
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(11)
+	}
+}
+
+repositories {
+	mavenCentral()
 }
 
 testSets {
