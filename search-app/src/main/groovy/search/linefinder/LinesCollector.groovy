@@ -59,6 +59,7 @@ class LinesCollector implements ILinesCollector {
 						: line
 
 				foundLines.add makeFoundLineWithContextLinesBefore(lineNr, truncatedLine)
+				adjustPreviousContextLinesAfterIfDidNotOverflow()
 			}
 			else {
 				addToContextLinesAfterIfNotOverflow line
@@ -72,6 +73,16 @@ class LinesCollector implements ILinesCollector {
 		new FoundLine(
 				lineNr: lineNr, line: line, contextLinesBefore: currentContextLinesBefore,
 				contextLinesBeforeOverflow: currentContextLinesBeforeOverflow)
+	}
+
+	private void adjustPreviousContextLinesAfterIfDidNotOverflow() {
+		if (foundLines.size() < 2) {
+			return
+		}
+
+		if (!foundLines[-1].contextLinesBeforeOverflow && foundLines[-2].contextLinesAfterOverflow) {
+			foundLines[-2].contextLinesAfterOverflow = false
+		}
 	}
 
 	void storeContextLine(String line) {

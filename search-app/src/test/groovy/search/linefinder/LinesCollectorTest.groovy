@@ -370,6 +370,74 @@ class LinesCollectorTest {
 	}
 
 	@Test
+	void shouldNotBeOverflowBetweenJustEnoughContextLines() {
+		// Given
+		linesCollector = new LinesCollector(-1, 2, 100)
+
+		// When
+		linesCollector.with {
+			storeFoundLine 1, 'f1', SHOW
+			storeContextLine 'c1'
+			storeContextLine 'c2'
+			storeContextLine 'c3'
+			storeContextLine 'c4'
+			storeFoundLine 6, 'f2', SHOW
+		}
+
+		// Then
+		assert linesCollector.foundLines == [
+				new FoundLine(
+						line: 'f1',
+						lineNr: 1,
+						contextLinesBefore: [],
+						contextLinesAfter: ['c1', 'c2']
+				),
+				new FoundLine(
+						line: 'f2',
+						lineNr: 6,
+						contextLinesBefore: ['c3', 'c4'],
+						contextLinesAfter: []
+				)
+		]
+	}
+
+	@Test
+	void shouldOverflowBeforeAndAfterWithTooManyContextLines() {
+		// Given
+		linesCollector = new LinesCollector(-1, 2, 100)
+
+		// When
+		linesCollector.with {
+			storeFoundLine 1, 'f1', SHOW
+			storeContextLine 'c1'
+			storeContextLine 'c2'
+			storeContextLine 'c3'
+			storeContextLine 'c4'
+			storeContextLine 'c5'
+			storeContextLine 'c6'
+			storeFoundLine 8, 'f2', SHOW
+		}
+
+		// Then
+		assert linesCollector.foundLines == [
+				new FoundLine(
+						line: 'f1',
+						lineNr: 1,
+						contextLinesBefore: [],
+						contextLinesAfter: ['c1', 'c2'],
+						contextLinesAfterOverflow: true
+				),
+				new FoundLine(
+						line: 'f2',
+						lineNr: 8,
+						contextLinesBefore: ['c5', 'c6'],
+						contextLinesAfter: [],
+						contextLinesBeforeOverflow: true
+				)
+		]
+	}
+
+	@Test
 	void doNotAcceptFoundLinesWhenSearchFinished() {
 		// Given
 		linesCollector = new LinesCollector(1, 1, 100)
