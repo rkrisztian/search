@@ -61,12 +61,9 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 			return
 		}
 
-		boolean prevContextLineAfterOverflow = false
-
 		foundLines.each { foundLine ->
 			if (foundLine.contextLinesBefore) {
-				printContextLines foundLine.contextLinesBefore, foundLine.contextLinesBeforeOverflow, ContextPosition.BEFORE,
-						prevContextLineAfterOverflow
+				printContextLines foundLine.contextLinesBefore, foundLine.contextLinesBeforeOverflow, ContextPosition.BEFORE
 			}
 
 			log.rawPrint '\t'
@@ -77,23 +74,19 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 			log.rawPrintln "${lineNr} : ${colorLine(foundLine.line)}"
 
 			if (foundLine.contextLinesAfter) {
-				printContextLines foundLine.contextLinesAfter, foundLine.contextLinesAfterOverflow, ContextPosition.AFTER, false
-				prevContextLineAfterOverflow = foundLine.contextLinesAfterOverflow
+				printContextLines foundLine.contextLinesAfter, foundLine.contextLinesAfterOverflow, ContextPosition.AFTER
 			}
 		}
 
 		log.rawPrintln()
 	}
 
-	private void printContextLines(List<String> contextLines, boolean contextLinesOverflow,
-			ContextPosition contextPosition, boolean prevContextLineAfterOverflow) {
+	private void printContextLines(List<String> contextLines, boolean contextLinesOverflow, ContextPosition contextPosition) {
 		if (contextLinesOverflow) {
 			def skippedLinesMarker = colors.format CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR, SKIPPED_LINES_MARKER
 
 			if (contextPosition == ContextPosition.BEFORE) {
-				if (!prevContextLineAfterOverflow) {
-					contextLines.add 0, skippedLinesMarker
-				}
+				contextLines.add 0, skippedLinesMarker
 			}
 			else {
 				contextLines.add skippedLinesMarker

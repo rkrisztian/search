@@ -431,8 +431,7 @@ class LinesCollectorTest {
 						line: 'f2',
 						lineNr: 8,
 						contextLinesBefore: ['c5', 'c6'],
-						contextLinesAfter: [],
-						contextLinesBeforeOverflow: true
+						contextLinesAfter: []
 				)
 		]
 	}

@@ -110,13 +110,10 @@ class HtmlResultsPrinter implements IResultsPrinter {
 
 			if (foundLines) {
 				table {
-					def prevContextLineAfterOverflow = false
-
 					foundLines.each { foundLine ->
 						if (foundLine.contextLinesBefore) {
-							printContextLines builder, foundLine.contextLinesBefore,
-									foundLine.contextLinesBeforeOverflow, ContextPosition.BEFORE,
-									prevContextLineAfterOverflow
+							printContextLines builder, foundLine.contextLinesBefore, foundLine.contextLinesBeforeOverflow,
+									ContextPosition.BEFORE
 						}
 
 						tr {
@@ -129,9 +126,8 @@ class HtmlResultsPrinter implements IResultsPrinter {
 						}
 
 						if (foundLine.contextLinesAfter) {
-							printContextLines builder, foundLine.contextLinesAfter,
-									foundLine.contextLinesAfterOverflow, ContextPosition.AFTER, false
-							prevContextLineAfterOverflow = foundLine.contextLinesAfterOverflow
+							printContextLines builder, foundLine.contextLinesAfter, foundLine.contextLinesAfterOverflow,
+									ContextPosition.AFTER
 						}
 					}
 				}
@@ -142,12 +138,10 @@ class HtmlResultsPrinter implements IResultsPrinter {
 	}
 
 	private void printContextLines(MarkupBuilder builder, List<String> contextLines, boolean contextLinesOverflow,
-			ContextPosition contextPosition, boolean prevContextLineAfterOverflow) {
+			ContextPosition contextPosition) {
 		if (contextLinesOverflow) {
 			if (contextPosition == ContextPosition.BEFORE) {
-				if (!prevContextLineAfterOverflow) {
-					contextLines.add 0, SKIPPED_LINES_MARKER
-				}
+				contextLines.add 0, SKIPPED_LINES_MARKER
 			}
 			else {
 				contextLines.add SKIPPED_LINES_MARKER

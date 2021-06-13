@@ -59,7 +59,7 @@ class LinesCollector implements ILinesCollector {
 						: line
 
 				foundLines.add makeFoundLineWithContextLinesBefore(lineNr, truncatedLine)
-				adjustPreviousContextLinesAfterIfDidNotOverflow()
+				correctContextLineOverflowBetweenLastTwoMatchedLines()
 			}
 			else {
 				addToContextLinesAfterIfNotOverflow line
@@ -75,13 +75,20 @@ class LinesCollector implements ILinesCollector {
 				contextLinesBeforeOverflow: currentContextLinesBeforeOverflow)
 	}
 
-	private void adjustPreviousContextLinesAfterIfDidNotOverflow() {
+	private void correctContextLineOverflowBetweenLastTwoMatchedLines() {
 		if (foundLines.size() < 2) {
 			return
 		}
 
-		if (!foundLines[-1].contextLinesBeforeOverflow && foundLines[-2].contextLinesAfterOverflow) {
-			foundLines[-2].contextLinesAfterOverflow = false
+		if (foundLines[-2].contextLinesAfterOverflow) {
+			if (foundLines[-1].contextLinesBeforeOverflow) {
+				// Prevent two skipped lines markers from being displayed.
+				foundLines[-1].contextLinesBeforeOverflow = false
+			}
+			else {
+				// Context line boundaries lie next to each other. => No overflow actually happened.
+				foundLines[-2].contextLinesAfterOverflow = false
+			}
 		}
 	}
 

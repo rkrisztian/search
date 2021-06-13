@@ -101,7 +101,7 @@ class ConsoleResultsPrinterTest {
 	}
 
 	@Test
-	void printsContextLines() {
+	void printsContextLinesOfOneMatchedLine() {
 		// Given
 		def patternData = [new PatternData(searchPattern: ~/Te?s+t/)] as Set
 		def foundLines = [
@@ -131,6 +131,76 @@ class ConsoleResultsPrinterTest {
 				{ assert log.loggedLines[6] =~ /context4/ },
 				{ assert log.loggedLines[7] =~ /\(\.\.\.\)/ },
 				{ assert log.loggedLines[8] =~ /^$/ }
+		)
+	}
+
+	@Test
+	void printsContextLinesBetweenTwoMatchedLines_withOverflow() {
+		// Given
+		def patternData = [new PatternData(searchPattern: ~/Te?s+t/)] as Set
+		def foundLines = [
+				new FoundLine(
+						lineNr: 5,
+						line: 'This is a Test! #1',
+						contextLinesAfter: ['context1', 'context2'],
+						contextLinesAfterOverflow: true
+				),
+				new FoundLine(
+						lineNr: 15,
+						line: 'This is a Test! #2',
+						contextLinesBefore: ['context3', 'context4']
+				)
+		]
+		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS)
+
+		// When
+		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
+
+		// Then
+		assertAll(
+				{ assert log.loggedLines.size() == 9 },
+				{ assert log.loggedLines[0] =~ /test\.txt :/ },
+				{ assert log.loggedLines[1] =~ /5\s+:\s+.*?Test! #1/ },
+				{ assert log.loggedLines[2] =~ /context1/ },
+				{ assert log.loggedLines[3] =~ /context2/ },
+				{ assert log.loggedLines[4] =~ /\(\.\.\.\)/ },
+				{ assert log.loggedLines[5] =~ /context3/ },
+				{ assert log.loggedLines[6] =~ /context4/ },
+				{ assert log.loggedLines[7] =~ /15\s+:\s+.*?Test! #2/ }
+		)
+	}
+
+	@Test
+	void printsContextLinesBetweenTwoMatchedLines_withoutOverflow() {
+		// Given
+		def patternData = [new PatternData(searchPattern: ~/Te?s+t/)] as Set
+		def foundLines = [
+				new FoundLine(
+						lineNr: 5,
+						line: 'This is a Test! #1',
+						contextLinesAfter: ['context1', 'context2']
+				),
+				new FoundLine(
+						lineNr: 10,
+						line: 'This is a Test! #2',
+						contextLinesBefore: ['context3', 'context4']
+				)
+		]
+		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS)
+
+		// When
+		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
+
+		// Then
+		assertAll(
+				{ assert log.loggedLines.size() == 8 },
+				{ assert log.loggedLines[0] =~ /test\.txt :/ },
+				{ assert log.loggedLines[1] =~ /5\s+:\s+.*?Test! #1/ },
+				{ assert log.loggedLines[2] =~ /context1/ },
+				{ assert log.loggedLines[3] =~ /context2/ },
+				{ assert log.loggedLines[4] =~ /context3/ },
+				{ assert log.loggedLines[5] =~ /context4/ },
+				{ assert log.loggedLines[6] =~ /10\s+:\s+.*?Test! #2/ }
 		)
 	}
 
