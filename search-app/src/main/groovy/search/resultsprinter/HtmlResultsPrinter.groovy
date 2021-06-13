@@ -9,6 +9,7 @@ import static search.conf.Constants.SKIPPED_LINES_MARKER
 
 import groovy.transform.CompileDynamic
 import groovy.xml.MarkupBuilder
+import search.annotations.VisibleForTesting
 import search.colors.HtmlColors
 import search.conf.PatternData
 import search.linefinder.FoundLine
@@ -77,23 +78,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 			action()
 		}
 		finally {
-			def htmlFile = new File(tmpDir, HTML_TMP_FILE_NAME)
-
-			htmlFile.withWriter('utf-8') { writer ->
-				new MarkupBuilder(writer).html {
-					head {
-						meta charset: 'utf-8'
-						title 'Search results'
-						style type: 'text/css', htmlStyle
-					}
-					body {
-						htmlBodyParts.each {
-							mkp.yieldUnescaped it
-						}
-					}
-				}
-			}
-
+			def htmlFile = writeToHtmlFile()
 			openHtmlFile htmlFile
 		}
 	}
@@ -106,7 +91,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 		def builder = new MarkupBuilder(bodyPartWriter)
 
 		builder.div {
-			h4([class: 'code'] + colors.format(FILE_PATH_COLOR), filePath)
+			h4([class: 'code', 'data-id': 'filePath'] + colors.format(FILE_PATH_COLOR), filePath)
 
 			if (foundLines) {
 				table {
@@ -116,7 +101,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 									ContextPosition.BEFORE
 						}
 
-						tr {
+						tr(['data-id': 'foundLine']) {
 							td([class: 'lineNr'] + colors.format(LINE_NUMBER_COLOR)) {
 								pre([class: 'code'], foundLine.lineNr)
 							}
@@ -149,7 +134,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 		}
 
 		contextLines.each { contextLine ->
-			builder.tr {
+			builder.tr(['data-id': 'contextLine']) {
 				td class: 'lineNr'
 
 				if (contextLine == SKIPPED_LINES_MARKER) {
@@ -170,6 +155,28 @@ class HtmlResultsPrinter implements IResultsPrinter {
 				span lp.colorType ? colors.format(lp.colorType) : [:], lp.text
 			}
 		}
+	}
+
+	@VisibleForTesting
+	File writeToHtmlFile() {
+		def htmlFile = new File(tmpDir, HTML_TMP_FILE_NAME)
+
+		htmlFile.withWriter('utf-8') { writer ->
+			new MarkupBuilder(writer).html {
+				head {
+					meta charset: 'utf-8'
+					title 'Search results'
+					style type: 'text/css', htmlStyle
+				}
+				body {
+					htmlBodyParts.each {
+						mkp.yieldUnescaped it
+					}
+				}
+			}
+		}
+
+		htmlFile
 	}
 
 	private void openHtmlFile(File htmlFile) {

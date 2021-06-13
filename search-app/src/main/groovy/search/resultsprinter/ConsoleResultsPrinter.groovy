@@ -21,21 +21,21 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 
 	private final Set<PatternData> patternData
 
-	private final boolean disableColors
-
 	private final ILog log
 
 	private final AnsiColors colors
 
 	private final ILinePartitioner partitioner
 
-	ConsoleResultsPrinter(Set<PatternData> patternData, ILog log, boolean disableColors, AnsiColors colors,
-			ILinePartitioner partitioner) {
+	private final boolean disableColors
+
+	ConsoleResultsPrinter(Set<PatternData> patternData, ILog log, AnsiColors colors, ILinePartitioner partitioner,
+			boolean disableColors) {
 		this.patternData = patternData
 		this.log = log
-		this.disableColors = disableColors
 		this.colors = colors
 		this.partitioner = partitioner
+		this.disableColors = disableColors
 	}
 
 	@Override

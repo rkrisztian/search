@@ -20,7 +20,7 @@ class ResultsPrinterFactory {
 			return new HtmlResultsPrinter(conf.patternData, log, new HtmlColors(conf.disableColors), partitioner, conf.tmpDir)
 		}
 
-		new ConsoleResultsPrinter(conf.patternData, log, conf.disableColors, new AnsiColors(conf.disableColors), partitioner)
+		new ConsoleResultsPrinter(conf.patternData, log, new AnsiColors(conf.disableColors), partitioner, conf.disableColors)
 	}
 
 }

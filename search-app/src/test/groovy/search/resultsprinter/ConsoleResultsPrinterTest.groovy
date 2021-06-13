@@ -7,7 +7,6 @@ import static search.resultsprinter.testutil.ResultsPrinterTestConstants.WITH_CO
 import static search.resultsprinter.testutil.ResultsPrinterTestConstants.WITH_REPLACE
 import static search.testutil.GroovyAssertions.assertAll
 
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -23,22 +22,17 @@ import java.util.stream.Stream
 
 class ConsoleResultsPrinterTest {
 
-	private LogMockForConsoleResultsPrinter log
-
-	@BeforeEach
-	void setup() {
-		log = new LogMockForConsoleResultsPrinter()
-	}
+	private final LogMockForConsoleResultsPrinter log = new LogMockForConsoleResultsPrinter()
 
 	@Test
 	void doesNothingIfNoFoundLines() {
 		// Given
 		def patternData = [new PatternData(searchPattern: ~/Te?s+t/)] as Set
 		def foundLines = []
-		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, WITH_COLORS)
+		def consoleResultsPrinter = makeConsoleResultsPrinter patternData, NO_REPLACE, NO_DRY_RUN, WITH_COLORS
 
 		// When
-		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
+		consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		// Then
 		assertAll(
@@ -53,10 +47,10 @@ class ConsoleResultsPrinterTest {
 		// Given
 		def patternData = [new PatternData(searchPattern: pattern)] as Set
 		def foundLines = [new FoundLine(line: 'This is a Test!')]
-		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, disableColors)
+		def consoleResultsPrinter = makeConsoleResultsPrinter patternData, NO_REPLACE, NO_DRY_RUN, disableColors
 
 		// When
-		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
+		consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		// Then
 		assertAll(
@@ -81,10 +75,10 @@ class ConsoleResultsPrinterTest {
 		// Given
 		def patternData = [new PatternData(searchPattern: pattern, replace: true, replaceText: 'test')] as Set
 		def foundLines = [new FoundLine(line: 'This is a Test!')]
-		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, WITH_REPLACE, NO_DRY_RUN, disableColors)
+		def consoleResultsPrinter = makeConsoleResultsPrinter patternData, WITH_REPLACE, NO_DRY_RUN, disableColors
 
 		// When
-		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
+		consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		// Then
 		assert log.loggedLines.any { it =~ expectedLine }
@@ -114,10 +108,10 @@ class ConsoleResultsPrinterTest {
 						contextLinesAfterOverflow: true
 				)
 		]
-		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS)
+		def consoleResultsPrinter = makeConsoleResultsPrinter patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS
 
 		// When
-		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
+		consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		// Then
 		assertAll(
@@ -151,10 +145,10 @@ class ConsoleResultsPrinterTest {
 						contextLinesBefore: ['context3', 'context4']
 				)
 		]
-		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS)
+		def consoleResultsPrinter = makeConsoleResultsPrinter patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS
 
 		// When
-		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
+		consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		// Then
 		assertAll(
@@ -186,10 +180,10 @@ class ConsoleResultsPrinterTest {
 						contextLinesBefore: ['context3', 'context4']
 				)
 		]
-		def consoleResultsPrinter = makeConsoleResultsPrinter(patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS)
+		def consoleResultsPrinter = makeConsoleResultsPrinter patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS
 
 		// When
-		consoleResultsPrinter.printFoundLines('test.txt', foundLines)
+		consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		// Then
 		assertAll(
@@ -207,7 +201,7 @@ class ConsoleResultsPrinterTest {
 	private ConsoleResultsPrinter makeConsoleResultsPrinter(Set<PatternData> patternData, boolean replace, boolean dryRun,
 			boolean disableColors) {
 		def partitioner = new LinePartitioner(patternData, replace, dryRun, disableColors)
-		new ConsoleResultsPrinter(patternData, log, disableColors, new AnsiColors(disableColors), partitioner)
+		new ConsoleResultsPrinter(patternData, log, new AnsiColors(disableColors), partitioner, disableColors)
 	}
 
 }
