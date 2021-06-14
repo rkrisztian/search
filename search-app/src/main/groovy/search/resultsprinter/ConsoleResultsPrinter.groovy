@@ -82,7 +82,7 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 		log.rawPrint "\t${colors.format LINE_NUMBER_COLOR, lineNr} : "
 
 		partitioner.partition(foundLine.line).each { lp ->
-			log.rawPrint((lp.colorType) ? colors.format(lp.colorType, lp.text) : lp.text)
+			log.rawPrint (lp.colorType) ? colors.format(lp.colorType, lp.text) : lp.text
 		}
 
 		log.rawPrintln()
