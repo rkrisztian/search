@@ -115,7 +115,7 @@ class ConsoleResultsPrinterTest {
 
 		// Then
 		assertAll(
-				{ assert log.loggedLines.size() == 9 },
+				{ assert log.loggedLines.size() == 10 },
 				{ assert log.loggedLines[0] =~ /test\.txt :/ },
 				{ assert log.loggedLines[1] =~ /\(\.\.\.\)/ },
 				{ assert log.loggedLines[2] =~ /context1/ },
@@ -124,7 +124,8 @@ class ConsoleResultsPrinterTest {
 				{ assert log.loggedLines[5] =~ /context3/ },
 				{ assert log.loggedLines[6] =~ /context4/ },
 				{ assert log.loggedLines[7] =~ /\(\.\.\.\)/ },
-				{ assert log.loggedLines[8] =~ /^$/ }
+				{ assert log.loggedLines[8] =~ /^$/ },
+				{ assert log.loggedLines[9] =~ /^$/ }
 		)
 	}
 
@@ -152,7 +153,7 @@ class ConsoleResultsPrinterTest {
 
 		// Then
 		assertAll(
-				{ assert log.loggedLines.size() == 9 },
+				{ assert log.loggedLines.size() == 10 },
 				{ assert log.loggedLines[0] =~ /test\.txt :/ },
 				{ assert log.loggedLines[1] =~ /5\s+:\s+.*?Test! #1/ },
 				{ assert log.loggedLines[2] =~ /context1/ },
@@ -187,7 +188,7 @@ class ConsoleResultsPrinterTest {
 
 		// Then
 		assertAll(
-				{ assert log.loggedLines.size() == 8 },
+				{ assert log.loggedLines.size() == 9 },
 				{ assert log.loggedLines[0] =~ /test\.txt :/ },
 				{ assert log.loggedLines[1] =~ /5\s+:\s+.*?Test! #1/ },
 				{ assert log.loggedLines[2] =~ /context1/ },

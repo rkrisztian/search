@@ -66,16 +66,23 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 				printContextLines foundLine.contextLinesBefore, foundLine.contextLinesBeforeOverflow, ContextPosition.BEFORE
 			}
 
-			log.rawPrint '\t'
-
-			def lineNr = sprintf '%6d', foundLine.lineNr
-			lineNr = colors.format LINE_NUMBER_COLOR, lineNr
-
-			log.rawPrintln "${lineNr} : ${colorLine(foundLine.line)}"
+			printFoundLine foundLine
 
 			if (foundLine.contextLinesAfter) {
 				printContextLines foundLine.contextLinesAfter, foundLine.contextLinesAfterOverflow, ContextPosition.AFTER
 			}
+		}
+
+		log.rawPrintln()
+	}
+
+	private void printFoundLine(FoundLine foundLine) {
+		def lineNr = sprintf '%6d', foundLine.lineNr
+
+		log.rawPrint "\t${colors.format LINE_NUMBER_COLOR, lineNr} : "
+
+		partitioner.partition(foundLine.line).each { lp ->
+			log.rawPrint((lp.colorType) ? colors.format(lp.colorType, lp.text) : lp.text)
 		}
 
 		log.rawPrintln()
@@ -99,16 +106,6 @@ class ConsoleResultsPrinter implements IResultsPrinter {
 			log.rawPrint '   '
 			log.rawPrintln colors.format(CONTEXT_LINES_COLOR, contextLine)
 		}
-	}
-
-	private String colorLine(String line) {
-		def coloredLine = ''
-
-		partitioner.partition(line).each { lp ->
-			coloredLine += (lp.colorType) ? colors.format(lp.colorType, lp.text) : lp.text
-		}
-
-		coloredLine
 	}
 
 }

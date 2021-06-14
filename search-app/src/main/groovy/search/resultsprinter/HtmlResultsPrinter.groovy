@@ -93,33 +93,43 @@ class HtmlResultsPrinter implements IResultsPrinter {
 		builder.div {
 			h4([class: 'code', 'data-id': 'filePath'] + colors.format(FILE_PATH_COLOR), filePath)
 
-			if (foundLines) {
-				table {
-					foundLines.each { foundLine ->
-						if (foundLine.contextLinesBefore) {
-							printContextLines builder, foundLine.contextLinesBefore, foundLine.contextLinesBeforeOverflow,
-									ContextPosition.BEFORE
-						}
+			if (!foundLines) {
+				return
+			}
 
-						tr(['data-id': 'foundLine']) {
-							td([class: 'lineNr'] + colors.format(LINE_NUMBER_COLOR)) {
-								pre([class: 'code'], foundLine.lineNr)
-							}
-							td {
-								colorLine builder, foundLine.line
-							}
-						}
+			table {
+				foundLines.each { foundLine ->
+					if (foundLine.contextLinesBefore) {
+						printContextLines builder, foundLine.contextLinesBefore, foundLine.contextLinesBeforeOverflow,
+								ContextPosition.BEFORE
+					}
 
-						if (foundLine.contextLinesAfter) {
-							printContextLines builder, foundLine.contextLinesAfter, foundLine.contextLinesAfterOverflow,
-									ContextPosition.AFTER
-						}
+					printFoundLine builder, foundLine
+
+					if (foundLine.contextLinesAfter) {
+						printContextLines builder, foundLine.contextLinesAfter, foundLine.contextLinesAfterOverflow,
+								ContextPosition.AFTER
 					}
 				}
 			}
 		}
 
 		htmlBodyParts << (bodyPartWriter as String)
+	}
+
+	private void printFoundLine(MarkupBuilder builder, FoundLine foundLine) {
+		builder.tr(['data-id': 'foundLine']) {
+			td([class: 'lineNr'] + colors.format(LINE_NUMBER_COLOR)) {
+				pre([class: 'code'], foundLine.lineNr)
+			}
+			td {
+				pre([class: 'code']) {
+					partitioner.partition(foundLine.line).each { lp ->
+						span lp.colorType ? colors.format(lp.colorType) : [:], lp.text
+					}
+				}
+			}
+		}
 	}
 
 	private void printContextLines(MarkupBuilder builder, List<String> contextLines, boolean contextLinesOverflow,
@@ -145,14 +155,6 @@ class HtmlResultsPrinter implements IResultsPrinter {
 						pre([class: 'code'] + colors.format(CONTEXT_LINES_COLOR), contextLine)
 					}
 				}
-			}
-		}
-	}
-
-	private void colorLine(MarkupBuilder builder, String line) {
-		builder.pre([class: 'code']) {
-			partitioner.partition(line).each { lp ->
-				span lp.colorType ? colors.format(lp.colorType) : [:], lp.text
 			}
 		}
 	}

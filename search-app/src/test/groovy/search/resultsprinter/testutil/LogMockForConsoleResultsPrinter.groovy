@@ -1,10 +1,12 @@
 package search.resultsprinter.testutil
 
+import groovy.transform.CompileStatic
 import search.log.ILog
 
+@CompileStatic
 class LogMockForConsoleResultsPrinter implements ILog {
 
-	List<StringBuffer[]> loggedLines = []
+	List<StringBuilder> loggedLines = []
 
 	@Override
 	void info(Object message) {
@@ -28,13 +30,17 @@ class LogMockForConsoleResultsPrinter implements ILog {
 
 	@Override
 	void rawPrint(Object message) {
-		def lastLoggedLine = loggedLines ? loggedLines.removeLast() : ''
-		loggedLines += lastLoggedLine + message
+		if (!loggedLines) {
+			loggedLines += new StringBuilder()
+		}
+
+		loggedLines[-1] << message as String
 	}
 
 	@Override
 	void rawPrintln(Object message = '') {
-		loggedLines += message
+		rawPrint message
+		loggedLines += new StringBuilder()
 	}
 
 	@Override
