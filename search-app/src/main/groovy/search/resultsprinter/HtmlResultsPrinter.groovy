@@ -22,6 +22,8 @@ import search.resultsprinter.linepart.ILinePartitioner
 @CompileDynamic
 class HtmlResultsPrinter implements IResultsPrinter {
 
+	private static final String NBSP = '&#160;'
+
 	private final String htmlStyle = '''
 			body {
 				/* TODO 01-Jul-2018/rkrisztian: Black-on-white for now. Make it configurable. */
@@ -152,7 +154,14 @@ class HtmlResultsPrinter implements IResultsPrinter {
 				}
 				else {
 					td {
-						pre([class: 'code'] + colors.format(CONTEXT_LINES_COLOR), contextLine)
+						pre([class: 'code'] + colors.format(CONTEXT_LINES_COLOR)) {
+							if (contextLine) {
+								mkp.yield contextLine
+							}
+							else {
+								mkp.yieldUnescaped NBSP
+							}
+						}
 					}
 				}
 			}

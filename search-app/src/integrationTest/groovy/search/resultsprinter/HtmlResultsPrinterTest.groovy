@@ -201,6 +201,23 @@ class HtmlResultsPrinterTest {
 		)
 	}
 
+	@Test
+	void printsEmptyLines() {
+		// Given
+		def patternData = [new PatternData(searchPattern: ~/^$/)] as Set
+		def foundLines = [new FoundLine(line: '', lineNr: 1, contextLinesAfter: [''])]
+		def htmlResultsPrinter = makeHtmlResultsPrinter patternData, NO_REPLACE, NO_DRY_RUN, NO_COLORS
+
+		// When
+		def html = printFoundLinesAndParse htmlResultsPrinter, foundLines
+
+		// Then
+		assertAll(
+				{ assert html.depthFirst().find { it.'@data-id' == 'foundLine' } =~ /(?m)1\s*$/ },
+				{ assert html.depthFirst().find { it.'@data-id' == 'contextLine' } =~ /(?m)\s*${160 as char}\s*$/ }
+		)
+	}
+
 	private HtmlResultsPrinter makeHtmlResultsPrinter(Set<PatternData> patternData, boolean replace, boolean dryRun,
 			boolean disableColors) {
 		def partitioner = new LinePartitioner(patternData, replace, dryRun, disableColors)
