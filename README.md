@@ -280,12 +280,6 @@ that are temporary files created by Eclipse to show history.)
 	$ s \* - '\-h'
 	```
 
-* Search for HTML/JS/CSS files containing the text `elementId` (might not cover all files in your project):
-
-	```text
-	$ s -w - 'elementId'
-	```
-
 * Search from the output of command `git blame`:
 
 	```text

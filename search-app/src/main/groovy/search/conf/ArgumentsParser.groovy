@@ -34,8 +34,6 @@ class ArgumentsParser {
 			                  than allowed to be shown, an additional "(...)" line will indicate that.
 			-s <pattern>  Skip files matching the given pattern. (Same as option "ExcludeFilePatterns".)
 			-t <num>      Number of context lines to display.
-			-w            Search in web files (HTML, JS, and CSS files). (This is purely a convenience option.)
-			                  If you use it, <file-patterns...> are optional.
 			-D            Dry run for the replace functionality (see "-r"). Useful for testing backreferences.
 			-H            Print results in HTML format and open in a browser. (Colors not fully supported yet.)
 			--help        Show this help.
@@ -128,12 +126,6 @@ class ArgumentsParser {
 				break
 			case '-t':
 				conf.maxContextLines = argsIterator.next() as int
-				break
-			case '-w':
-				conf.paths << new GlobPattern('*.html')
-				conf.paths << new GlobPattern('*.xhtml')
-				conf.paths << new GlobPattern('*.js')
-				conf.paths << new GlobPattern('*.css')
 				break
 			case '--help':
 				showHelp = true
