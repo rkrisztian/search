@@ -21,9 +21,12 @@ class FileFinder {
 
 	protected final ILog log
 
-	FileFinder(Conf conf, ILog log) {
+	protected final File baseDir
+
+	FileFinder(Conf conf, ILog log, File baseDir = new File('.')) {
 		this.conf = conf
 		this.log = log
+		this.baseDir = baseDir
 	}
 
 	void find(@ClosureParams(value = SimpleType, options = ['File']) Closure foundFileHandler) {
@@ -38,7 +41,7 @@ class FileFinder {
 				}
 		]
 
-		new File('.').traverse(options as Map) {
+		baseDir.traverse(options as Map) {
 			if (!filterFile(it)) {
 				return SKIP_SUBTREE
 			}

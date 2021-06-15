@@ -6,17 +6,16 @@ import org.junit.jupiter.params.provider.MethodSource
 
 import java.util.stream.Stream
 
-class BinaryFileCheckerIntTest {
+class BinaryFileCheckerTest {
 
 	@ParameterizedTest
 	@MethodSource('shouldDetectFileAsBinaryOrTextArgs')
 	void shouldDetectFileAsBinaryOrText(String fileName, boolean expectBinary) {
-		def classFile = new File(this.class.classLoader.getResource(fileName).toURI())
-		assert BinaryFileChecker.checkIfBinary(classFile) == expectBinary
+		def exampleFile = new File(this.class.classLoader.getResource(fileName).toURI())
+		assert BinaryFileChecker.checkIfBinary(exampleFile) == expectBinary
 	}
 
-	// codenarc-disable UnusedPrivateMethod
-	@SuppressWarnings('unused')
+	@SuppressWarnings(['unused', 'UnusedPrivateMethod'])
 	private static Stream<Arguments> shouldDetectFileAsBinaryOrTextArgs() {
 		Stream.of(
 				Arguments.of('example.class', true),
