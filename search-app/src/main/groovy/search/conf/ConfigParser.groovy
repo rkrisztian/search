@@ -67,7 +67,7 @@ class ConfigParser {
 			if (currentConfig[PROPERTY_MAX_CONTEXT_LINES] && (conf.maxContextLines == null)) {
 				conf.maxContextLines = currentConfig[PROPERTY_MAX_CONTEXT_LINES] as Integer
 			}
-			if (currentConfig[PROPERTY_PRINT_HTML] as Boolean) {
+			if (currentConfig[PROPERTY_PRINT_HTML]) {
 				conf.printHtml = true
 			}
 			if (currentConfig[PROPERTY_INCLUDE_CONFIG]) {

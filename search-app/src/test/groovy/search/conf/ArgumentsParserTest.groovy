@@ -1,5 +1,7 @@
 package search.conf
 
+import static search.testutil.GroovyAssertions.assertAll
+
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import search.log.ILog
@@ -20,98 +22,209 @@ class ArgumentsParserTest {
 
 	@Test
 	void showsHelpWithoutArguments() {
-		assert !argumentsParser.parseArgs()
-		assert argumentsParser.showHelp
+		// When
+		def success = argumentsParser.parseArgs()
+
+		// Then
+		assertAll(
+				{ assert !success },
+				{ assert argumentsParser.showHelp }
+		)
 	}
 
 	@Test
 	void argAllFiles() {
-		assert argumentsParser.parseArgs('-a')
-		assert conf.paths.size() == 2
+		// When
+		def success = argumentsParser.parseArgs('-a')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.paths.size() == 2 }
+		)
 	}
 
 	@Test
 	void argConfigFile() {
-		assert argumentsParser.parseArgs('-c', 'some.file')
-		assert conf.configFile == 'some.file'
+		// When
+		def success = argumentsParser.parseArgs('-c', 'some.file')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.configFile == 'some.file' }
+		)
 	}
 
 	@Test
 	void argExcludePatterns() {
-		assert argumentsParser.parseArgs('-s', 'some.file.1', '-s', 'some.file.2')
-		assert conf.excludeFilePatterns.size() == 2
-		assert conf.excludeFilePatterns[0].pattern() == /some.file.1/
-		assert conf.excludeFilePatterns[1].pattern() == /some.file.2/
+		// When
+		def success = argumentsParser.parseArgs('-s', 'some.file.1', '-s', 'some.file.2')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.excludeFilePatterns.size() == 2 },
+				{ assert conf.excludeFilePatterns[0].pattern() == /some.file.1/ },
+				{ assert conf.excludeFilePatterns[1].pattern() == /some.file.2/ }
+		)
 	}
 
 	@Test
 	void argDebugIsStackable() {
-		assert argumentsParser.parseArgs('-d', '-d', '-d')
-		assert conf.debug == 3
+		// When
+		def success = argumentsParser.parseArgs('-d', '-d', '-d')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.debug == 3 }
+		)
 	}
 
 	@Test
 	void argAfterHypen_pattern() {
-		assert argumentsParser.parseArgs('-', 'abc')
-		assert conf.patternData.size() == 1
-		assert conf.patternData[0].searchPattern.pattern() == /abc/
+		// When
+		def success = argumentsParser.parseArgs('-', 'abc')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.patternData.size() == 1 },
+				{ assert conf.patternData[0].searchPattern.pattern() == /abc/ }
+		)
 	}
 
 	@Test
 	void argAfterHypen_noDuplicatePatterns() {
-		assert argumentsParser.parseArgs('-', 'abc', 'abc')
-		assert conf.patternData.size() == 1
+		// When
+		def success = argumentsParser.parseArgs('-', 'abc', 'abc')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.patternData.size() == 1 }
+		)
 	}
 
 	@Test
 	void argAfterHypen_hypenAsPattern() {
-		assert argumentsParser.parseArgs('-', '-')
-		assert conf.patternData.size() == 1
-		assert conf.patternData[0].searchPattern.pattern() == /-/
+		// When
+		def success = argumentsParser.parseArgs('-', '-')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.patternData.size() == 1 },
+				{ assert conf.patternData[0].searchPattern.pattern() == /-/ }
+		)
 	}
 
 	@Test
 	void argAfterHypenIsPattern() {
-		assert argumentsParser.parseArgs('-', '-a')
-		assert conf.patternData.size() == 1
-		assert !conf.paths
+		// When
+		def success = argumentsParser.parseArgs('-', '-a')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.patternData.size() == 1 },
+				{ assert !conf.paths }
+		)
 	}
 
 	@Test
 	void argHelpStopsParsing() {
-		assert !argumentsParser.parseArgs('--help', '-', 'abc')
-		assert conf.patternData.size() == 0
+		// When
+		def success = argumentsParser.parseArgs('--help', '-', 'abc')
+
+		// Then
+		assertAll(
+				{ assert !success },
+				{ assert conf.patternData.size() == 0 }
+		)
 	}
 
 	@Test
 	void argAfterHypen_patternWithReplaceText() {
-		assert argumentsParser.parseArgs('some.file', '-', 'abc', '-r', 'def')
-		assert conf.patternData.size() == 1
-		assert conf.patternData[0].searchPattern.pattern() == /abc/
-		assert conf.patternData[0].replaceText == 'def'
+		// When
+		def success = argumentsParser.parseArgs('some.file', '-', 'abc', '-r', 'def')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.patternData.size() == 1 },
+				{ assert conf.patternData[0].searchPattern.pattern() == /abc/ },
+				{ assert conf.patternData[0].replaceText == 'def' }
+		)
 	}
 
 	@Test
 	void argAfterHypenPartiallyHidePatterns() {
-		assert argumentsParser.parseArgs('-', '-h', 'abc', 'def')
-		assert conf.patternData.size() == 2
-		assert conf.patternData[0].hidePattern
-		assert !conf.patternData[1].hidePattern
+		// When
+		def success = argumentsParser.parseArgs('-', '-h', 'abc', 'def')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.patternData.size() == 2 },
+				{ assert conf.patternData[0].hidePattern },
+				{ assert !conf.patternData[1].hidePattern }
+		)
 	}
 
 	@Test
 	void ignoresReplaceTextWithoutPattern() {
-		assert argumentsParser.parseArgs('some.file', '-', '-r', 'abc')
-		assert conf.patternData.empty
+		// When
+		def success = argumentsParser.parseArgs('some.file', '-', '-r', 'abc')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.patternData.empty }
+		)
 	}
 
 	@Test
 	void replaceTextWithoutPatternDoesNotAffectOtherArgs() {
-		assert argumentsParser.parseArgs('some.file', '-', '-r', 'abc', 'def')
-		assert conf.patternData.size() == 1
-		assert !conf.patternData[0].replace
-		assert !conf.patternData[0].replaceText
-		assert conf.patternData[0].searchPattern.pattern() == /def/
+		// When
+		def success = argumentsParser.parseArgs('some.file', '-', '-r', 'abc', 'def')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.patternData.size() == 1 },
+				{ assert !conf.patternData[0].replace },
+				{ assert !conf.patternData[0].replaceText },
+				{ assert conf.patternData[0].searchPattern.pattern() == /def/ }
+		)
+	}
+
+	@Test
+	void canIgnoreCase() {
+		// When
+		def success = argumentsParser.parseArgs('some.file', '-i', '-', 'abc')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert 'abc' =~ conf.patternData[0].searchPattern },
+				{ assert 'ABC' =~ conf.patternData[0].searchPattern }
+		)
+	}
+
+	@Test
+	void canDoNegativeSearch() {
+		// When
+		def success = argumentsParser.parseArgs('some.file', '-', '-n', 'abc')
+
+		// Then
+		assertAll(
+				{ assert success },
+				{ assert conf.patternData.size() == 1 },
+				{ assert conf.patternData[0].searchPattern.pattern() == /abc/ },
+				{ assert conf.patternData[0].negativeSearch }
+		)
 	}
 
 }
