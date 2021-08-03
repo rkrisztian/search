@@ -21,6 +21,7 @@ import search.log.ILog
 import search.log.LogMock
 import search.resultsprinter.linepart.LinePartitioner
 
+import java.nio.file.Path
 import java.util.regex.Pattern
 import java.util.stream.Stream
 
@@ -29,7 +30,7 @@ class HtmlResultsPrinterTest {
 	private final ILog log = LogMock.get()
 
 	@TempDir
-	protected File tempDir
+	protected Path tempDir
 
 	@Test
 	void doesNothingIfNoFoundLines() {

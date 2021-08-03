@@ -3,6 +3,8 @@ package search.conf
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
 
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.regex.Pattern
 
 /**
@@ -17,7 +19,7 @@ class Conf {
 	/** Maximum length of a displayed line (type -1 for no limit) */
 	public static final int MAX_DISPLAYED_LINE_LENGTH = 500
 
-	public static final File DEFAULT_TMP_DIR = new File(System.getProperty('java.io.tmpdir') ?: '/tmp')
+	public static final Path DEFAULT_TMP_DIR = Paths.get(System.getProperty('java.io.tmpdir') ?: '/tmp')
 
 	public int debug
 
@@ -45,7 +47,7 @@ class Conf {
 
 	public boolean printHtml
 
-	public File tmpDir = DEFAULT_TMP_DIR
+	public Path tmpDir = DEFAULT_TMP_DIR
 
 	void setDefaults() {
 		maxContextLines ?= DEFAULT_MAX_CONTEXT_LINES

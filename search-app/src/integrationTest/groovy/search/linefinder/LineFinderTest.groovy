@@ -12,12 +12,13 @@ import search.log.LogMock
 import search.resultsprinter.IResultsPrinter
 
 import java.nio.file.Path
+import java.nio.file.Paths
 
 class LineFinderTest {
 
 	private static final String EXAMPLE_GROOVY_FILE_NAME = 'example.groovy'
 
-	private final File exampleGroovyFile = new File(this.class.classLoader.getResource(EXAMPLE_GROOVY_FILE_NAME).toURI())
+	private final Path exampleGroovyFile = Paths.get this.class.classLoader.getResource(EXAMPLE_GROOVY_FILE_NAME).toURI()
 
 	private String filePath
 
@@ -33,7 +34,7 @@ class LineFinderTest {
 
 		// Then
 		assertAll(
-				{ assert new File(filePath).name == EXAMPLE_GROOVY_FILE_NAME },
+				{ assert Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME },
 				{ assert !foundLines }
 		)
 	}
@@ -53,7 +54,7 @@ class LineFinderTest {
 
 		// Then
 		assertAll(
-				{ assert new File(filePath).name == EXAMPLE_GROOVY_FILE_NAME },
+				{ assert Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME },
 				{ assert foundLines?.size() == 2 },
 				{ assert foundLines?.every { it.line =~ /private static/ } }
 		)
@@ -72,8 +73,6 @@ class LineFinderTest {
 
 		// When
 		lineFinder.findLines exampleGroovyFile
-
-		println filePath
 
 		// Then
 		assertAll(
@@ -95,8 +94,6 @@ class LineFinderTest {
 		// When
 		lineFinder.findLines exampleGroovyFile
 
-		println filePath
-
 		// Then
 		assertAll(
 				{ assert !filePath },
@@ -114,11 +111,9 @@ class LineFinderTest {
 		// When
 		lineFinder.findLines exampleGroovyFile
 
-		println filePath
-
 		// Then
 		assertAll(
-				{ assert new File(filePath).name == EXAMPLE_GROOVY_FILE_NAME },
+				{ assert Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME },
 				{ assert !foundLines }
 		)
 	}
@@ -137,7 +132,7 @@ class LineFinderTest {
 
 		// Then
 		assertAll(
-				{ assert new File(filePath).name == EXAMPLE_GROOVY_FILE_NAME },
+				{ assert Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME },
 				{ assert foundLines?.size() == 2 },
 				{ assert foundLines?.every { it.line =~ /private static/ } }
 		)
@@ -154,11 +149,11 @@ class LineFinderTest {
 		))
 
 		// When
-		lineFinder.findLines exampleGroovyFileCopy.toFile()
+		lineFinder.findLines exampleGroovyFileCopy
 
 		// Then
 		assertAll(
-				{ assert new File(filePath).name == exampleGroovyFileCopy.fileName as String },
+				{ assert Paths.get(filePath).fileName as String == exampleGroovyFileCopy.fileName as String },
 				{ assert foundLines?.size() == 2 },
 				{ assert foundLines?.every { it.line =~ /private static/ } },
 				{ assert exampleGroovyFileCopy.readLines().every { !(it =~ /private static/) } }
@@ -179,8 +174,8 @@ class LineFinderTest {
 	}
 
 	private Path copyExampleGroovyFile(Path tempDir) {
-		def exampleGroovyFileCopy = tempDir.resolve(exampleGroovyFile.name)
-		copy exampleGroovyFile.toPath(), exampleGroovyFileCopy, REPLACE_EXISTING
+		def exampleGroovyFileCopy = tempDir.resolve exampleGroovyFile.fileName
+		copy exampleGroovyFile, exampleGroovyFileCopy, REPLACE_EXISTING
 
 		exampleGroovyFileCopy
 	}

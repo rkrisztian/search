@@ -11,6 +11,8 @@ import search.linefinder.LinesCollector
 import search.log.Log
 import search.resultsprinter.ResultsPrinterFactory
 
+import java.nio.file.Paths
+
 /**
  * Main class.
  */
@@ -58,7 +60,7 @@ class Search {
 	protected void loadConfig() {
 		def configParser = new ConfigParser(conf, log)
 
-		configParser.parseConfig new File(conf.configFile)
+		configParser.parseConfig Paths.get(conf.configFile)
 		conf.setDefaults()
 
 		if (conf.debug) {
@@ -91,7 +93,7 @@ class Search {
 			if (conf.paths) {
 				FileFinder fileFinder = new FileFinder(conf, log)
 
-				fileFinder.find { foundFile -> lineFinder.findLines foundFile as File }
+				fileFinder.find { foundFile -> lineFinder.findLines foundFile }
 			}
 			else {
 				lineFinder.findLines()

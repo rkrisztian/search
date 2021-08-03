@@ -4,13 +4,15 @@ import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 
+import java.nio.file.Path
+
 /**
  * Methods for reading a file or input stream line by line, but allowing the read to stop if a condition is true.
  */
 @CompileStatic
 class LinesReader {
 
-	static void eachLineWhile(File file,
+	static void eachLineWhile(Path file,
 			@ClosureParams(value = SimpleType, options = ['java.lang.String', 'int']) Closure<Boolean> condition) {
 		file.withReader {
 			eachLineWhile it, condition

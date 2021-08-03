@@ -1,7 +1,12 @@
 package search.conf
 
+import static java.nio.file.Files.isRegularFile
+
 import groovy.transform.CompileStatic
 import search.log.ILog
+
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Parses configuration files.
@@ -28,24 +33,24 @@ class ConfigParser {
 		this.log = log
 	}
 
-	void parseConfig(File file) {
+	void parseConfig(Path file) {
 		def newConfig = readConfig file
 		parseConfigObject newConfig
 	}
 
-	protected ConfigObject readConfig(File file) {
+	protected ConfigObject readConfig(Path file) {
 		if (conf.debug) {
 			log.debug "*** Reading configuration file '${file}'..."
 		}
 
-		if (!file.exists()) {
+		if (!isRegularFile(file)) {
 			if (conf.debug) {
 				log.debug "Configuration file '${file}' not found."
 			}
 			return null
 		}
 
-		new ConfigSlurper().parse(file.toURI().toURL())
+		new ConfigSlurper().parse file.toUri().toURL()
 	}
 
 	protected void parseConfigObject(ConfigObject newConfig) {
@@ -72,11 +77,11 @@ class ConfigParser {
 			}
 			if (currentConfig[PROPERTY_INCLUDE_CONFIG]) {
 				currentConfig[PROPERTY_INCLUDE_CONFIG].collect { String it ->
-					readConfig new File(it)
+					readConfig Paths.get(it)
 				}.each { stack.push it }
 			}
 			if (currentConfig[PROPERTY_TMP_DIR]) {
-				conf.tmpDir = new File(currentConfig[PROPERTY_TMP_DIR] as String)
+				conf.tmpDir = Paths.get currentConfig[PROPERTY_TMP_DIR] as String
 			}
 		}
 	}

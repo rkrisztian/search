@@ -3,6 +3,7 @@ package search.filefinder
 import static groovy.io.FileType.FILES
 import static groovy.io.FileVisitResult.CONTINUE
 import static groovy.io.FileVisitResult.SKIP_SUBTREE
+import static java.nio.file.Files.isRegularFile
 import static java.nio.file.Files.isSymbolicLink
 
 import groovy.transform.CompileStatic
@@ -10,6 +11,9 @@ import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import search.conf.Conf
 import search.log.ILog
+
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Searches for files based on the given include and exclude patterns.
@@ -21,22 +25,19 @@ class FileFinder {
 
 	protected final ILog log
 
-	protected final File baseDir
+	protected final Path baseDir
 
-	FileFinder(Conf conf, ILog log, File baseDir = new File('.')) {
+	FileFinder(Conf conf, ILog log, Path baseDir = Paths.get('.')) {
 		this.conf = conf
 		this.log = log
 		this.baseDir = baseDir
 	}
 
-	void find(@ClosureParams(value = SimpleType, options = ['File']) Closure foundFileHandler) {
-		def sortByFilesFirstThenByName = { File a, File b ->
-			a.file == b.file ? a.name <=> b.name : b.file <=> a.file
-		}
+	void find(@ClosureParams(value = SimpleType, options = ['java.nio.file.Path']) Closure foundFileHandler) {
 		def options = [
 				type: FILES,
-				sort: sortByFilesFirstThenByName,
-				preDir: { File file ->
+				sort: FileFinder.&sortByFilesFirstThenByName,
+				preDir: { Path file ->
 					filterDir(file) ? CONTINUE : SKIP_SUBTREE
 				}
 		]
@@ -50,7 +51,14 @@ class FileFinder {
 		}
 	}
 
-	protected boolean filterDir(File file) {
+	private static int sortByFilesFirstThenByName(Path a, Path b) {
+		def aIsFile = isRegularFile a
+		def bIsFile = isRegularFile b
+
+		aIsFile == bIsFile ? a.fileName <=> b.fileName : bIsFile <=> aIsFile
+	}
+
+	protected boolean filterDir(Path file) {
 		// For simpler search patterns.
 		def filePath = "$file/"
 
@@ -65,11 +73,11 @@ class FileFinder {
 		true
 	}
 
-	protected boolean filterFile(File file) {
-		if (isSymbolicLink(file.toPath())) {
+	protected boolean filterFile(Path file) {
+		if (isSymbolicLink(file)) {
 			return false
 		}
-		if (isExcluded(file.path)) {
+		if (isExcluded(file as String)) {
 			return false
 		}
 		if (!isIncluded(file)) {
@@ -98,8 +106,8 @@ class FileFinder {
 		false
 	}
 
-	protected boolean isIncluded(File file) {
-		def fileNameAsPath = new File(file.name).toPath()
+	protected boolean isIncluded(Path file) {
+		def fileNameAsPath = file.fileName
 
 		if (!conf.paths.any { it.matches(fileNameAsPath) }) {
 			if (conf.debug > 1) {
@@ -112,7 +120,7 @@ class FileFinder {
 		true
 	}
 
-	private boolean isBinaryFile(File file) {
+	private boolean isBinaryFile(Path file) {
 		try {
 			BinaryFileChecker.checkIfBinary file
 		}

@@ -12,29 +12,32 @@ import search.conf.Conf
 import search.conf.GlobPattern
 import search.log.LogMock
 
+import java.nio.file.Path
+import java.nio.file.Paths
+
 class FileFinderTest {
 
 	@TempDir
-	protected File tempDir
+	protected Path tempDir
 
-	private final List<File> foundFiles = []
+	private final List<Path> foundFiles = []
 
 	@BeforeEach
 	void setUp() {
-		def exampleClass = new File(this.class.classLoader.getResource('example.class').toURI())
-		def exampleGroovy = new File(this.class.classLoader.getResource('example.groovy').toURI())
-		def greekTxt = new File(this.class.classLoader.getResource('greek.txt').toURI())
+		def exampleClass = Paths.get this.class.classLoader.getResource('example.class').toURI()
+		def exampleGroovy = Paths.get this.class.classLoader.getResource('example.groovy').toURI()
+		def greekTxt = Paths.get this.class.classLoader.getResource('greek.txt').toURI()
 
 		copyFileToPathCreatingDirs exampleClass, 'a/b/c'
 		copyFileToPathCreatingDirs exampleGroovy, 'a/d'
 		copyFileToPathCreatingDirs greekTxt, 'a/e'
 	}
 
-	private void copyFileToPathCreatingDirs(File file, String parentDirStr) {
-		def parentDir = tempDir.toPath().resolve parentDirStr
+	private void copyFileToPathCreatingDirs(Path file, String parentDirStr) {
+		def parentDir = tempDir.resolve parentDirStr
 
 		createDirectories parentDir
-		copy file.toPath(), parentDir.resolve(file.name)
+		copy file, parentDir.resolve(file.fileName)
 	}
 
 	@Test
@@ -80,15 +83,15 @@ class FileFinderTest {
 		// Then
 		assertAll(
 				{ assert foundFiles?.size() == 2 },
-				{ assert foundFiles.any { it.path =~ $/\ba/d/example.groovy/$ } },
-				{ assert foundFiles.any { it.path =~ $/\ba/e/greek.txt/$ } }
+				{ assert foundFiles.any { it as String =~ $/\ba/d/example.groovy/$ } },
+				{ assert foundFiles.any { it as String =~ $/\ba/e/greek.txt/$ } }
 		)
 	}
 
 	@Test
 	void symbolicLinksAreSkipped() {
 		// Given
-		createSymbolicLink tempDir.toPath().resolve('a/d/example2.groovy'), tempDir.toPath().resolve('a/d/example.groovy')
+		createSymbolicLink tempDir.resolve('a/d/example2.groovy'), tempDir.resolve('a/d/example.groovy')
 
 		// When
 		findFiles new Conf(paths: [new GlobPattern('*.groovy')])
@@ -109,7 +112,7 @@ class FileFinderTest {
 	@Test
 	void filesAreSorted() {
 		// Given
-		copy tempDir.toPath().resolve('a/d/example.groovy'), tempDir.toPath().resolve('a/d/anotherExample.groovy')
+		copy tempDir.resolve('a/d/example.groovy'), tempDir.resolve('a/d/anotherExample.groovy')
 
 		// When
 		findFiles new Conf(paths: [new GlobPattern('*.groovy')])
@@ -117,8 +120,8 @@ class FileFinderTest {
 		// Then
 		assertAll(
 				{ assert foundFiles?.size() == 2 },
-				{ assert foundFiles[0].path =~ $/a/d/anotherExample.groovy/$ },
-				{ assert foundFiles[1].path =~ $/a/d/example.groovy/$ }
+				{ assert foundFiles[0] as String =~ $/a/d/anotherExample.groovy/$ },
+				{ assert foundFiles[1] as String =~ $/a/d/example.groovy/$ }
 		)
 	}
 

@@ -16,6 +16,8 @@ import search.linefinder.FoundLine
 import search.log.ILog
 import search.resultsprinter.linepart.ILinePartitioner
 
+import java.nio.file.Path
+
 /**
  * Saves the search results into an HTML file.
  */
@@ -64,9 +66,9 @@ class HtmlResultsPrinter implements IResultsPrinter {
 
 	private final ILinePartitioner partitioner
 
-	private final File tmpDir
+	private final Path tmpDir
 
-	HtmlResultsPrinter(Set<PatternData> patternData, ILog log, HtmlColors colors, ILinePartitioner partitioner, File tmpDir) {
+	HtmlResultsPrinter(Set<PatternData> patternData, ILog log, HtmlColors colors, ILinePartitioner partitioner, Path tmpDir) {
 		this.patternData = patternData
 		this.log = log
 		this.colors = colors
@@ -169,8 +171,8 @@ class HtmlResultsPrinter implements IResultsPrinter {
 	}
 
 	@VisibleForTesting
-	File writeToHtmlFile() {
-		def htmlFile = new File(tmpDir, HTML_TMP_FILE_NAME)
+	Path writeToHtmlFile() {
+		def htmlFile = tmpDir.resolve HTML_TMP_FILE_NAME
 
 		htmlFile.withWriter('utf-8') { writer ->
 			new MarkupBuilder(writer).html {
@@ -190,9 +192,9 @@ class HtmlResultsPrinter implements IResultsPrinter {
 		htmlFile
 	}
 
-	private void openHtmlFile(File htmlFile) {
+	private void openHtmlFile(Path htmlFile) {
 		try {
-			Process process = ['/usr/bin/xdg-open', htmlFile.absolutePath].execute()
+			Process process = ['/usr/bin/xdg-open', htmlFile as String].execute()
 			def out = new StringBuffer()
 			def err = new StringBuffer()
 			process.consumeProcessOutput out, err

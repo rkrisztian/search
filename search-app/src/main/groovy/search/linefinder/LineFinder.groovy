@@ -4,6 +4,7 @@ import static LineType.CONTEXT_LINE
 import static LineType.FOUND_LINE
 import static LineVisibility.HIDE
 import static LineVisibility.SHOW
+import static java.nio.file.Files.isWritable
 import static java.nio.file.Files.move
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import static search.conf.Constants.REPLACE_TMP_FILE_NAME
@@ -15,6 +16,7 @@ import search.conf.PatternData
 import search.log.ILog
 import search.resultsprinter.IResultsPrinter
 
+import java.nio.file.Path
 import java.util.regex.Pattern
 
 /**
@@ -37,7 +39,7 @@ class LineFinder {
 
 	private final ILog log
 
-	private final File replaceTmpFilePath
+	private final Path replaceTmpFilePath
 
 	LineFinder(Conf conf, ILinesCollector linesCollector, IResultsPrinter resultsPrinter, ILog log) {
 		this.patternData = conf.patternData
@@ -47,11 +49,11 @@ class LineFinder {
 		this.linesCollector = linesCollector
 		this.resultsPrinter = resultsPrinter
 		this.log = log
-		this.replaceTmpFilePath = new File(conf.tmpDir, REPLACE_TMP_FILE_NAME)
+		this.replaceTmpFilePath = conf.tmpDir.resolve REPLACE_TMP_FILE_NAME
 	}
 
-	void findLines(File file = null) {
-		def filePath = file ? file.path : '<STDIN>'
+	void findLines(Path file = null) {
+		def filePath = file ? file as String : '<STDIN>'
 		linesCollector.reset()
 		boolean allPatternsFound = true
 
@@ -75,7 +77,7 @@ class LineFinder {
 		}
 	}
 
-	private void searchForPatterns(File file, Set foundPatterns) {
+	private void searchForPatterns(Path file, Set foundPatterns) {
 		if (file) {
 			eachLineWhile(file) { String line, int lineNr ->
 				searchForPatternsOnLine line, lineNr, foundPatterns
@@ -129,9 +131,9 @@ class LineFinder {
 	}
 
 	// TODO 2013-07-29/rkrisztian: Replace is done by re-opening the same file twice at the moment.
-	private void replaceInFile(File file) {
-		if (!file.canWrite()) {
-			log.fatal "File '${file.path}' is not writable."
+	private void replaceInFile(Path file) {
+		if (!isWritable(file)) {
+			log.fatal "File '${file}' is not writable."
 		}
 
 		replaceTmpFilePath.withWriter { writer ->
@@ -148,11 +150,12 @@ class LineFinder {
 					}
 				}
 
-				writer.writeLine replacedLine
+				// TODO: Get rid of the cast (GROOVY-10189)
+				(writer as BufferedWriter).writeLine replacedLine
 			}
 		}
 
-		move replaceTmpFilePath.toPath(), file.toPath(), REPLACE_EXISTING
+		move replaceTmpFilePath, file, REPLACE_EXISTING
 	}
 
 }

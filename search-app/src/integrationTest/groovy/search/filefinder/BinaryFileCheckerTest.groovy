@@ -4,6 +4,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
+import java.nio.file.Paths
 import java.util.stream.Stream
 
 class BinaryFileCheckerTest {
@@ -11,7 +12,7 @@ class BinaryFileCheckerTest {
 	@ParameterizedTest
 	@MethodSource('shouldDetectFileAsBinaryOrTextArgs')
 	void shouldDetectFileAsBinaryOrText(String fileName, boolean expectBinary) {
-		def exampleFile = new File(this.class.classLoader.getResource(fileName).toURI())
+		def exampleFile = Paths.get this.class.classLoader.getResource(fileName).toURI()
 		assert BinaryFileChecker.checkIfBinary(exampleFile) == expectBinary
 	}
 

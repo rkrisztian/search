@@ -72,7 +72,7 @@ search for multiple patterns, Ack cannot replace text in files, and I don't care
 
 		@Test
 		void globPatternWorks() {
-			assert new GlobPattern('*.java').matches(new File('Test.java').toPath())
+			assert new GlobPattern('*.java').matches(Paths.get('Test.java'))
 		}
 	}
 	```
@@ -90,7 +90,7 @@ search for multiple patterns, Ack cannot replace text in files, and I don't care
 
 			13 : 	@Test
 					void globPatternWorks() {
-			15 : 		assert new GlobPattern('*.java').matches(new File('Test.java').toPath())
+			15 : 		assert new GlobPattern('*.java').matches(Paths.get('Test.java'))
 					}
 	```
 
@@ -108,7 +108,7 @@ search for multiple patterns, Ack cannot replace text in files, and I don't care
 	12-
 	13:	@Test
 	14-	void globPatternWorks() {
-	15:		assert new GlobPattern('*.java').matches(new File('Test.java').toPath())
+	15:		assert new GlobPattern('*.java').matches(Paths.get('Test.java'))
 	16-	}
 	17-}
 	```

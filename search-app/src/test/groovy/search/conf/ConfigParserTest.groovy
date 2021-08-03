@@ -14,6 +14,8 @@ import org.junit.jupiter.api.function.Executable
 import search.log.ILog
 import search.log.LogMock
 
+import java.nio.file.Paths
+
 class ConfigParserTest {
 
 	private final Conf conf = new Conf()
@@ -116,7 +118,7 @@ class ConfigParserTest {
 
 		// Then
 		assertAll(
-				{ assert conf.tmpDir == new File('/dummy/tmp/dir') },
+				{ assert conf.tmpDir == Paths.get('/dummy/tmp/dir') },
 				{ assert conf.tmpDir != DEFAULT_TMP_DIR }
 		)
 	}

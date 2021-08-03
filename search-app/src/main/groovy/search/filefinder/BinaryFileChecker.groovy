@@ -2,6 +2,8 @@ package search.filefinder
 
 import groovy.transform.CompileStatic
 
+import java.nio.file.Path
+
 /**
  * Perl's binary file detector ("-B <file-path>") is excellent, but I found no similar library in Java or Groovy.
  *
@@ -26,7 +28,7 @@ class BinaryFileChecker {
 	private final static int LATIN_IN_UTF_8_START = 0x2E2E
 	private static final int LATIN_IN_UTF_8_END = 0xC3BF
 
-	static boolean checkIfBinary(File file) {
+	static boolean checkIfBinary(Path file) {
 		checkEachChunk(file, 512, 1) { byte[] buffer, int count ->
 			checkEachByte(buffer, count) { int unsignedByte, int utf8value ->
 				!isCharacterText(unsignedByte, utf8value)
@@ -34,7 +36,7 @@ class BinaryFileChecker {
 		}
 	}
 
-	private static boolean checkEachChunk(File file, int bufferSize, int times, Closure checkChunk) {
+	private static boolean checkEachChunk(Path file, int bufferSize, int times, Closure checkChunk) {
 		def buffer = new byte[bufferSize]
 
 		file.withDataInputStream { stream ->
