@@ -134,7 +134,7 @@ chapter _Usage_ about how to make the tool easier to use.
 
 ### From source
 
-Execute the following steps:
+Assuming you have [gng](https://github.com/gdubw/gng) installed, execute the following steps:
 
 ```bash
 cd ~/projects
