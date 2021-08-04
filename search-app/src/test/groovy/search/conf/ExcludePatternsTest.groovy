@@ -34,7 +34,7 @@ class ExcludePatternsTest {
 
 		// When
 		argumentsParser.parseArgs('-s', 'some.file.1', '-s', 'some.file.2')
-		configParser.parseConfigObject config
+		configParser.mapConfigObject config
 
 		// Then
 		assert conf.excludeFilePatterns.size() == 4

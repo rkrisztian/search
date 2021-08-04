@@ -24,6 +24,8 @@ class ConfigParser {
 
 	protected static final String PROPERTY_TMP_DIR = 'tmpDir'
 
+	private static final String INTERNAL_PROPERTY_CURRENT_FILE = '__currentFile'
+
 	protected final Conf conf
 
 	protected final ILog log
@@ -33,12 +35,12 @@ class ConfigParser {
 		this.log = log
 	}
 
-	void parseConfig(Path file) {
-		def newConfig = readConfig file
-		parseConfigObject newConfig
+	void parseConfig() {
+		def newConfig = readConfig Paths.get(conf.configFile)
+		mapConfigObject(newConfig)
 	}
 
-	protected ConfigObject readConfig(Path file) {
+	private ConfigObject readConfig(Path file) {
 		if (conf.debug) {
 			log.debug "*** Reading configuration file '${file}'..."
 		}
@@ -50,10 +52,13 @@ class ConfigParser {
 			return null
 		}
 
-		new ConfigSlurper().parse file.toUri().toURL()
+		def newConfig = new ConfigSlurper().parse file.toUri().toURL()
+		newConfig[INTERNAL_PROPERTY_CURRENT_FILE] = file as String
+
+		newConfig
 	}
 
-	protected void parseConfigObject(ConfigObject newConfig) {
+	protected void mapConfigObject(ConfigObject newConfig) {
 		def stack = [] as Stack
 
 		stack.push newConfig
@@ -76,9 +81,10 @@ class ConfigParser {
 				conf.printHtml = true
 			}
 			if (currentConfig[PROPERTY_INCLUDE_CONFIG]) {
-				currentConfig[PROPERTY_INCLUDE_CONFIG].collect { String it ->
-					readConfig Paths.get(it)
-				}.each { stack.push it }
+				currentConfig[PROPERTY_INCLUDE_CONFIG].each {
+					stack.push readConfig(
+							Paths.get(currentConfig[INTERNAL_PROPERTY_CURRENT_FILE] as String).parent.resolve(it as String))
+				}
 			}
 			if (currentConfig[PROPERTY_TMP_DIR]) {
 				conf.tmpDir = Paths.get currentConfig[PROPERTY_TMP_DIR] as String

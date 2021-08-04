@@ -202,25 +202,20 @@ Uses Groovy syntax, see [ConfigSlurper](http://docs.groovy-lang.org/latest/html/
 ### Configuration options
 
 * `excludePatterns: List<String>`
-
-	List of regular expressions to exclude directory paths and file paths. You can of course use
-		slashy strings and dollar-slashy strings, so you don't have to escape characters.
+  List of regular expressions to exclude directory paths and file paths. You can of course use slashy strings and dollar-slashy
+  strings, so you don't have to escape characters.
 
 * `includeConfig: List<String>`
-
-	Allows extension of the current config file with other ones. (Warning: avoid circular
-	includes!)
+  Allows extension of the current config file with other ones. (Warning: avoid circular includes!) Supports both absolute
+  paths and paths relative to the current config file.
 
 * `contextLines: int`
-
-	Number of context lines to display (before and after matched lines).
+  Number of context lines to display (before and after matched lines).
 
 * `printHtml: boolean`
-
-	Print the results in HTML and open in a browser.
+  Print the results in HTML and open in a browser.
 
 * `tmpDir: String`
-
   Location of the temporary directory used for replacements and HTML output. The default value is taken from Java system
   property `java.io.tmpdir`.
 

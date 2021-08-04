@@ -25,7 +25,7 @@ class ConfigParserTest {
 	@Test
 	void nullConfigsAreIgnored() {
 		assertDoesNotThrow({
-			configParser.parseConfigObject(null)
+			configParser.mapConfigObject(null)
 		} as Executable)
 	}
 
@@ -38,7 +38,7 @@ class ConfigParserTest {
 		assert DEFAULT_MAX_CONTEXT_LINES != 3
 
 		// When
-		configParser.parseConfigObject config
+		configParser.mapConfigObject config
 
 		// Then
 		assert conf.maxContextLines == 3
@@ -65,7 +65,7 @@ class ConfigParserTest {
 
 		// When
 		conf.maxContextLines = 5
-		configParser.parseConfigObject config
+		configParser.mapConfigObject config
 		conf.setDefaults()
 
 		// Then
@@ -83,7 +83,7 @@ class ConfigParserTest {
 		""")
 
 		// When
-		configParser.parseConfigObject config
+		configParser.mapConfigObject config
 
 		// Then
 		assert conf.excludeFilePatterns.size() == 2
@@ -99,7 +99,7 @@ class ConfigParserTest {
 		""")
 
 		// When
-		configParser.parseConfigObject config
+		configParser.mapConfigObject config
 
 		// Then
 		assert conf.printHtml
@@ -113,7 +113,7 @@ class ConfigParserTest {
 		""")
 
 		// When
-		configParser.parseConfigObject config
+		configParser.mapConfigObject config
 		conf.setDefaults()
 
 		// Then
