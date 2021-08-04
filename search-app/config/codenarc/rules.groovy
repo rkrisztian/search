@@ -35,7 +35,15 @@ ruleset {
 		'Indentation' enabled: false
 		'SpaceAroundMapEntryColon' characterAfterColonRegex: /\s/
 	}
-	ruleset 'rulesets/generic.xml'
+	ruleset('rulesets/generic.xml') {
+		IllegalClassReference {
+			name = 'DoNotUseJavaIoFile'
+			priority = 2
+			classNames = 'File'
+			applyToClassNames = '*'
+			description = '"java.io.File" is part of a legacy API, use "java.nio.file.Path"'
+		}
+	}
 	ruleset('rulesets/groovyism.xml') {
 		// "GroovyAssertions#assertAll" takes multiple closures, where this style does not make sense
 		'ClosureAsLastMethodParameter' doNotApplyToFilesMatching: /.*?Test\.groovy$/
