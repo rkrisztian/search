@@ -136,11 +136,11 @@ chapter _Usage_ about how to make the tool easier to use.
 
 Execute the following steps:
 
-```text
-$ cd ~/projects
-$ git clone $URL
-$ cd search
-$ gw assemble
+```bash
+cd ~/projects
+git clone $URL
+cd search
+gw assemble
 ```
 
 Then either you can unpack the distribution package in `search-app/build/distributions` as described
@@ -149,8 +149,8 @@ as the extracted location.
 
 Optionally, to ensure you got a working revision:
 
-```text
-$ gw test integrationTest
+```bash
+gw test integrationTest
 ```
 
 ## Usage
@@ -170,7 +170,7 @@ $ gw test integrationTest
 3. To support automatic use of the project-specific configuration, create the following bash
 	function, and put it into your private `~/.bashrc`:
 
-	```text
+	```bash
 	search() {
 		local args=''
 
@@ -189,8 +189,8 @@ $ gw test integrationTest
 
 For a list of command line arguments see:
 
-```text
-$ s --help
+```bash
+s --help
 ```
 
 ## Configuration
@@ -251,59 +251,59 @@ that are temporary files created by Eclipse to show history.)
 
 * Basic searches:
 
-	```text
-	$ s \*.js - jQuery
-	$ s \*.java - 'System\.out\.println'
-	$ s \*.java \*.js - myCode 'myThing(s)?'
-	$ s \*.java - MyCode '(my|their)code'
+	```bash
+	s \*.js - jQuery
+	s \*.java - 'System\.out\.println'
+	s \*.java \*.js - myCode 'myThing(s)?'
+	s \*.java - MyCode '(my|their)code'
 	```
 * Case insensitive search:
 
-	```text
-	$ s -i \* - regex processor
+	```bash
+	s -i \* - regex processor
 	```
 
 * Hide the keyword `processor` in results:
 
-	```text
-	$ s \* - regex -h processor
+	```bash
+	s \* - regex -h processor
 	```
 
 * Search for the character sequence `-h`:
 
-	```text
-	$ s \* - '\-h'
+	```bash
+	s \* - '\-h'
 	```
 
 * Search from the output of command `git blame`:
 
-	```text
-	$ git blame someFile | search - someAuthor
+	```bash
+	git blame someFile | search - someAuthor
 	```
 
 * Search in every file (including hidden ones):
 
-	```text
-	$ s -a - myproject
+	```bash
+	s -a - myproject
 	```
 
 * Execute a command for every file found (which can be much faster than regular `findf`):
-	```text
-	$ s -C .project | xargs git add
+	```bash
+	s -C .project | xargs git add
 	```
 
 ### Example replaces
 
 * Search for `jQuery` and replace each occurrence with `$`:
 
-	```text
-	$ s \* - 'jQuery' -r '$'
+	```bash
+	s \* - 'jQuery' -r '$'
 	```
 
 * Search for `jQuery` and replace each occurrence with `$`, but only in files including a script tag:
 
-	```text
-	$ s \* - 'jQuery' -r '$' '<script'
+	```bash
+	s \* - 'jQuery' -r '$' '<script'
 	```
 
 ## How to contribute
@@ -311,8 +311,8 @@ that are temporary files created by Eclipse to show history.)
 1. Import project in IntelliJ IDEA (e.g. the Community Edition).
 2. Make sure Project Code Style is used as set in `.editorconfig` (This is needed to keep formatting compatible with CodeNarc.)
 3. Before committing:
-	```text
-	$ gw clean build
+	```bash
+	gw clean build
 	```
 4. How to commit:
 	Please send a PR. :)
