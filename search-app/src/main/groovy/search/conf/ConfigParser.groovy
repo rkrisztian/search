@@ -37,7 +37,8 @@ class ConfigParser {
 
 	void parseConfig() {
 		def newConfig = readConfig Paths.get(conf.configFile)
-		mapConfigObject(newConfig)
+		mergeIncludedConfigs newConfig
+		mapConfigObject newConfig
 	}
 
 	private ConfigObject readConfig(Path file) {
@@ -58,8 +59,8 @@ class ConfigParser {
 		newConfig
 	}
 
-	protected void mapConfigObject(ConfigObject newConfig) {
-		def stack = [] as Stack
+	protected void mergeIncludedConfigs(ConfigObject newConfig) {
+		def stack = [] as Stack<ConfigObject>
 
 		stack.push newConfig
 
@@ -70,25 +71,36 @@ class ConfigParser {
 				continue
 			}
 
-			if (currentConfig[PROPERTY_EXCLUDE_FILE_PATTERNS]) {
-				conf.excludeFilePatterns.addAll 0,
-						currentConfig[PROPERTY_EXCLUDE_FILE_PATTERNS].collect { String it -> ~it }
-			}
-			if (currentConfig[PROPERTY_MAX_CONTEXT_LINES] && (conf.maxContextLines == null)) {
-				conf.maxContextLines = currentConfig[PROPERTY_MAX_CONTEXT_LINES] as Integer
-			}
-			if (currentConfig[PROPERTY_PRINT_HTML]) {
-				conf.printHtml = true
-			}
 			if (currentConfig[PROPERTY_INCLUDE_CONFIG]) {
 				currentConfig[PROPERTY_INCLUDE_CONFIG].each {
 					stack.push readConfig(
 							Paths.get(currentConfig[INTERNAL_PROPERTY_CURRENT_FILE] as String).parent.resolve(it as String))
 				}
 			}
-			if (currentConfig[PROPERTY_TMP_DIR]) {
-				conf.tmpDir = Paths.get currentConfig[PROPERTY_TMP_DIR] as String
+
+			if (!currentConfig.is(newConfig)) {
+				newConfig.merge currentConfig
 			}
+		}
+	}
+
+	protected void mapConfigObject(ConfigObject newConfig) {
+		if (!newConfig) {
+			return
+		}
+
+		if (newConfig[PROPERTY_EXCLUDE_FILE_PATTERNS]) {
+			conf.excludeFilePatterns.addAll 0,
+					newConfig[PROPERTY_EXCLUDE_FILE_PATTERNS].collect { String it -> ~it }
+		}
+		if (newConfig[PROPERTY_MAX_CONTEXT_LINES] && (conf.maxContextLines == null)) {
+			conf.maxContextLines = newConfig[PROPERTY_MAX_CONTEXT_LINES] as Integer
+		}
+		if (newConfig[PROPERTY_PRINT_HTML]) {
+			conf.printHtml = true
+		}
+		if (newConfig[PROPERTY_TMP_DIR]) {
+			conf.tmpDir = Paths.get newConfig[PROPERTY_TMP_DIR] as String
 		}
 	}
 

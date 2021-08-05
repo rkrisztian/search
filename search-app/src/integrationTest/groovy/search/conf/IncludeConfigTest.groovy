@@ -9,19 +9,33 @@ import java.nio.file.Paths
 
 class IncludeConfigTest {
 
+	private final Path testConfigFile = Paths.get this.class.classLoader.getResource('conf1.groovy').toURI()
+	private final ILog log = LogMock.get()
+
 	@Test
-	void includedConfigFilesAreMapped() {
+	void includedConfigFilesCanOverrideProperties() {
 		// Given
-		Path testConfigFile = Paths.get this.class.classLoader.getResource('conf1.groovy').toURI()
-		Conf conf = new Conf(configFile: testConfigFile)
-		ILog log = LogMock.get()
-		ConfigParser configParser = new ConfigParser(conf, log)
+		def conf = new Conf(configFile: testConfigFile)
+		def configParser = new ConfigParser(conf, log)
 
 		// When
 		configParser.parseConfig()
 
 		// Then
 		assert conf.maxContextLines == 5
+	}
+
+	@Test
+	void includedConfigFilesCannotOverrideCommandLineArguments() {
+		// Given
+		def conf = new Conf(configFile: testConfigFile, maxContextLines: 10)
+		def configParser = new ConfigParser(conf, log)
+
+		// When
+		configParser.parseConfig()
+
+		// Then
+		assert conf.maxContextLines == 10
 	}
 
 }

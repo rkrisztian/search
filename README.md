@@ -201,16 +201,17 @@ Uses Groovy syntax, see [ConfigSlurper](http://docs.groovy-lang.org/latest/html/
 
 ### Configuration options
 
+* `contextLines: int`
+  Number of context lines to display (before and after matched lines).
+
 * `excludePatterns: List<String>`
   List of regular expressions to exclude directory paths and file paths. You can of course use slashy strings and dollar-slashy
   strings, so you don't have to escape characters.
 
 * `includeConfig: List<String>`
   Allows extension of the current config file with other ones. (Warning: avoid circular includes!) Supports both absolute
-  paths and paths relative to the current config file.
-
-* `contextLines: int`
-  Number of context lines to display (before and after matched lines).
+  paths and paths relative to the current config file. The included config will always override options of its parent config,
+  regardless of where you put this option.
 
 * `printHtml: boolean`
   Print the results in HTML and open in a browser.
