@@ -1,14 +1,14 @@
 package search.conf
 
-import org.junit.jupiter.api.Test
+import spock.lang.Specification
 
 import java.nio.file.Paths
 
-class GlobPatternTest {
+class GlobPatternTest extends Specification {
 
-	@Test
-	void globPatternWorks() {
-		assert new GlobPattern('*.java').matches(Paths.get('Test.java'))
+	void 'glob pattern works'() {
+		expect:
+			new GlobPattern('*.java').matches(Paths.get('Test.java'))
 	}
 
 }

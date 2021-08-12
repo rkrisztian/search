@@ -1,126 +1,116 @@
 package search.conf
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import static search.conf.Conf.DEFAULT_MAX_CONTEXT_LINES
 import static search.conf.Conf.DEFAULT_TMP_DIR
 import static search.conf.ConfigParser.PROPERTY_EXCLUDE_FILE_PATTERNS
 import static search.conf.ConfigParser.PROPERTY_MAX_CONTEXT_LINES
 import static search.conf.ConfigParser.PROPERTY_PRINT_HTML
 import static search.conf.ConfigParser.PROPERTY_TMP_DIR
-import static search.testutil.GroovyAssertions.assertAll
 
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.function.Executable
 import search.log.ILog
 import search.log.LogMock
+import spock.lang.Specification
 
 import java.nio.file.Paths
 
-class ConfigParserTest {
+class ConfigParserTest extends Specification {
 
 	private final Conf conf = new Conf()
 	private final ILog log = LogMock.get()
 	private final ConfigParser configParser = new ConfigParser(conf, log)
 
-	@Test
-	void nullConfigsAreIgnored() {
-		assertDoesNotThrow({
+	void 'null configs are ignored'() {
+		when:
 			configParser.mapConfigObject(null)
-		} as Executable)
+
+		then:
+			noExceptionThrown()
 	}
 
-	@Test
-	void testContextLines() {
-		// Given
-		def config = new ConfigSlurper().parse("""
-			${PROPERTY_MAX_CONTEXT_LINES} = 3
-		""")
-		assert DEFAULT_MAX_CONTEXT_LINES != 3
+	void 'context lines'() {
+		given:
+			def config = new ConfigSlurper().parse("""
+				${PROPERTY_MAX_CONTEXT_LINES} = 3
+			""")
+			assert DEFAULT_MAX_CONTEXT_LINES != 3
 
-		// When
-		configParser.mapConfigObject config
+		when:
+			configParser.mapConfigObject config
 
-		// Then
-		assert conf.maxContextLines == 3
+		then:
+			conf.maxContextLines == 3
 	}
 
-	@Test
-	void maxContextLinesHasDefaultValue() {
-		// When
-		conf.setDefaults()
+	void 'max context lines has default value'() {
+		when:
+			conf.setDefaults()
 
-		// Then
-		assert conf.maxContextLines != null
-		assert conf.maxContextLines == DEFAULT_MAX_CONTEXT_LINES
+		then:
+			conf.maxContextLines != null
+			conf.maxContextLines == DEFAULT_MAX_CONTEXT_LINES
 	}
 
-	@Test
-	void maxContextLinesCanBeOverriddenOnCommandLine() {
-		// Given
-		def config = new ConfigSlurper().parse("""
-			${PROPERTY_MAX_CONTEXT_LINES} = 3
-		""")
-		assert DEFAULT_MAX_CONTEXT_LINES != 3
-		assert DEFAULT_MAX_CONTEXT_LINES != 5
+	void 'max context lines can be overridden on command line'() {
+		given:
+			def config = new ConfigSlurper().parse("""
+				${PROPERTY_MAX_CONTEXT_LINES} = 3
+			""")
+			assert DEFAULT_MAX_CONTEXT_LINES != 3
+			assert DEFAULT_MAX_CONTEXT_LINES != 5
+			conf.maxContextLines = 5
 
-		// When
-		conf.maxContextLines = 5
-		configParser.mapConfigObject config
-		conf.setDefaults()
+		when:
+			configParser.mapConfigObject config
+			conf.setDefaults()
 
-		// Then
-		assert conf.maxContextLines == 5
+		then:
+			conf.maxContextLines == 5
 	}
 
-	@Test
-	void testExcludes() {
-		// Given
-		def config = new ConfigSlurper().parse("""
-			${PROPERTY_EXCLUDE_FILE_PATTERNS} = [
-				/pattern.1/,
-				/pattern.2/
-			]
-		""")
+	void 'excludes'() {
+		given:
+			def config = new ConfigSlurper().parse("""
+				${PROPERTY_EXCLUDE_FILE_PATTERNS} = [
+					/pattern.1/,
+					/pattern.2/
+				]
+			""")
 
-		// When
-		configParser.mapConfigObject config
+		when:
+			configParser.mapConfigObject config
 
-		// Then
-		assert conf.excludeFilePatterns.size() == 2
-		assert conf.excludeFilePatterns[0].pattern() == /pattern.1/
-		assert conf.excludeFilePatterns[1].pattern() == /pattern.2/
+		then:
+			conf.excludeFilePatterns.size() == 2
+			conf.excludeFilePatterns[0].pattern() == /pattern.1/
+			conf.excludeFilePatterns[1].pattern() == /pattern.2/
 	}
 
-	@Test
-	void testPrintHtml_enabled() {
-		// Given
-		def config = new ConfigSlurper().parse("""
-			${PROPERTY_PRINT_HTML} = true
-		""")
+	void 'print html, enabled'() {
+		given:
+			def config = new ConfigSlurper().parse("""
+				${PROPERTY_PRINT_HTML} = true
+			""")
 
-		// When
-		configParser.mapConfigObject config
+		when:
+			configParser.mapConfigObject config
 
-		// Then
-		assert conf.printHtml
+		then:
+			conf.printHtml
 	}
 
-	@Test
-	void tmpDirCanBeSetToNonDefault() {
-		// Given
-		def config = new ConfigSlurper().parse("""
-			${PROPERTY_TMP_DIR} = '/dummy/tmp/dir'
-		""")
+	void 'tmp dir can be set to non-default'() {
+		given:
+			def config = new ConfigSlurper().parse("""
+				${PROPERTY_TMP_DIR} = '/dummy/tmp/dir'
+			""")
 
-		// When
-		configParser.mapConfigObject config
-		conf.setDefaults()
+		when:
+			configParser.mapConfigObject config
+			conf.setDefaults()
 
-		// Then
-		assertAll(
-				{ assert conf.tmpDir == Paths.get('/dummy/tmp/dir') },
-				{ assert conf.tmpDir != DEFAULT_TMP_DIR }
-		)
+		then:
+			conf.tmpDir == Paths.get('/dummy/tmp/dir')
+			conf.tmpDir != DEFAULT_TMP_DIR
 	}
 
 }

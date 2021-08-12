@@ -3,27 +3,24 @@ package search.filefinder
 import static java.nio.file.Files.copy
 import static java.nio.file.Files.createDirectories
 import static java.nio.file.Files.createSymbolicLink
-import static search.testutil.GroovyAssertions.assertAll
 
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 import search.conf.Conf
 import search.conf.GlobPattern
 import search.log.LogMock
+import spock.lang.Specification
+import spock.lang.TempDir
 
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class FileFinderTest {
+class FileFinderTest extends Specification {
 
 	@TempDir
-	protected Path tempDir
+	private Path tempDir
 
 	private final List<Path> foundFiles = []
 
-	@BeforeEach
-	void setUp() {
+	void setup() {
 		def exampleClass = Paths.get this.class.classLoader.getResource('example.class').toURI()
 		def exampleGroovy = Paths.get this.class.classLoader.getResource('example.groovy').toURI()
 		def greekTxt = Paths.get this.class.classLoader.getResource('greek.txt').toURI()
@@ -40,89 +37,78 @@ class FileFinderTest {
 		copy file, parentDir.resolve(file.fileName)
 	}
 
-	@Test
-	void onePattern_noMatch() {
-		// When
-		findFiles new Conf(paths: [new GlobPattern('nonexisting.file')])
+	void 'one pattern, no match'() {
+		when:
+			findFiles new Conf(paths: [new GlobPattern('nonexisting.file')])
 
-		// Then
-		assert !foundFiles
+		then:
+			!foundFiles
 	}
 
-	@Test
-	void onePattern_withMatch_fileExcluded() {
-		// When
-		findFiles new Conf(
-				paths: [new GlobPattern('*.groovy')],
-				excludeFilePatterns: [~$//example.+/$]
-		)
+	void 'one pattern, with match, file excluded'() {
+		when:
+			findFiles new Conf(
+					paths: [new GlobPattern('*.groovy')],
+					excludeFilePatterns: [~$//example.+/$]
+			)
 
-		// Then
-		assert !foundFiles
+		then:
+			!foundFiles
 	}
 
-	@Test
-	void onePattern_withMatch_directoryExcluded() {
-		// When
-		findFiles new Conf(
-				paths: [new GlobPattern('*.groovy')],
-				excludeFilePatterns: [~$/a/d//$]
-		)
+	void 'one pattern, with match, directory excluded'() {
+		when:
+			findFiles new Conf(
+					paths: [new GlobPattern('*.groovy')],
+					excludeFilePatterns: [~$/a/d//$]
+			)
 
-		// Then
-		assert !foundFiles
+		then:
+			!foundFiles
 	}
 
-	@Test
-	void twoPatterns_withMatch() {
-		// When
-		findFiles new Conf(
-				paths: [new GlobPattern('*.groovy'), new GlobPattern('*.txt')]
-		)
+	void 'two patterns, with match'() {
+		when:
+			findFiles new Conf(
+					paths: [new GlobPattern('*.groovy'), new GlobPattern('*.txt')]
+			)
 
-		// Then
-		assertAll(
-				{ assert foundFiles?.size() == 2 },
-				{ assert foundFiles.any { it as String =~ $/\ba/d/example.groovy/$ } },
-				{ assert foundFiles.any { it as String =~ $/\ba/e/greek.txt/$ } }
-		)
+		then:
+			foundFiles?.size() == 2
+			foundFiles.any { it as String =~ $/\ba/d/example.groovy/$ }
+			foundFiles.any { it as String =~ $/\ba/e/greek.txt/$ }
 	}
 
-	@Test
-	void symbolicLinksAreSkipped() {
-		// Given
-		createSymbolicLink tempDir.resolve('a/d/example2.groovy'), tempDir.resolve('a/d/example.groovy')
+	void 'symbolic links are skipped'() {
+		given:
+			createSymbolicLink tempDir.resolve('a/d/example2.groovy'), tempDir.resolve('a/d/example.groovy')
 
-		// When
-		findFiles new Conf(paths: [new GlobPattern('*.groovy')])
+		when:
+			findFiles new Conf(paths: [new GlobPattern('*.groovy')])
 
-		// Then
-		assert foundFiles?.size() == 1
+		then:
+			foundFiles?.size() == 1
 	}
 
-	@Test
-	void binaryFilesAreSkipped() {
-		// When
-		findFiles new Conf(paths: [new GlobPattern('*.class')])
+	void 'binary files are skipped'() {
+		when:
+			findFiles new Conf(paths: [new GlobPattern('*.class')])
 
-		// Then
-		assert !foundFiles
+		then:
+			!foundFiles
 	}
 
-	@Test
-	void filesAreSorted() {
-		// Given
-		copy tempDir.resolve('a/d/example.groovy'), tempDir.resolve('a/d/anotherExample.groovy')
+	void 'files are sorted'() {
+		given:
+			copy tempDir.resolve('a/d/example.groovy'), tempDir.resolve('a/d/anotherExample.groovy')
 
-		// When
-		findFiles new Conf(paths: [new GlobPattern('*.groovy')])
+		when:
+			findFiles new Conf(paths: [new GlobPattern('*.groovy')])
 
-		// Then
-		assertAll(
-				{ assert foundFiles?.size() == 2 },
-				{ assert foundFiles[0] as String =~ $/a/d/anotherExample.groovy/$ },
-				{ assert foundFiles[1] as String =~ $/a/d/example.groovy/$ }
-		)
+		then:
+			foundFiles?.size() == 2
+			foundFiles[0] as String =~ $/a/d/anotherExample.groovy/$
+			foundFiles[1] as String =~ $/a/d/example.groovy/$
 	}
 
 	private void findFiles(Conf conf) {

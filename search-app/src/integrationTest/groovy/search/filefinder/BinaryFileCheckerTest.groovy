@@ -1,29 +1,24 @@
 package search.filefinder
 
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
+import spock.lang.Specification
 
 import java.nio.file.Paths
-import java.util.stream.Stream
 
-class BinaryFileCheckerTest {
+class BinaryFileCheckerTest extends Specification {
 
-	@ParameterizedTest
-	@MethodSource('shouldDetectFileAsBinaryOrTextArgs')
-	void shouldDetectFileAsBinaryOrText(String fileName, boolean expectBinary) {
-		def exampleFile = Paths.get this.class.classLoader.getResource(fileName).toURI()
-		assert BinaryFileChecker.checkIfBinary(exampleFile) == expectBinary
-	}
+	void 'should detect file as binary or text'() {
+		given:
+			def exampleFile = Paths.get this.class.classLoader.getResource(fileName).toURI()
 
-	@SuppressWarnings(['unused', 'UnusedPrivateMethod'])
-	private static Stream<Arguments> shouldDetectFileAsBinaryOrTextArgs() {
-		Stream.of(
-				Arguments.of('example.class', true),
-				Arguments.of('example.groovy', false),
-				Arguments.of('russian.txt', false),
-				Arguments.of('greek.txt', false)
-		)
+		expect:
+			BinaryFileChecker.checkIfBinary(exampleFile) == expectBinary
+
+		where:
+			fileName         || expectBinary
+			'example.class'  || true
+			'example.groovy' || false
+			'russian.txt'    || false
+			'greek.txt'      || false
 	}
 
 }

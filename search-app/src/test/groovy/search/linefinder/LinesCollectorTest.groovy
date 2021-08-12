@@ -1,13 +1,11 @@
 package search.linefinder
 
-import static org.junit.jupiter.api.Assertions.assertThrows
 import static search.linefinder.LineVisibility.HIDE
 import static search.linefinder.LineVisibility.SHOW
-import static search.testutil.GroovyAssertions.assertAll
 
-import org.junit.jupiter.api.Test
+import spock.lang.Specification
 
-class LinesCollectorTest {
+class LinesCollectorTest extends Specification {
 
 	private static final String TEST_LINE_CONTEXT_BEFORE_BEFORE = 'context before before'
 	private static final String TEST_LINE_CONTEXT_BEFORE = 'context before'
@@ -18,460 +16,427 @@ class LinesCollectorTest {
 
 	private LinesCollector linesCollector
 
-	@Test
-	void matchedLinesAndContextDisabled_foundOneMatchedLine_shouldYieldEmptyList() {
-		// Given
-		linesCollector = new LinesCollector(0, 0, 100)
+	void 'matched lines and context disabled, found one matched line, should yield empty list'() {
+		given:
+			linesCollector = new LinesCollector(0, 0, 100)
 
-		// When
-		linesCollector.storeFoundLine TEST_LINENR, TEST_LINE, SHOW
+		when:
+			linesCollector.storeFoundLine TEST_LINENR, TEST_LINE, SHOW
 
-		// Then
-		assertAll(
-				{ assert !linesCollector.foundLines },
-				{ assert !linesCollector.currentContextLinesBefore }
-		)
+		then:
+			with(linesCollector) {
+				!foundLines
+				!currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void matchedLinesAndContextDisabled_foundOneContextLine_shouldYieldEmptyList() {
-		// Given
-		linesCollector = new LinesCollector(0, 0, 100)
+	void 'matched lines and context disabled, found one context line, should yield empty list'() {
+		given:
+			linesCollector = new LinesCollector(0, 0, 100)
 
-		// When
-		linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
+		when:
+			linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
 
-		// Then
-		assertAll(
-				{ assert !linesCollector.foundLines },
-				{ assert !linesCollector.currentContextLinesBefore }
-		)
+		then:
+			with(linesCollector) {
+				!foundLines
+				!currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void noMatchedLinesAndOneContextLineEnabled_shouldYieldEmptyList() {
-		// Given
-		linesCollector = new LinesCollector(0, 1, 100)
+	void 'no matched lines and one context line enabled, should yield empty list'() {
+		given:
+			linesCollector = new LinesCollector(0, 1, 100)
 
-		// When
-		linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
+		when:
+			linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
 
-		// Then
-		assertAll(
-				{ assert !linesCollector.foundLines },
-				{ assert !linesCollector.currentContextLinesBefore }
-		)
+		then:
+			with(linesCollector) {
+				!foundLines
+				!currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void oneMatchedLineAndNoContextEnabled_shouldYieldOneLine() {
-		// Given
-		linesCollector = new LinesCollector(1, 0, 100)
+	void 'one matched line and no context enabled, should yield one line'() {
+		given:
+			linesCollector = new LinesCollector(1, 0, 100)
 
-		// When
-		linesCollector.with {
-			storeContextLine TEST_LINE_CONTEXT_BEFORE
-			storeFoundLine TEST_LINENR, TEST_LINE, SHOW
-			storeContextLine TEST_LINE_CONTEXT_AFTER
-		}
+		when:
+			linesCollector.with {
+				storeContextLine TEST_LINE_CONTEXT_BEFORE
+				storeFoundLine TEST_LINENR, TEST_LINE, SHOW
+				storeContextLine TEST_LINE_CONTEXT_AFTER
+			}
 
-		// Then
-		assertAll(
-				{ assert linesCollector.foundLines == [new FoundLine(line: TEST_LINE, lineNr: TEST_LINENR)] },
-				{ assert !linesCollector.currentContextLinesBefore }
-		)
+		then:
+			with(linesCollector) {
+				foundLines == [new FoundLine(line: TEST_LINE, lineNr: TEST_LINENR)]
+				!currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void oneMatchedLongLine_shouldYieldOneTruncatedLine() {
-		// Given
-		linesCollector = new LinesCollector(1, 0, 20)
+	void 'one matched long line, should yield one truncated line'() {
+		given:
+			linesCollector = new LinesCollector(1, 0, 20)
 
-		// When
-		linesCollector.storeFoundLine TEST_LINENR, 'this is a very long line that should be truncated', SHOW
+		when:
+			linesCollector.storeFoundLine TEST_LINENR, 'this is a very long line that should be truncated', SHOW
 
-		// Then
-		assert linesCollector.foundLines == [new FoundLine(line: 'this is a very long ...', lineNr: TEST_LINENR)]
+		then:
+			linesCollector.foundLines == [new FoundLine(line: 'this is a very long ...', lineNr: TEST_LINENR)]
 	}
 
-	@Test
-	void oneMatchedLineAndOneContextLineEnabled_singleMatch_withoutOverflow() {
-		// Given
-		linesCollector = new LinesCollector(1, 1, 100)
+	void 'one matched line and one context line enabled, single match, without overflow'() {
+		given:
+			linesCollector = new LinesCollector(1, 1, 100)
 
-		// When
-		linesCollector.with {
-			storeContextLine TEST_LINE_CONTEXT_BEFORE
-			storeFoundLine TEST_LINENR, TEST_LINE, SHOW
-			storeContextLine TEST_LINE_CONTEXT_AFTER
-		}
+		when:
+			linesCollector.with {
+				storeContextLine TEST_LINE_CONTEXT_BEFORE
+				storeFoundLine TEST_LINENR, TEST_LINE, SHOW
+				storeContextLine TEST_LINE_CONTEXT_AFTER
+			}
 
-		// Then
-		assertAll(
-				{
-					assert linesCollector.foundLines == [new FoundLine(
-							line: TEST_LINE,
-							lineNr: TEST_LINENR,
-							contextLinesBefore: [TEST_LINE_CONTEXT_BEFORE],
-							contextLinesAfter: [TEST_LINE_CONTEXT_AFTER]
-					)]
-				},
-				{ assert !linesCollector.currentContextLinesBefore }
-		)
+		then:
+			with(linesCollector) {
+				foundLines == [new FoundLine(
+						line: TEST_LINE,
+						lineNr: TEST_LINENR,
+						contextLinesBefore: [TEST_LINE_CONTEXT_BEFORE],
+						contextLinesAfter: [TEST_LINE_CONTEXT_AFTER]
+				)]
+				!currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void oneMatchedLineAndOneContextLineEnabled_singleMatch_withOverflow() {
-		// Given
-		linesCollector = new LinesCollector(1, 1, 100)
+	void 'one matched line and one context line enabled, single match, with overflow'() {
+		given:
+			linesCollector = new LinesCollector(1, 1, 100)
 
-		// When
-		linesCollector.with {
-			storeContextLine TEST_LINE_CONTEXT_BEFORE_BEFORE
-			storeContextLine TEST_LINE_CONTEXT_BEFORE
-			storeFoundLine TEST_LINENR, TEST_LINE, SHOW
-			storeContextLine TEST_LINE_CONTEXT_AFTER
-			storeContextLine TEST_LINE_CONTEXT_AFTER_AFTER
-		}
+		when:
+			linesCollector.with {
+				storeContextLine TEST_LINE_CONTEXT_BEFORE_BEFORE
+				storeContextLine TEST_LINE_CONTEXT_BEFORE
+				storeFoundLine TEST_LINENR, TEST_LINE, SHOW
+				storeContextLine TEST_LINE_CONTEXT_AFTER
+				storeContextLine TEST_LINE_CONTEXT_AFTER_AFTER
+			}
 
-		// Then
-		assertAll(
-				{
-					assert linesCollector.foundLines == [new FoundLine(
-							line: TEST_LINE,
-							lineNr: TEST_LINENR,
-							contextLinesBefore: [TEST_LINE_CONTEXT_BEFORE],
-							contextLinesAfter: [TEST_LINE_CONTEXT_AFTER],
-							contextLinesBeforeOverflow: true,
-							contextLinesAfterOverflow: true
-					)]
-				},
-				{ assert !linesCollector.currentContextLinesBefore }
-		)
+		then:
+			with(linesCollector) {
+				foundLines == [new FoundLine(
+						line: TEST_LINE,
+						lineNr: TEST_LINENR,
+						contextLinesBefore: [TEST_LINE_CONTEXT_BEFORE],
+						contextLinesAfter: [TEST_LINE_CONTEXT_AFTER],
+						contextLinesBeforeOverflow: true,
+						contextLinesAfterOverflow: true
+				)]
+				!currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void oneMatchedLineAndOneContextLineEnabled_reset() {
-		// Given
-		linesCollector = new LinesCollector(1, 1, 100)
+	void 'one matched line and one context line enabled, reset'() {
+		given:
+			linesCollector = new LinesCollector(1, 1, 100)
 
-		// When
-		linesCollector.with {
-			storeContextLine TEST_LINE_CONTEXT_BEFORE
-			storeFoundLine TEST_LINENR, TEST_LINE, SHOW
-			storeContextLine TEST_LINE_CONTEXT_AFTER
-			reset()
-		}
+		when:
+			linesCollector.with {
+				storeContextLine TEST_LINE_CONTEXT_BEFORE
+				storeFoundLine TEST_LINENR, TEST_LINE, SHOW
+				storeContextLine TEST_LINE_CONTEXT_AFTER
+				reset()
+			}
 
-		// Then
-		assertAll(
-				{ assert !linesCollector.foundLines },
-				{ assert !linesCollector.currentContextLinesBefore }
-		)
+		then:
+			with(linesCollector) {
+				!foundLines
+				!currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void oneMatchedLineAndOneContextLineEnabled_oneMatchDisplayed() {
-		// Given
-		linesCollector = new LinesCollector(1, 1, 100)
+	void 'one matched line and one context line enabled, one match displayed'() {
+		given:
+			linesCollector = new LinesCollector(1, 1, 100)
 
-		// When
-		linesCollector.with {
-			storeContextLine 'c1'
-			storeFoundLine 2, 'f1', SHOW
-			storeContextLine 'c2'
-			storeFoundLine 4, 'f2', SHOW
-		}
+		when:
+			linesCollector.with {
+				storeContextLine 'c1'
+				storeFoundLine 2, 'f1', SHOW
+				storeContextLine 'c2'
+				storeFoundLine 4, 'f2', SHOW
+			}
 
-		// Then
-		assertAll(
-				{ assert linesCollector.hasFinished() },
-				{
-					assert linesCollector.foundLines == [
-							new FoundLine(
-									line: 'f1',
-									lineNr: 2,
-									contextLinesBefore: ['c1'],
-									contextLinesAfter: ['c2'],
-									contextLinesAfterOverflow: true
-							)
-					]
-				},
-				{ assert !linesCollector.currentContextLinesBefore }
-		)
+		then:
+			with(linesCollector) {
+				hasFinished()
+				foundLines == [
+						new FoundLine(
+								line: 'f1',
+								lineNr: 2,
+								contextLinesBefore: ['c1'],
+								contextLinesAfter: ['c2'],
+								contextLinesAfterOverflow: true
+						)
+				]
+				!currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void oneMatchedLineAndOneContextLineEnabled_oneMatch_hidden() {
-		// Given
-		linesCollector = new LinesCollector(1, 1, 100)
+	void 'one matched line and one context line enabled, one match, hidden'() {
+		given:
+			linesCollector = new LinesCollector(1, 1, 100)
 
-		// When
-		linesCollector.with {
-			storeContextLine 'c1'
-			storeFoundLine 2, 'f1', HIDE
-			storeContextLine 'c2'
-		}
+		when:
+			linesCollector.with {
+				storeContextLine 'c1'
+				storeFoundLine 2, 'f1', HIDE
+				storeContextLine 'c2'
+			}
 
-		// Then
-		assert !linesCollector.foundLines
+		then:
+			!linesCollector.foundLines
 	}
 
-	@Test
-	void oneMatchedLineAndOneContextLineEnabled_twoMatches_oneHidden() {
-		// Given
-		linesCollector = new LinesCollector(1, 1, 100)
+	void 'one matched line and one context line enabled, two matches, one hidden'() {
+		given:
+			linesCollector = new LinesCollector(1, 1, 100)
 
-		// When
-		linesCollector.with {
-			storeContextLine 'c1'
-			storeFoundLine 2, 'f1', SHOW
-			storeContextLine 'c2'
-			storeFoundLine 4, 'f2', HIDE
-			storeContextLine 'c3'
-		}
+		when:
+			linesCollector.with {
+				storeContextLine 'c1'
+				storeFoundLine 2, 'f1', SHOW
+				storeContextLine 'c2'
+				storeFoundLine 4, 'f2', HIDE
+				storeContextLine 'c3'
+			}
 
-		// Then
-		assertAll(
-				{
-					assert linesCollector.foundLines == [new FoundLine(
-							line: 'f1',
-							lineNr: 2,
-							contextLinesBefore: ['c1'],
-							contextLinesAfter: ['c2'],
-							contextLinesAfterOverflow: true
-					)]
-				},
-				{ assert !linesCollector.currentContextLinesBefore }
-		)
-	}
-
-	@Test
-	void twoMatchedLinesAndOneContextLineEnabled() {
-		// Given
-		linesCollector = new LinesCollector(2, 1, 100)
-
-		// When
-		linesCollector.with {
-			storeContextLine 'c1'
-			storeFoundLine 2, 'f1', SHOW
-			storeContextLine 'c2'
-			storeFoundLine 4, 'f2', SHOW
-			storeContextLine 'c3'
-		}
-
-		// Then
-		assertAll(
-				{
-					assert linesCollector.foundLines == [
-							new FoundLine(
-									line: 'f1',
-									lineNr: 2,
-									contextLinesBefore: ['c1'],
-									contextLinesAfter: ['c2']
-							),
-							new FoundLine(
-									line: 'f2',
-									lineNr: 4,
-									contextLinesBefore: [],
-									contextLinesAfter: ['c3']
-							)
-					]
-				},
-				{ assert !linesCollector.currentContextLinesBefore }
-		)
-	}
-
-	@Test
-	void matchedLineShouldBeDisplayedAsContextLineAfterTheLimit_mixed() {
-		// Given
-		linesCollector = new LinesCollector(1, 2, 100)
-
-		// When
-		linesCollector.with {
-			storeContextLine 'c1'
-			storeFoundLine 2, 'f1', SHOW
-			storeContextLine 'c2'
-			storeFoundLine 4, 'f2', SHOW
-			storeContextLine 'c3'
-		}
-
-		// Then
-		assert linesCollector.foundLines == [
-				new FoundLine(
+		then:
+			with(linesCollector) {
+				foundLines == [new FoundLine(
 						line: 'f1',
 						lineNr: 2,
 						contextLinesBefore: ['c1'],
-						contextLinesAfter: ['c2', 'f2'],
+						contextLinesAfter: ['c2'],
 						contextLinesAfterOverflow: true
-				)
-		]
+				)]
+				!currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void matchedLineShouldBeDisplayedAsContextLineAfterTheLimit_onlyFoundLines() {
-		// Given
-		linesCollector = new LinesCollector(1, 2, 100)
+	void 'two matched lines and one context line enabled'() {
+		given:
+			linesCollector = new LinesCollector(2, 1, 100)
 
-		// When
-		linesCollector.with {
-			storeFoundLine 2, 'f1', SHOW
-			storeFoundLine 3, 'f2', SHOW
-			storeFoundLine 4, 'f3', SHOW
-		}
+		when:
+			linesCollector.with {
+				storeContextLine 'c1'
+				storeFoundLine 2, 'f1', SHOW
+				storeContextLine 'c2'
+				storeFoundLine 4, 'f2', SHOW
+				storeContextLine 'c3'
+			}
 
-		// Then
-		assert linesCollector.foundLines == [
-				new FoundLine(
-						line: 'f1',
-						lineNr: 2,
-						contextLinesAfter: ['f2', 'f3'],
-						contextLinesAfterOverflow: false
-				)
-		]
+		then:
+			with(linesCollector) {
+				foundLines == [
+						new FoundLine(
+								line: 'f1',
+								lineNr: 2,
+								contextLinesBefore: ['c1'],
+								contextLinesAfter: ['c2']
+						),
+						new FoundLine(
+								line: 'f2',
+								lineNr: 4,
+								contextLinesBefore: [],
+								contextLinesAfter: ['c3']
+						)
+				]
+				!currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void unlimitedMatchesAndOneContextLineEnabled() {
-		// Given
-		linesCollector = new LinesCollector(-1, 1, 100)
+	void 'matched line should be displayed as context line after the limit, mixed'() {
+		given:
+			linesCollector = new LinesCollector(1, 2, 100)
 
-		// When
-		linesCollector.with {
-			storeContextLine 'c1'
-			storeFoundLine 2, 'f1', SHOW
-			storeContextLine 'c2'
-			storeFoundLine 4, 'f2', SHOW
-			storeContextLine 'c3'
-			storeContextLine 'c4'
-		}
+		when:
+			linesCollector.with {
+				storeContextLine 'c1'
+				storeFoundLine 2, 'f1', SHOW
+				storeContextLine 'c2'
+				storeFoundLine 4, 'f2', SHOW
+				storeContextLine 'c3'
+			}
 
-		// Then
-		assertAll(
-				{
-					assert linesCollector.foundLines == [
-							new FoundLine(
-									line: 'f1',
-									lineNr: 2,
-									contextLinesBefore: ['c1'],
-									contextLinesAfter: ['c2']
-							),
-							new FoundLine(
-									line: 'f2',
-									lineNr: 4,
-									contextLinesBefore: [],
-									contextLinesAfter: ['c3'],
-									contextLinesAfterOverflow: true
-							)
-					]
-				},
-				{ assert linesCollector.currentContextLinesBefore }
-		)
+		then:
+			linesCollector.foundLines == [
+					new FoundLine(
+							line: 'f1',
+							lineNr: 2,
+							contextLinesBefore: ['c1'],
+							contextLinesAfter: ['c2', 'f2'],
+							contextLinesAfterOverflow: true
+					)
+			]
 	}
 
-	@Test
-	void shouldNotBeOverflowBetweenJustEnoughContextLines() {
-		// Given
-		linesCollector = new LinesCollector(-1, 2, 100)
+	void 'matched line should be displayed as context line after the limit, only found lines'() {
+		given:
+			linesCollector = new LinesCollector(1, 2, 100)
 
-		// When
-		linesCollector.with {
-			storeFoundLine 1, 'f1', SHOW
-			storeContextLine 'c1'
-			storeContextLine 'c2'
-			storeContextLine 'c3'
-			storeContextLine 'c4'
-			storeFoundLine 6, 'f2', SHOW
-		}
+		when:
+			linesCollector.with {
+				storeFoundLine 2, 'f1', SHOW
+				storeFoundLine 3, 'f2', SHOW
+				storeFoundLine 4, 'f3', SHOW
+			}
 
-		// Then
-		assert linesCollector.foundLines == [
-				new FoundLine(
-						line: 'f1',
-						lineNr: 1,
-						contextLinesBefore: [],
-						contextLinesAfter: ['c1', 'c2']
-				),
-				new FoundLine(
-						line: 'f2',
-						lineNr: 6,
-						contextLinesBefore: ['c3', 'c4'],
-						contextLinesAfter: []
-				)
-		]
+		then:
+			linesCollector.foundLines == [
+					new FoundLine(
+							line: 'f1',
+							lineNr: 2,
+							contextLinesAfter: ['f2', 'f3'],
+							contextLinesAfterOverflow: false
+					)
+			]
 	}
 
-	@Test
-	void shouldOverflowBeforeAndAfterWithTooManyContextLines() {
-		// Given
-		linesCollector = new LinesCollector(-1, 2, 100)
+	void 'unlimited matches and one context line enabled'() {
+		given:
+			linesCollector = new LinesCollector(-1, 1, 100)
 
-		// When
-		linesCollector.with {
-			storeFoundLine 1, 'f1', SHOW
-			storeContextLine 'c1'
-			storeContextLine 'c2'
-			storeContextLine 'c3'
-			storeContextLine 'c4'
-			storeContextLine 'c5'
-			storeContextLine 'c6'
-			storeFoundLine 8, 'f2', SHOW
-		}
+		when:
+			linesCollector.with {
+				storeContextLine 'c1'
+				storeFoundLine 2, 'f1', SHOW
+				storeContextLine 'c2'
+				storeFoundLine 4, 'f2', SHOW
+				storeContextLine 'c3'
+				storeContextLine 'c4'
+			}
 
-		// Then
-		assert linesCollector.foundLines == [
-				new FoundLine(
-						line: 'f1',
-						lineNr: 1,
-						contextLinesBefore: [],
-						contextLinesAfter: ['c1', 'c2'],
-						contextLinesAfterOverflow: true
-				),
-				new FoundLine(
-						line: 'f2',
-						lineNr: 8,
-						contextLinesBefore: ['c5', 'c6'],
-						contextLinesAfter: []
-				)
-		]
+		then:
+			with(linesCollector) {
+				foundLines == [
+						new FoundLine(
+								line: 'f1',
+								lineNr: 2,
+								contextLinesBefore: ['c1'],
+								contextLinesAfter: ['c2']
+						),
+						new FoundLine(
+								line: 'f2',
+								lineNr: 4,
+								contextLinesBefore: [],
+								contextLinesAfter: ['c3'],
+								contextLinesAfterOverflow: true
+						)
+				]
+				currentContextLinesBefore
+			}
 	}
 
-	@Test
-	void doNotAcceptFoundLinesWhenSearchFinished() {
-		// Given
-		linesCollector = new LinesCollector(1, 1, 100)
+	void 'should not be overflow between just enough context lines'() {
+		given:
+			linesCollector = new LinesCollector(-1, 2, 100)
 
-		// When
-		linesCollector.with {
-			storeContextLine 'c1'
-			storeFoundLine 2, 'f1', SHOW
-			storeContextLine 'c2'
-			storeFoundLine 4, 'f2', SHOW
-		}
+		when:
+			linesCollector.with {
+				storeFoundLine 1, 'f1', SHOW
+				storeContextLine 'c1'
+				storeContextLine 'c2'
+				storeContextLine 'c3'
+				storeContextLine 'c4'
+				storeFoundLine 6, 'f2', SHOW
+			}
 
-		// Then
-		assertThrows(LinesCollector.LinesCollectorException) {
+		then:
+			linesCollector.foundLines == [
+					new FoundLine(
+							line: 'f1',
+							lineNr: 1,
+							contextLinesBefore: [],
+							contextLinesAfter: ['c1', 'c2']
+					),
+					new FoundLine(
+							line: 'f2',
+							lineNr: 6,
+							contextLinesBefore: ['c3', 'c4'],
+							contextLinesAfter: []
+					)
+			]
+	}
+
+	void 'should overflow before and after with too many context lines'() {
+		given:
+			linesCollector = new LinesCollector(-1, 2, 100)
+
+		when:
+			linesCollector.with {
+				storeFoundLine 1, 'f1', SHOW
+				storeContextLine 'c1'
+				storeContextLine 'c2'
+				storeContextLine 'c3'
+				storeContextLine 'c4'
+				storeContextLine 'c5'
+				storeContextLine 'c6'
+				storeFoundLine 8, 'f2', SHOW
+			}
+
+		then:
+			linesCollector.foundLines == [
+					new FoundLine(
+							line: 'f1',
+							lineNr: 1,
+							contextLinesBefore: [],
+							contextLinesAfter: ['c1', 'c2'],
+							contextLinesAfterOverflow: true
+					),
+					new FoundLine(
+							line: 'f2',
+							lineNr: 8,
+							contextLinesBefore: ['c5', 'c6'],
+							contextLinesAfter: []
+					)
+			]
+	}
+
+	void 'do not accept found lines when search finished'() {
+		given:
+			linesCollector = new LinesCollector(1, 1, 100)
+			linesCollector.with {
+				storeContextLine 'c1'
+				storeFoundLine 2, 'f1', SHOW
+				storeContextLine 'c2'
+				storeFoundLine 4, 'f2', SHOW
+			}
+
+		when:
 			linesCollector.storeFoundLine 5, 'f3', SHOW
-		}
+
+		then:
+			thrown LinesCollector.LinesCollectorException
 	}
 
-	@Test
-	void doNotAcceptContextLinesWhenSearchFinished() {
-		// Given
-		linesCollector = new LinesCollector(1, 1, 100)
+	void 'do not accept context lines when search finished'() {
+		given:
+			linesCollector = new LinesCollector(1, 1, 100)
+			linesCollector.with {
+				storeContextLine 'c1'
+				storeFoundLine 2, 'f1', SHOW
+				storeContextLine 'c2'
+				storeFoundLine 4, 'f2', SHOW
+			}
 
-		// When
-		linesCollector.with {
-			storeContextLine 'c1'
-			storeFoundLine 2, 'f1', SHOW
-			storeContextLine 'c2'
-			storeFoundLine 4, 'f2', SHOW
-		}
-
-		// Then
-		assertThrows(LinesCollector.LinesCollectorException) {
+		when:
 			linesCollector.storeContextLine 'c3'
-		}
+
+		then:
+			thrown LinesCollector.LinesCollectorException
 	}
 
 }

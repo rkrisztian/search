@@ -2,19 +2,18 @@ package search.linefinder
 
 import static java.nio.file.Files.copy
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
-import static search.testutil.GroovyAssertions.assertAll
 
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 import search.conf.Conf
 import search.conf.PatternData
 import search.log.LogMock
 import search.resultsprinter.IResultsPrinter
+import spock.lang.Specification
+import spock.lang.TempDir
 
 import java.nio.file.Path
 import java.nio.file.Paths
 
-class LineFinderTest {
+class LineFinderTest extends Specification {
 
 	private static final String EXAMPLE_GROOVY_FILE_NAME = 'example.groovy'
 
@@ -24,140 +23,122 @@ class LineFinderTest {
 
 	private List<FoundLine> foundLines
 
-	@Test
-	void shouldPrintOnlyFileNameWhenNoPatterns() {
-		// Given
-		def lineFinder = makeLineFinderFor(new Conf())
+	@TempDir
+	private Path tempDir
 
-		// When
-		lineFinder.findLines exampleGroovyFile
+	void 'should print only file name when no patterns'() {
+		given:
+			def lineFinder = makeLineFinderFor(new Conf())
 
-		// Then
-		assertAll(
-				{ assert Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME },
-				{ assert !foundLines }
-		)
+		when:
+			lineFinder.findLines exampleGroovyFile
+
+		then:
+			Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
+			!foundLines
 	}
 
-	@Test
-	void shouldFindLinesWithPatterns() {
-		// Given
-		def lineFinder = makeLineFinderFor(new Conf(
-				patternData: [
-						new PatternData(searchPattern: ~/private/),
-						new PatternData(searchPattern: ~/static/)
-				]
-		))
+	void 'should find lines with patterns'() {
+		given:
+			def lineFinder = makeLineFinderFor(new Conf(
+					patternData: [
+							new PatternData(searchPattern: ~/private/),
+							new PatternData(searchPattern: ~/static/)
+					]
+			))
 
-		// When
-		lineFinder.findLines exampleGroovyFile
+		when:
+			lineFinder.findLines exampleGroovyFile
 
-		// Then
-		assertAll(
-				{ assert Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME },
-				{ assert foundLines?.size() == 2 },
-				{ assert foundLines?.every { it.line =~ /private static/ } }
-		)
+		then:
+			Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
+			foundLines?.size() == 2
+			foundLines?.every { it.line =~ /private static/ }
 	}
 
-	@Test
-	void mustFindAllPatternsEvenWithExcludePatternsAdded() {
-		// Given
-		def lineFinder = makeLineFinderFor(new Conf(
-				patternData: [
-						new PatternData(searchPattern: ~/class/),
-						new PatternData(searchPattern: ~/private/)
-				],
-				excludeLinePatterns: [~/static/]
-		))
+	void 'must find all patterns even with exclude patterns added'() {
+		given:
+			def lineFinder = makeLineFinderFor(new Conf(
+					patternData: [
+							new PatternData(searchPattern: ~/class/),
+							new PatternData(searchPattern: ~/private/)
+					],
+					excludeLinePatterns: [~/static/]
+			))
 
-		// When
-		lineFinder.findLines exampleGroovyFile
+		when:
+			lineFinder.findLines exampleGroovyFile
 
-		// Then
-		assertAll(
-				{ assert !filePath },
-				{ assert !foundLines }
-		)
+		then:
+			!filePath
+			!foundLines
 	}
 
-	@Test
-	void shouldNotFindLinesWithNegativePattern() {
-		// Given
-		def lineFinder = makeLineFinderFor(new Conf(
-				patternData: [
-						new PatternData(searchPattern: ~/private/),
-						new PatternData(searchPattern: ~/static/, negativeSearch: true)
-				]
-		))
+	void 'should not find lines with negative pattern'() {
+		given:
+			def lineFinder = makeLineFinderFor(new Conf(
+					patternData: [
+							new PatternData(searchPattern: ~/private/),
+							new PatternData(searchPattern: ~/static/, negativeSearch: true)
+					]
+			))
 
-		// When
-		lineFinder.findLines exampleGroovyFile
+		when:
+			lineFinder.findLines exampleGroovyFile
 
-		// Then
-		assertAll(
-				{ assert !filePath },
-				{ assert !foundLines }
-		)
+		then:
+			!filePath
+			!foundLines
 	}
 
-	@Test
-	void shouldNotShowLinesWithPatternToHide() {
-		// Given
-		def lineFinder = makeLineFinderFor(new Conf(
-				patternData: [new PatternData(searchPattern: ~/private/, hidePattern: true)]
-		))
+	void 'should not show lines with pattern to hide'() {
+		given:
+			def lineFinder = makeLineFinderFor(new Conf(
+					patternData: [new PatternData(searchPattern: ~/private/, hidePattern: true)]
+			))
 
-		// When
-		lineFinder.findLines exampleGroovyFile
+		when:
+			lineFinder.findLines exampleGroovyFile
 
-		// Then
-		assertAll(
-				{ assert Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME },
-				{ assert !foundLines }
-		)
+		then:
+			Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
+			!foundLines
 	}
 
-	@Test
-	void shouldLetResultsPrinterShowReplacements() {
-		// Given
-		def lineFinder = makeLineFinderFor(new Conf(
-				patternData: [new PatternData(searchPattern: ~/private/, replace: true, replaceText: 'public')],
-				doReplace: true,
-				dryRun: true
-		))
+	void 'should let results printer show replacements'() {
+		given:
+			def lineFinder = makeLineFinderFor(new Conf(
+					patternData: [new PatternData(searchPattern: ~/private/, replace: true, replaceText: 'public')],
+					doReplace: true,
+					dryRun: true
+			))
 
-		// When
-		lineFinder.findLines exampleGroovyFile
+		when:
+			lineFinder.findLines exampleGroovyFile
 
-		// Then
-		assertAll(
-				{ assert Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME },
-				{ assert foundLines?.size() == 2 },
-				{ assert foundLines?.every { it.line =~ /private static/ } }
-		)
+		then:
+			Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
+			foundLines?.size() == 2
+			foundLines?.every { it.line =~ /private static/ }
 	}
 
-	@Test
-	void shouldDoReplacementsInFile(@TempDir Path tempDir) {
-		// Given
-		def exampleGroovyFileCopy = copyExampleGroovyFile tempDir
-		def lineFinder = makeLineFinderFor(new Conf(
-				patternData: [new PatternData(searchPattern: ~/private/, replace: true, replaceText: 'public')],
-				doReplace: true,
-				dryRun: false
-		))
+	void 'should do replacements in file'() {
+		given:
+			def exampleGroovyFileCopy = copyExampleGroovyFile tempDir
+			def lineFinder = makeLineFinderFor(new Conf(
+					patternData: [new PatternData(searchPattern: ~/private/, replace: true, replaceText: 'public')],
+					doReplace: true,
+					dryRun: false
+			))
 
-		// When
-		lineFinder.findLines exampleGroovyFileCopy
+		when:
+			lineFinder.findLines exampleGroovyFileCopy
 
-		// Then
-		assertAll(
-				{ assert Paths.get(filePath).fileName as String == exampleGroovyFileCopy.fileName as String },
-				{ assert foundLines?.size() == 2 },
-				{ assert foundLines?.every { it.line =~ /private static/ } },
-				{ assert exampleGroovyFileCopy.readLines().every { !(it =~ /private static/) } }
-		)
+		then:
+			Paths.get(filePath).fileName as String == exampleGroovyFileCopy.fileName as String
+			foundLines?.size() == 2
+			foundLines?.every { it.line =~ /private static/ }
+			exampleGroovyFileCopy.readLines().every { !(it =~ /private static/) }
 	}
 
 	private LineFinder makeLineFinderFor(Conf conf) {

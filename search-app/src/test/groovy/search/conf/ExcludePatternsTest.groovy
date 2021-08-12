@@ -2,19 +2,17 @@ package search.conf
 
 import static search.conf.ConfigParser.PROPERTY_EXCLUDE_FILE_PATTERNS
 
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import search.log.ILog
 import search.log.LogMock
+import spock.lang.Specification
 
-class ExcludePatternsTest {
+class ExcludePatternsTest extends Specification {
 
 	private Conf conf
 	private ILog log
 	private ArgumentsParser argumentsParser
 	private ConfigParser configParser
 
-	@BeforeEach
 	void setup() {
 		conf = new Conf()
 		log = LogMock.get()
@@ -22,26 +20,25 @@ class ExcludePatternsTest {
 		configParser = new ConfigParser(conf, log)
 	}
 
-	@Test
-	void testConfigExcludesPreceedArgumentExcludes() {
-		// Given
-		def config = new ConfigSlurper().parse("""
-			${PROPERTY_EXCLUDE_FILE_PATTERNS} = [
-				/pattern.1/,
-				/pattern.2/
-			]
-		""")
+	void 'config excludes preceed argument excludes'() {
+		given:
+			def config = new ConfigSlurper().parse("""
+				${PROPERTY_EXCLUDE_FILE_PATTERNS} = [
+					/pattern.1/,
+					/pattern.2/
+				]
+			""")
 
-		// When
-		argumentsParser.parseArgs('-s', 'some.file.1', '-s', 'some.file.2')
-		configParser.mapConfigObject config
+		when:
+			argumentsParser.parseArgs('-s', 'some.file.1', '-s', 'some.file.2')
+			configParser.mapConfigObject config
 
-		// Then
-		assert conf.excludeFilePatterns.size() == 4
-		assert conf.excludeFilePatterns[0].pattern() == /pattern.1/
-		assert conf.excludeFilePatterns[1].pattern() == /pattern.2/
-		assert conf.excludeFilePatterns[2].pattern() == /some.file.1/
-		assert conf.excludeFilePatterns[3].pattern() == /some.file.2/
+		then:
+			conf.excludeFilePatterns.size() == 4
+			conf.excludeFilePatterns[0].pattern() == /pattern.1/
+			conf.excludeFilePatterns[1].pattern() == /pattern.2/
+			conf.excludeFilePatterns[2].pattern() == /some.file.1/
+			conf.excludeFilePatterns[3].pattern() == /some.file.2/
 	}
 
 }

@@ -50,22 +50,25 @@ ruleset {
 	}
 	ruleset 'rulesets/imports.xml'
 	ruleset('rulesets/junit.xml') {
-		// ParameterizedTest should be ignored too (see https://github.com/CodeNarc/CodeNarc/issues/624)
-		'JUnitPublicNonTestMethod' ignoreMethodsWithAnnotations: [
-				'After', 'AfterAll', 'AfterClass', 'AfterEach', 'Before', 'BeforeAll', 'BeforeClass', 'BeforeEach', 'Disabled',
-				'Ignore', 'Override', 'Test', 'ParameterizedTest'
-		].join(',')
+		// Not Spock friendly
+		'JUnitPublicNonTestMethod' enabled: false
 	}
 	ruleset('rulesets/logging.xml') {
 		// TODO: Think of a better way of logging.
 		'Println' enabled: false
 		'SystemErrPrint' enabled: false
 	}
-	ruleset 'rulesets/naming.xml'
+	ruleset('rulesets/naming.xml') {
+		// Not Spock friendly
+		'MethodName' doNotApplyToFilesMatching: /.*?Test\.groovy$/
+	}
 	ruleset('rulesets/size.xml') {
 		// JaCoCo is used, not Cobertura.
 		'CrapMetric' enabled: false
 	}
-	ruleset 'rulesets/unnecessary.xml'
+	ruleset('rulesets/unnecessary.xml') {
+		// Not Spock friendly (https://github.com/CodeNarc/CodeNarc/issues/329)
+		'UnnecessaryBooleanExpression' doNotApplyToFilesMatching: /.*?Test\.groovy$/
+	}
 	ruleset 'rulesets/unused.xml'
 }
