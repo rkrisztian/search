@@ -7,6 +7,7 @@ import search.conf.Conf
 import search.conf.PatternData
 import search.log.LogMock
 import search.resultsprinter.IResultsPrinter
+import spock.lang.ResourceLock
 import spock.lang.Specification
 import spock.lang.TempDir
 
@@ -60,7 +61,7 @@ class LineFinderTest extends Specification {
 			}
 	}
 
-	void 'must find all patterns even with exclude patterns added'() {
+	void 'finds nothing when exclude pattern matches'() {
 		given:
 			def lineFinder = makeLineFinderFor(new Conf(
 					patternData: [
@@ -80,7 +81,26 @@ class LineFinderTest extends Specification {
 			}
 	}
 
-	void 'should not find lines with negative pattern'() {
+	void 'must find lines when exclude patterns do not match'() {
+		given:
+			def lineFinder = makeLineFinderFor(new Conf(
+					patternData: [
+							new PatternData(searchPattern: ~/class/),
+					],
+					excludeLinePatterns: [~/static/]
+			))
+
+		when:
+			lineFinder.findLines exampleGroovyFile
+
+		then:
+			verifyAll(foundLines) {
+				it?.size() == 1
+				it?.every { it.line =~ /class/ }
+			}
+	}
+
+	void 'does not find lines with matching negative pattern'() {
 		given:
 			def lineFinder = makeLineFinderFor(new Conf(
 					patternData: [
@@ -96,6 +116,25 @@ class LineFinderTest extends Specification {
 			verifyAll {
 				!filePath
 				!foundLines
+			}
+	}
+
+	void 'finds lines with non-matching negative pattern'() {
+		given:
+			def lineFinder = makeLineFinderFor(new Conf(
+					patternData: [
+							new PatternData(searchPattern: ~/private/),
+							new PatternData(searchPattern: ~/BLUE/, negativeSearch: true)
+					]
+			))
+
+		when:
+			lineFinder.findLines exampleGroovyFile
+
+		then:
+			verifyAll(foundLines) {
+				it?.size() == 2
+				it?.every { it.line =~ /private static/ }
 			}
 	}
 
@@ -134,6 +173,7 @@ class LineFinderTest extends Specification {
 			}
 	}
 
+	@ResourceLock(value = 'search.pl.out')
 	void 'should do replacements in file'() {
 		given:
 			def exampleGroovyFileCopy = copyExampleGroovyFile tempDir
@@ -152,6 +192,28 @@ class LineFinderTest extends Specification {
 				foundLines?.size() == 2
 				foundLines?.every { it.line =~ /private static/ }
 				exampleGroovyFileCopy.readLines().every { !(it =~ /private static/) }
+			}
+	}
+
+	@ResourceLock(value = 'search.pl.out')
+	void 'does not replace excluded lines'() {
+		given:
+			def exampleGroovyFileCopy = copyExampleGroovyFile tempDir
+			def lineFinder = makeLineFinderFor(new Conf(
+					patternData: [new PatternData(searchPattern: ~/private/, replace: true, replaceText: 'public')],
+					doReplace: true,
+					dryRun: false,
+					excludeLinePatterns: [~/RED/]
+			))
+
+		when:
+			lineFinder.findLines exampleGroovyFileCopy
+
+		then:
+			verifyAll {
+				foundLines?.size() == 1
+				foundLines?.every { it.line =~ /private static final String GREEN/ }
+				exampleGroovyFileCopy.readLines().every { !(it =~ /private static final String GREEN/) }
 			}
 	}
 
