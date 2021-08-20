@@ -2,6 +2,7 @@ package search.conf
 
 import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import search.SearchError
 import search.annotations.VisibleForTesting
 import search.log.ILog
 
@@ -151,7 +152,7 @@ class ArgumentsParser {
 				def replaceText = argsIterator.next()
 
 				if (!conf.paths) {
-					log.fatal 'Cannot replace in STDIN.'
+					throw new SearchError('Cannot replace in STDIN.')
 				}
 				if (!conf.patternData) {
 					log.warn "No search pattern specified for replace pattern, ignoring argument ${arg}."

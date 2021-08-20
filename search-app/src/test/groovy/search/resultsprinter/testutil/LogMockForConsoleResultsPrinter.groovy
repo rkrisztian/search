@@ -25,10 +25,6 @@ class LogMockForConsoleResultsPrinter implements ILog {
 	}
 
 	@Override
-	void fatal(Object message) {
-	}
-
-	@Override
 	void rawPrint(Object message) {
 		if (!loggedLines) {
 			loggedLines += new StringBuilder()

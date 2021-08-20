@@ -37,14 +37,21 @@ class Search {
 		def log = new Log()
 		def colors = new AnsiColors(conf.disableColors)
 
-		new Search(conf, log, colors, args).doSearch()
+		new Search(conf, log, colors, args)
+				.doSearch()
 	}
 
 	protected void doSearch() {
-		parseArgs()
-		loadConfig()
-		addColorsToLogger()
-		findFiles()
+		try {
+			parseArgs()
+			loadConfig()
+			addColorsToLogger()
+			findFiles()
+		}
+		catch (SearchError e) {
+			log.error e
+			System.exit 1
+		}
 	}
 
 	protected void parseArgs() {

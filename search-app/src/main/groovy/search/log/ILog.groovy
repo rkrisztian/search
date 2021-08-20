@@ -16,8 +16,6 @@ interface ILog {
 
 	void error(Object message)
 
-	void fatal(Object message)
-
 	void rawPrint(Object message)
 
 	void rawPrintln()

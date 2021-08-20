@@ -11,6 +11,7 @@ import static search.conf.Constants.REPLACE_TMP_FILE_NAME
 import static search.linefinder.LinesReader.eachLineWhile
 
 import groovy.transform.CompileStatic
+import search.SearchError
 import search.conf.Conf
 import search.conf.PatternData
 import search.log.ILog
@@ -133,7 +134,7 @@ class LineFinder {
 	// TODO 2013-07-29/rkrisztian: Replace is done by re-opening the same file twice at the moment.
 	private void replaceInFile(Path file) {
 		if (!isWritable(file)) {
-			log.fatal "File '${file}' is not writable."
+			throw new SearchError("File '${file}' is not writable.")
 		}
 
 		replaceTmpFilePath.withWriter { writer ->

@@ -1,5 +1,6 @@
 package search.conf
 
+import search.SearchError
 import search.log.ILog
 import search.log.LogMock
 import spock.lang.Specification
@@ -220,6 +221,14 @@ class ArgumentsParserTest extends Specification {
 		then:
 			success
 			conf.paths*.globPattern == ['-Q']
+	}
+
+	void 'does not allow replacements in STDIN'() {
+		when:
+			argumentsParser.parseArgs('-', 'abc', '-r', 'def')
+
+		then:
+			thrown SearchError
 	}
 
 }

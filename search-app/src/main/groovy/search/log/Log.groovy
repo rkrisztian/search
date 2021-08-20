@@ -30,11 +30,6 @@ class Log implements ILog {
 		System.err.println colors ? colors.format(ColorType.ERROR_COLOR, prefixedMessage) : prefixedMessage
 	}
 
-	void fatal(Object message) {
-		error message
-		System.exit 1
-	}
-
 	/** For search results. */
 	void rawPrint(Object message = '') {
 		print message
