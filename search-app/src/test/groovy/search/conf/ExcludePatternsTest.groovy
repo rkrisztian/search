@@ -34,11 +34,7 @@ class ExcludePatternsTest extends Specification {
 			configParser.mapConfigObject config
 
 		then:
-			conf.excludeFilePatterns.size() == 4
-			conf.excludeFilePatterns[0].pattern() == /pattern.1/
-			conf.excludeFilePatterns[1].pattern() == /pattern.2/
-			conf.excludeFilePatterns[2].pattern() == /some.file.1/
-			conf.excludeFilePatterns[3].pattern() == /some.file.2/
+			conf.excludeFilePatterns*.pattern() == [/pattern.1/, /pattern.2/, /some.file.1/, /some.file.2/]
 	}
 
 }

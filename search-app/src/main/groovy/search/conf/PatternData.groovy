@@ -33,22 +33,15 @@ class PatternData {
 
 	@Override
 	boolean equals(Object obj) {
-		if (this.is(obj)) {
-			return true
-		}
-		if (!obj) {
-			return false
-		}
 		if (!getClass().is(obj.class)) {
 			return false
 		}
 		def other = obj as PatternData
-		if (!searchPattern) {
-			if (other.searchPattern) {
-				return false
-			}
+
+		if (!searchPattern || !other.searchPattern) {
+			return !searchPattern && !other.searchPattern
 		}
-		else if (searchPattern.pattern() != other.searchPattern.pattern()) {
+		if (searchPattern.pattern() != other.searchPattern.pattern()) {
 			return false
 		}
 		true

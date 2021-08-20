@@ -49,9 +49,7 @@ class ArgumentsParserTest extends Specification {
 
 		then:
 			success
-			conf.excludeFilePatterns.size() == 2
-			conf.excludeFilePatterns[0].pattern() == /some.file.1/
-			conf.excludeFilePatterns[1].pattern() == /some.file.2/
+			conf.excludeFilePatterns*.pattern() == [/some.file.1/, /some.file.2/]
 	}
 
 	void 'arg debug is stackable'() {
@@ -69,8 +67,7 @@ class ArgumentsParserTest extends Specification {
 
 		then:
 			success
-			conf.patternData.size() == 1
-			conf.patternData[0].searchPattern.pattern() == /abc/
+			conf.patternData*.searchPattern*.pattern() == [/abc/]
 	}
 
 	void 'arg after hypen, no duplicate patterns'() {
@@ -88,8 +85,7 @@ class ArgumentsParserTest extends Specification {
 
 		then:
 			success
-			conf.patternData.size() == 1
-			conf.patternData[0].searchPattern.pattern() == /-/
+			conf.patternData*.searchPattern*.pattern() == [/-/]
 	}
 
 	void 'arg after hypen, arg as pattern'() {
@@ -108,7 +104,7 @@ class ArgumentsParserTest extends Specification {
 
 		then:
 			!success
-			conf.patternData.size() == 0
+			!conf.patternData
 	}
 
 	void 'arg after hypen, pattern with replace text'() {
@@ -117,9 +113,11 @@ class ArgumentsParserTest extends Specification {
 
 		then:
 			success
-			conf.patternData.size() == 1
-			conf.patternData[0].searchPattern.pattern() == /abc/
-			conf.patternData[0].replaceText == 'def'
+			with(conf.patternData) {
+				size() == 1
+				it[0].searchPattern.pattern() == /abc/
+				it[0].replaceText == 'def'
+			}
 	}
 
 	void 'arg after hypen, partially hide patterns'() {
@@ -128,9 +126,7 @@ class ArgumentsParserTest extends Specification {
 
 		then:
 			success
-			conf.patternData.size() == 2
-			conf.patternData[0].hidePattern
-			!conf.patternData[1].hidePattern
+			conf.patternData*.hidePattern == [true, false]
 	}
 
 	void 'ignores replace text without pattern'() {
@@ -148,10 +144,12 @@ class ArgumentsParserTest extends Specification {
 
 		then:
 			success
-			conf.patternData.size() == 1
-			!conf.patternData[0].replace
-			!conf.patternData[0].replaceText
-			conf.patternData[0].searchPattern.pattern() == /def/
+			with(conf.patternData) {
+				size() == 1
+				!it[0].replace
+				!it[0].replaceText
+				it[0].searchPattern.pattern() == /def/
+			}
 	}
 
 	void 'can ignore case'() {
@@ -160,8 +158,10 @@ class ArgumentsParserTest extends Specification {
 
 		then:
 			success
-			'abc' =~ conf.patternData[0].searchPattern
-			'ABC' =~ conf.patternData[0].searchPattern
+			with(conf.patternData[0]) {
+				'abc' =~ searchPattern
+				'ABC' =~ searchPattern
+			}
 	}
 
 	void 'can do negative search'() {
@@ -171,8 +171,20 @@ class ArgumentsParserTest extends Specification {
 		then:
 			success
 			conf.patternData.size() == 1
-			conf.patternData[0].searchPattern.pattern() == /abc/
-			conf.patternData[0].negativeSearch
+
+			with(conf.patternData[0]) {
+				searchPattern.pattern() == /abc/
+				negativeSearch
+			}
+	}
+
+	void 'unknown flags are treated as file patterns'() {
+		when:
+			def success = argumentsParser.parseArgs('-i', '-Q')
+
+		then:
+			success
+			conf.paths*.globPattern == ['-Q']
 	}
 
 }

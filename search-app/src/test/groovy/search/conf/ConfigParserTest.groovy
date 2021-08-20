@@ -46,7 +46,6 @@ class ConfigParserTest extends Specification {
 			conf.setDefaults()
 
 		then:
-			conf.maxContextLines != null
 			conf.maxContextLines == DEFAULT_MAX_CONTEXT_LINES
 	}
 
@@ -80,9 +79,7 @@ class ConfigParserTest extends Specification {
 			configParser.mapConfigObject config
 
 		then:
-			conf.excludeFilePatterns.size() == 2
-			conf.excludeFilePatterns[0].pattern() == /pattern.1/
-			conf.excludeFilePatterns[1].pattern() == /pattern.2/
+			conf.excludeFilePatterns*.pattern() == [/pattern.1/, /pattern.2/]
 	}
 
 	void 'print html, enabled'() {
