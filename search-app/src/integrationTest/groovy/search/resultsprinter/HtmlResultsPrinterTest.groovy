@@ -37,8 +37,10 @@ class HtmlResultsPrinterTest extends Specification {
 			def html = printFoundLinesAndParse htmlResultsPrinter, foundLines
 
 		then:
-			html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt/
-			!(html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt :/)
+			verifyAll {
+				html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt/
+				!(html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt :/)
+			}
 	}
 
 	void 'prints search results'(Pattern pattern, boolean disableColors, String expectedLine) {
@@ -51,8 +53,10 @@ class HtmlResultsPrinterTest extends Specification {
 			def html = printFoundLinesAndParse htmlResultsPrinter, foundLines
 
 		then:
-			html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt/
-			html.depthFirst().find { it.'@data-id' == 'foundLine' } =~ expectedLine
+			verifyAll {
+				html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt/
+				html.depthFirst().find { it.'@data-id' == 'foundLine' } =~ expectedLine
+			}
 
 		where:
 			pattern         | disableColors || expectedLine
@@ -101,14 +105,16 @@ class HtmlResultsPrinterTest extends Specification {
 			def html = printFoundLinesAndParse htmlResultsPrinter, foundLines
 
 		then:
-			html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[0] =~ /\(\.\.\.\)/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[1] =~ /context1/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[2] =~ /context2/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[3] =~ /5.*?Test/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[4] =~ /context3/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[5] =~ /context4/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[6] =~ /\(\.\.\.\)/
+			verifyAll {
+				html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[0] =~ /\(\.\.\.\)/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[1] =~ /context1/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[2] =~ /context2/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[3] =~ /5.*?Test/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[4] =~ /context3/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[5] =~ /context4/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[6] =~ /\(\.\.\.\)/
+			}
 	}
 
 	void 'prints context lines between two matched lines, with overflow'() {
@@ -133,14 +139,16 @@ class HtmlResultsPrinterTest extends Specification {
 			def html = printFoundLinesAndParse htmlResultsPrinter, foundLines
 
 		then:
-			html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[0] =~ /5.*?Test! #1/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[1] =~ /context1/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[2] =~ /context2/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[3] =~ /\(\.\.\.\)/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[4] =~ /context3/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[5] =~ /context4/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[6] =~ /15.*?Test! #2/
+			verifyAll {
+				html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[0] =~ /5.*?Test! #1/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[1] =~ /context1/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[2] =~ /context2/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[3] =~ /\(\.\.\.\)/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[4] =~ /context3/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[5] =~ /context4/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[6] =~ /15.*?Test! #2/
+			}
 	}
 
 	void 'prints context lines between two matched lines, without overflow'() {
@@ -164,13 +172,15 @@ class HtmlResultsPrinterTest extends Specification {
 			def html = printFoundLinesAndParse htmlResultsPrinter, foundLines
 
 		then:
-			html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[0] =~ /5.*?Test! #1/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[1] =~ /context1/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[2] =~ /context2/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[3] =~ /context3/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[4] =~ /context4/
-			html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[5] =~ /10.*?Test! #2/
+			verifyAll {
+				html.depthFirst().find { it.'@data-id' == 'filePath' } =~ /test\.txt/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[0] =~ /5.*?Test! #1/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[1] =~ /context1/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[2] =~ /context2/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[3] =~ /context3/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[4] =~ /context4/
+				html.depthFirst().findAll { it.'@data-id' =~ /(found|context)Line/ }[5] =~ /10.*?Test! #2/
+			}
 	}
 
 	void 'prints empty lines'() {
@@ -183,8 +193,10 @@ class HtmlResultsPrinterTest extends Specification {
 			def html = printFoundLinesAndParse htmlResultsPrinter, foundLines
 
 		then:
-			html.depthFirst().find { it.'@data-id' == 'foundLine' } =~ /(?m)1\s*$/
-			html.depthFirst().find { it.'@data-id' == 'contextLine' } =~ /(?m)\s*${160 as char}\s*$/
+			verifyAll {
+				html.depthFirst().find { it.'@data-id' == 'foundLine' } =~ /(?m)1\s*$/
+				html.depthFirst().find { it.'@data-id' == 'contextLine' } =~ /(?m)\s*${160 as char}\s*$/
+			}
 	}
 
 	private HtmlResultsPrinter makeHtmlResultsPrinter(Set<PatternData> patternData, boolean replace, boolean dryRun,

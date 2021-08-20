@@ -21,8 +21,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs()
 
 		then:
-			!success
-			argumentsParser.showHelp
+			verifyAll {
+				!success
+				argumentsParser.showHelp
+			}
 	}
 
 	void 'arg all files'() {
@@ -30,8 +32,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('-a')
 
 		then:
-			success
-			conf.paths.size() == 2
+			verifyAll {
+				success
+				conf.paths.size() == 2
+			}
 	}
 
 	void 'arg config file'() {
@@ -39,8 +43,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('-c', 'some.file')
 
 		then:
-			success
-			conf.configFile == 'some.file'
+			verifyAll {
+				success
+				conf.configFile == 'some.file'
+			}
 	}
 
 	void 'arg exclude patterns'() {
@@ -48,8 +54,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('-s', 'some.file.1', '-s', 'some.file.2')
 
 		then:
-			success
-			conf.excludeFilePatterns*.pattern() == [/some.file.1/, /some.file.2/]
+			verifyAll {
+				success
+				conf.excludeFilePatterns*.pattern() == [/some.file.1/, /some.file.2/]
+			}
 	}
 
 	void 'arg debug is stackable'() {
@@ -57,8 +65,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('-d', '-d', '-d')
 
 		then:
-			success
-			conf.debug == 3
+			verifyAll {
+				success
+				conf.debug == 3
+			}
 	}
 
 	void 'arg after hypen, simple pattern'() {
@@ -66,8 +76,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('-', 'abc')
 
 		then:
-			success
-			conf.patternData*.searchPattern*.pattern() == [/abc/]
+			verifyAll {
+				success
+				conf.patternData*.searchPattern*.pattern() == [/abc/]
+			}
 	}
 
 	void 'arg after hypen, no duplicate patterns'() {
@@ -75,8 +87,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('-', 'abc', 'abc')
 
 		then:
-			success
-			conf.patternData.size() == 1
+			verifyAll {
+				success
+				conf.patternData.size() == 1
+			}
 	}
 
 	void 'arg after hypen, hypen as pattern'() {
@@ -84,8 +98,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('-', '-')
 
 		then:
-			success
-			conf.patternData*.searchPattern*.pattern() == [/-/]
+			verifyAll {
+				success
+				conf.patternData*.searchPattern*.pattern() == [/-/]
+			}
 	}
 
 	void 'arg after hypen, arg as pattern'() {
@@ -93,9 +109,11 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('-', '-a')
 
 		then:
-			success
-			conf.patternData.size() == 1
-			!conf.paths
+			verifyAll {
+				success
+				conf.patternData.size() == 1
+				!conf.paths
+			}
 	}
 
 	void 'arg help stops parsing'() {
@@ -103,8 +121,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('--help', '-', 'abc')
 
 		then:
-			!success
-			!conf.patternData
+			verifyAll {
+				!success
+				!conf.patternData
+			}
 	}
 
 	void 'arg after hypen, pattern with replace text'() {
@@ -112,11 +132,14 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('some.file', '-', 'abc', '-r', 'def')
 
 		then:
-			success
-			with(conf.patternData) {
-				size() == 1
-				it[0].searchPattern.pattern() == /abc/
-				it[0].replaceText == 'def'
+			verifyAll {
+				success
+
+				verifyAll(conf.patternData) {
+					size() == 1
+					it[0].searchPattern.pattern() == /abc/
+					it[0].replaceText == 'def'
+				}
 			}
 	}
 
@@ -125,8 +148,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('-', '-h', 'abc', 'def')
 
 		then:
-			success
-			conf.patternData*.hidePattern == [true, false]
+			verifyAll {
+				success
+				conf.patternData*.hidePattern == [true, false]
+			}
 	}
 
 	void 'ignores replace text without pattern'() {
@@ -134,8 +159,10 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('some.file', '-', '-r', 'abc')
 
 		then:
-			success
-			conf.patternData.empty
+			verifyAll {
+				success
+				conf.patternData.empty
+			}
 	}
 
 	void 'replace text without pattern does not affect other args'() {
@@ -143,12 +170,15 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('some.file', '-', '-r', 'abc', 'def')
 
 		then:
-			success
-			with(conf.patternData) {
-				size() == 1
-				!it[0].replace
-				!it[0].replaceText
-				it[0].searchPattern.pattern() == /def/
+			verifyAll {
+				success
+
+				verifyAll(conf.patternData) {
+					size() == 1
+					!it[0].replace
+					!it[0].replaceText
+					it[0].searchPattern.pattern() == /def/
+				}
 			}
 	}
 
@@ -157,10 +187,13 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('some.file', '-i', '-', 'abc')
 
 		then:
-			success
-			with(conf.patternData[0]) {
-				'abc' =~ searchPattern
-				'ABC' =~ searchPattern
+			verifyAll {
+				success
+
+				verifyAll(conf.patternData[0]) {
+					'abc' =~ searchPattern
+					'ABC' =~ searchPattern
+				}
 			}
 	}
 
@@ -169,12 +202,14 @@ class ArgumentsParserTest extends Specification {
 			def success = argumentsParser.parseArgs('some.file', '-', '-n', 'abc')
 
 		then:
-			success
-			conf.patternData.size() == 1
+			verifyAll {
+				success
+				conf.patternData.size() == 1
 
-			with(conf.patternData[0]) {
-				searchPattern.pattern() == /abc/
-				negativeSearch
+				verifyAll(conf.patternData[0]) {
+					searchPattern.pattern() == /abc/
+					negativeSearch
+				}
 			}
 	}
 

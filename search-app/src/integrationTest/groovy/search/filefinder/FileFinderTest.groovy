@@ -74,9 +74,11 @@ class FileFinderTest extends Specification {
 			)
 
 		then:
-			foundFiles?.size() == 2
-			foundFiles.any { it as String =~ $/\ba/d/example.groovy/$ }
-			foundFiles.any { it as String =~ $/\ba/e/greek.txt/$ }
+			verifyAll(foundFiles) {
+				it?.size() == 2
+				it?.any { it as String =~ $/\ba/d/example.groovy/$ }
+				it?.any { it as String =~ $/\ba/e/greek.txt/$ }
+			}
 	}
 
 	void 'symbolic links are skipped'() {
@@ -106,9 +108,11 @@ class FileFinderTest extends Specification {
 			findFiles new Conf(paths: [new GlobPattern('*.groovy')])
 
 		then:
-			foundFiles?.size() == 2
-			foundFiles[0] as String =~ $/a/d/anotherExample.groovy/$
-			foundFiles[1] as String =~ $/a/d/example.groovy/$
+			verifyAll(foundFiles) {
+				it?.size() == 2
+				it[0] as String =~ $/a/d/anotherExample.groovy/$
+				it[1] as String =~ $/a/d/example.groovy/$
+			}
 	}
 
 	private void findFiles(Conf conf) {

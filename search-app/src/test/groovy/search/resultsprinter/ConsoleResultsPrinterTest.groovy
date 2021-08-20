@@ -29,8 +29,10 @@ class ConsoleResultsPrinterTest extends Specification {
 			consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		then:
-			log.loggedLines.any { it =~ /test\.txt/ }
-			!log.loggedLines.any { it =~ /test\.txt :/ }
+			verifyAll(log.loggedLines) {
+				it.any { it =~ /test\.txt/ }
+				!it.any { it =~ /test\.txt :/ }
+			}
 	}
 
 	void 'prints search results'(Pattern pattern, boolean disableColors, String expectedLine) {
@@ -43,8 +45,10 @@ class ConsoleResultsPrinterTest extends Specification {
 			consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		then:
-			log.loggedLines.any { it =~ /test\.txt :/ }
-			log.loggedLines.any { it =~ expectedLine }
+			verifyAll(log.loggedLines) {
+				it.any { it =~ /test\.txt :/ }
+				it.any { it =~ expectedLine }
+			}
 
 		where:
 			pattern         | disableColors || expectedLine
@@ -93,17 +97,19 @@ class ConsoleResultsPrinterTest extends Specification {
 			consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		then:
-			log.loggedLines.size() == 10
-			log.loggedLines[0] =~ /test\.txt :/
-			log.loggedLines[1] =~ /\(\.\.\.\)/
-			log.loggedLines[2] =~ /context1/
-			log.loggedLines[3] =~ /context2/
-			log.loggedLines[4] =~ /5\s+:\s+.*?Test/
-			log.loggedLines[5] =~ /context3/
-			log.loggedLines[6] =~ /context4/
-			log.loggedLines[7] =~ /\(\.\.\.\)/
-			log.loggedLines[8] =~ /^$/
-			log.loggedLines[9] =~ /^$/
+			verifyAll(log.loggedLines) {
+				it.size() == 10
+				it[0] =~ /test\.txt :/
+				it[1] =~ /\(\.\.\.\)/
+				it[2] =~ /context1/
+				it[3] =~ /context2/
+				it[4] =~ /5\s+:\s+.*?Test/
+				it[5] =~ /context3/
+				it[6] =~ /context4/
+				it[7] =~ /\(\.\.\.\)/
+				it[8] =~ /^$/
+				it[9] =~ /^$/
+			}
 	}
 
 	void 'prints context lines between two matched lines, with overflow'() {
@@ -128,15 +134,17 @@ class ConsoleResultsPrinterTest extends Specification {
 			consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		then:
-			log.loggedLines.size() == 10
-			log.loggedLines[0] =~ /test\.txt :/
-			log.loggedLines[1] =~ /5\s+:\s+.*?Test! #1/
-			log.loggedLines[2] =~ /context1/
-			log.loggedLines[3] =~ /context2/
-			log.loggedLines[4] =~ /\(\.\.\.\)/
-			log.loggedLines[5] =~ /context3/
-			log.loggedLines[6] =~ /context4/
-			log.loggedLines[7] =~ /15\s+:\s+.*?Test! #2/
+			verifyAll(log.loggedLines) {
+				it.size() == 10
+				it[0] =~ /test\.txt :/
+				it[1] =~ /5\s+:\s+.*?Test! #1/
+				it[2] =~ /context1/
+				it[3] =~ /context2/
+				it[4] =~ /\(\.\.\.\)/
+				it[5] =~ /context3/
+				it[6] =~ /context4/
+				it[7] =~ /15\s+:\s+.*?Test! #2/
+			}
 	}
 
 	void 'prints context lines between two matched lines, without overflow'() {
@@ -160,14 +168,16 @@ class ConsoleResultsPrinterTest extends Specification {
 			consoleResultsPrinter.printFoundLines 'test.txt', foundLines
 
 		then:
-			log.loggedLines.size() == 9
-			log.loggedLines[0] =~ /test\.txt :/
-			log.loggedLines[1] =~ /5\s+:\s+.*?Test! #1/
-			log.loggedLines[2] =~ /context1/
-			log.loggedLines[3] =~ /context2/
-			log.loggedLines[4] =~ /context3/
-			log.loggedLines[5] =~ /context4/
-			log.loggedLines[6] =~ /10\s+:\s+.*?Test! #2/
+			verifyAll(log.loggedLines) {
+				it.size() == 9
+				it[0] =~ /test\.txt :/
+				it[1] =~ /5\s+:\s+.*?Test! #1/
+				it[2] =~ /context1/
+				it[3] =~ /context2/
+				it[4] =~ /context3/
+				it[5] =~ /context4/
+				it[6] =~ /10\s+:\s+.*?Test! #2/
+			}
 	}
 
 	private ConsoleResultsPrinter makeConsoleResultsPrinter(Set<PatternData> patternData, boolean replace, boolean dryRun,

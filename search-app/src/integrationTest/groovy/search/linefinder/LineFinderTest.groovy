@@ -34,8 +34,10 @@ class LineFinderTest extends Specification {
 			lineFinder.findLines exampleGroovyFile
 
 		then:
-			Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
-			!foundLines
+			verifyAll {
+				Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
+				!foundLines
+			}
 	}
 
 	void 'should find lines with patterns'() {
@@ -51,9 +53,11 @@ class LineFinderTest extends Specification {
 			lineFinder.findLines exampleGroovyFile
 
 		then:
-			Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
-			foundLines?.size() == 2
-			foundLines?.every { it.line =~ /private static/ }
+			verifyAll {
+				Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
+				foundLines?.size() == 2
+				foundLines?.every { it.line =~ /private static/ }
+			}
 	}
 
 	void 'must find all patterns even with exclude patterns added'() {
@@ -70,8 +74,10 @@ class LineFinderTest extends Specification {
 			lineFinder.findLines exampleGroovyFile
 
 		then:
-			!filePath
-			!foundLines
+			verifyAll {
+				!filePath
+				!foundLines
+			}
 	}
 
 	void 'should not find lines with negative pattern'() {
@@ -87,8 +93,10 @@ class LineFinderTest extends Specification {
 			lineFinder.findLines exampleGroovyFile
 
 		then:
-			!filePath
-			!foundLines
+			verifyAll {
+				!filePath
+				!foundLines
+			}
 	}
 
 	void 'should not show lines with pattern to hide'() {
@@ -101,8 +109,10 @@ class LineFinderTest extends Specification {
 			lineFinder.findLines exampleGroovyFile
 
 		then:
-			Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
-			!foundLines
+			verifyAll {
+				Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
+				!foundLines
+			}
 	}
 
 	void 'should let results printer show replacements'() {
@@ -117,9 +127,11 @@ class LineFinderTest extends Specification {
 			lineFinder.findLines exampleGroovyFile
 
 		then:
-			Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
-			foundLines?.size() == 2
-			foundLines?.every { it.line =~ /private static/ }
+			verifyAll {
+				Paths.get(filePath).fileName as String == EXAMPLE_GROOVY_FILE_NAME
+				foundLines?.size() == 2
+				foundLines?.every { it.line =~ /private static/ }
+			}
 	}
 
 	void 'should do replacements in file'() {
@@ -135,10 +147,12 @@ class LineFinderTest extends Specification {
 			lineFinder.findLines exampleGroovyFileCopy
 
 		then:
-			Paths.get(filePath).fileName as String == exampleGroovyFileCopy.fileName as String
-			foundLines?.size() == 2
-			foundLines?.every { it.line =~ /private static/ }
-			exampleGroovyFileCopy.readLines().every { !(it =~ /private static/) }
+			verifyAll {
+				Paths.get(filePath).fileName as String == exampleGroovyFileCopy.fileName as String
+				foundLines?.size() == 2
+				foundLines?.every { it.line =~ /private static/ }
+				exampleGroovyFileCopy.readLines().every { !(it =~ /private static/) }
+			}
 	}
 
 	private LineFinder makeLineFinderFor(Conf conf) {

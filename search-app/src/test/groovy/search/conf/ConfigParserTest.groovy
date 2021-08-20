@@ -106,8 +106,10 @@ class ConfigParserTest extends Specification {
 			conf.setDefaults()
 
 		then:
-			conf.tmpDir == Paths.get('/dummy/tmp/dir')
-			conf.tmpDir != DEFAULT_TMP_DIR
+			verifyAll(conf.tmpDir) {
+				it == Paths.get('/dummy/tmp/dir')
+				it != DEFAULT_TMP_DIR
+			}
 	}
 
 }

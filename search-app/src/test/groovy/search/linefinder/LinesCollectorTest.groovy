@@ -24,7 +24,7 @@ class LinesCollectorTest extends Specification {
 			linesCollector.storeFoundLine TEST_LINENR, TEST_LINE, SHOW
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				!foundLines
 				!currentContextLinesBefore
 			}
@@ -38,7 +38,7 @@ class LinesCollectorTest extends Specification {
 			linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				!foundLines
 				!currentContextLinesBefore
 			}
@@ -52,7 +52,7 @@ class LinesCollectorTest extends Specification {
 			linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				!foundLines
 				!currentContextLinesBefore
 			}
@@ -70,7 +70,7 @@ class LinesCollectorTest extends Specification {
 			}
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				foundLines == [new FoundLine(line: TEST_LINE, lineNr: TEST_LINENR)]
 				!currentContextLinesBefore
 			}
@@ -99,7 +99,7 @@ class LinesCollectorTest extends Specification {
 			}
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				foundLines == [new FoundLine(
 						line: TEST_LINE,
 						lineNr: TEST_LINENR,
@@ -124,7 +124,7 @@ class LinesCollectorTest extends Specification {
 			}
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				foundLines == [new FoundLine(
 						line: TEST_LINE,
 						lineNr: TEST_LINENR,
@@ -150,7 +150,7 @@ class LinesCollectorTest extends Specification {
 			}
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				!foundLines
 				!currentContextLinesBefore
 			}
@@ -169,7 +169,7 @@ class LinesCollectorTest extends Specification {
 			}
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				hasFinished()
 				foundLines == [
 						new FoundLine(
@@ -213,7 +213,7 @@ class LinesCollectorTest extends Specification {
 			}
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				foundLines == [new FoundLine(
 						line: 'f1',
 						lineNr: 2,
@@ -239,7 +239,7 @@ class LinesCollectorTest extends Specification {
 			}
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				foundLines == [
 						new FoundLine(
 								line: 'f1',
@@ -320,7 +320,7 @@ class LinesCollectorTest extends Specification {
 			}
 
 		then:
-			with(linesCollector) {
+			verifyAll(linesCollector) {
 				foundLines == [
 						new FoundLine(
 								line: 'f1',
