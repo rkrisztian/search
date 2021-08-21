@@ -27,7 +27,7 @@ class LineFinderTest extends Specification {
 	@TempDir
 	private Path tempDir
 
-	void 'should print only file name when no patterns'() {
+	void 'prints only file name when no patterns'() {
 		given:
 			def lineFinder = makeLineFinderFor(new Conf())
 
@@ -41,7 +41,7 @@ class LineFinderTest extends Specification {
 			}
 	}
 
-	void 'should find lines with patterns'() {
+	void 'finds lines with patterns'() {
 		given:
 			def lineFinder = makeLineFinderFor(new Conf(
 					patternData: [
@@ -61,33 +61,14 @@ class LineFinderTest extends Specification {
 			}
 	}
 
-	void 'finds nothing when exclude pattern matches'() {
+	void 'does not find excluded lines'() {
 		given:
 			def lineFinder = makeLineFinderFor(new Conf(
 					patternData: [
-							new PatternData(searchPattern: ~/class/),
-							new PatternData(searchPattern: ~/private/)
+							new PatternData(searchPattern: ~/private/),
+							new PatternData(searchPattern: ~/static/)
 					],
-					excludeLinePatterns: [~/static/]
-			))
-
-		when:
-			lineFinder.findLines exampleGroovyFile
-
-		then:
-			verifyAll {
-				!filePath
-				!foundLines
-			}
-	}
-
-	void 'must find lines when exclude patterns do not match'() {
-		given:
-			def lineFinder = makeLineFinderFor(new Conf(
-					patternData: [
-							new PatternData(searchPattern: ~/class/),
-					],
-					excludeLinePatterns: [~/static/]
+					excludeLinePatterns: [~/GREEN/, ~/class/]
 			))
 
 		when:
@@ -96,16 +77,16 @@ class LineFinderTest extends Specification {
 		then:
 			verifyAll(foundLines) {
 				it?.size() == 1
-				it?.every { it.line =~ /class/ }
+				it?.every { it.line =~ /private static final String RED/ }
 			}
 	}
 
-	void 'does not find lines with matching negative pattern'() {
+	void 'does not find any lines when negative pattern matches at least once'() {
 		given:
 			def lineFinder = makeLineFinderFor(new Conf(
 					patternData: [
-							new PatternData(searchPattern: ~/private/),
-							new PatternData(searchPattern: ~/static/, negativeSearch: true)
+							new PatternData(searchPattern: ~/static/),
+							new PatternData(searchPattern: ~/class/, negativeSearch: true)
 					]
 			))
 
@@ -119,7 +100,7 @@ class LineFinderTest extends Specification {
 			}
 	}
 
-	void 'finds lines with non-matching negative pattern'() {
+	void 'finds lines when negative pattern never matches'() {
 		given:
 			def lineFinder = makeLineFinderFor(new Conf(
 					patternData: [
@@ -138,7 +119,7 @@ class LineFinderTest extends Specification {
 			}
 	}
 
-	void 'should not show lines with pattern to hide'() {
+	void 'does not show lines with pattern to hide'() {
 		given:
 			def lineFinder = makeLineFinderFor(new Conf(
 					patternData: [new PatternData(searchPattern: ~/private/, hidePattern: true)]
@@ -154,7 +135,7 @@ class LineFinderTest extends Specification {
 			}
 	}
 
-	void 'should let results printer show replacements'() {
+	void 'lets results printer show replacements'() {
 		given:
 			def lineFinder = makeLineFinderFor(new Conf(
 					patternData: [new PatternData(searchPattern: ~/private/, replace: true, replaceText: 'public')],
@@ -173,8 +154,8 @@ class LineFinderTest extends Specification {
 			}
 	}
 
-	@ResourceLock(value = 'search.pl.out')
-	void 'should do replacements in file'() {
+	@ResourceLock('search.pl.out')
+	void 'does replacements in file'() {
 		given:
 			def exampleGroovyFileCopy = copyExampleGroovyFile tempDir
 			def lineFinder = makeLineFinderFor(new Conf(
@@ -195,7 +176,7 @@ class LineFinderTest extends Specification {
 			}
 	}
 
-	@ResourceLock(value = 'search.pl.out')
+	@ResourceLock('search.pl.out')
 	void 'does not replace excluded lines'() {
 		given:
 			def exampleGroovyFileCopy = copyExampleGroovyFile tempDir
