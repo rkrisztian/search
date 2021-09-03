@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class PatternDataTest extends Specification {
 
-	@SuppressWarnings(['ComparisonWithSelf', 'GrEqualsBetweenInconvertibleTypes'])
+	@SuppressWarnings(['CodeNarc.ComparisonWithSelf', 'GrEqualsBetweenInconvertibleTypes'])
 	void 'basic equals behavior'() {
 		expect:
 			verifyAll(new PatternData(searchPattern: ~/abc/)) {
