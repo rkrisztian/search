@@ -28,7 +28,7 @@ dependencies {
 
 	implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
 	testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
-	codenarc 'org.codenarc:CodeNarc:2.1.0'
+	codenarc 'org.codenarc:CodeNarc:2.2.0'
 	codenarc "org.codehaus.groovy:groovy-all:$groovyVersion"
 	integrationTestImplementation sourceSets.test.output
 }
