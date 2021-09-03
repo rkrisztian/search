@@ -205,9 +205,9 @@ tab_width = 2
 ij_continuation_indent_size = 2
 ij_yaml_keep_indents_on_empty_lines = false
 ij_yaml_keep_line_breaks = true
-ij_yaml_space_before_colon = true
+ij_yaml_space_before_colon = false
 ij_yaml_spaces_within_braces = true
-ij_yaml_spaces_within_brackets = true
+ij_yaml_spaces_within_brackets = false
 
 [*.properties]
 ij_properties_align_group_field_declarations = false
