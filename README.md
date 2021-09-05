@@ -226,17 +226,17 @@ The following is an actual config I use as a user-specific config (`~/.search.co
 maxContextLines = 3
 
 excludeFilePatterns = [
-	$/\.\#(.+?)(\.\d+)+/$,
-	$//.git//$,
+	$//\.git//$,
 	$//build//$,
-	$//out//$,
-	$//bin//$,
 	$//dist//$,
 	$//target(.+?)//$,
-	/\.bak$/,
 	$//node_modules//$,
+	$//\.gradle//$,
 	$//\.idea//$,
-	$//\.gradle//$
+	$//out//$,
+	$//bin//$,
+	/\.bak$/,
+	$/\.\#(.+?)(\.\d+)+/$
 ]
 ```
 
