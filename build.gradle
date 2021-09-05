@@ -1,4 +1,105 @@
+plugins {
+	id 'groovy'
+	id 'application'
+	id 'org.unbroken-dome.test-sets' version '4.0.0'
+	id 'codenarc'
+	id 'jacoco'
+}
+
 wrapper {
 	gradleVersion = '7.0.2'
 	distributionType = Wrapper.DistributionType.ALL
+}
+
+version = BUILD_VERSION
+group = GROUP_ID
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(11)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+testSets {
+	integrationTest
+}
+
+dependencies {
+	def groovyVersion = '3.0.8'
+
+	implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
+	testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
+	codenarc 'org.codenarc:CodeNarc:2.2.0'
+	codenarc "org.codehaus.groovy:groovy-all:$groovyVersion"
+	integrationTestImplementation sourceSets.test.output
+}
+
+application {
+	applicationName = 'search'
+	mainClass = 'search.Search'
+}
+
+distributions {
+	main {
+		contents {
+			from('README.md') {
+				into 'docs'
+			}
+		}
+	}
+}
+
+tasks.named('jar').configure {
+	manifest {
+		attributes 'Implementation-Title': 'Search App',
+				'Implementation-Version': archiveVersion
+	}
+}
+
+tasks.withType(Test).configureEach {
+	useJUnitPlatform()
+	testLogging { events 'skipped', 'failed' }
+	finalizedBy "jacoco${it.name.capitalize()}Report"
+}
+
+tasks.named('integrationTest').configure { Test it ->
+	it.systemProperty 'java.io.tmpdir', "${buildDir}/tmp"
+}
+
+codenarc {
+	configFile = file 'config/codenarc/rules.groovy'
+	reportFormat = 'html'
+}
+
+jacoco {
+	toolVersion = '0.8.7'
+}
+
+tasks.withType(JacocoReport).configureEach {
+	reports {
+		xml.enabled true
+	}
+}
+
+tasks.register('codeCoverageReport', JacocoReport) {
+	sourceSets sourceSets.main
+
+	tasks.matching({ t -> t.extensions.findByType(JacocoTaskExtension) }).forEach { testTask ->
+		executionData testTask
+		dependsOn testTask
+	}
+
+	reports {
+		xml.enabled false
+		html.enabled true
+	}
+}
+
+tasks.named('check').configure {
+	dependsOn 'integrationTest'
+	dependsOn 'codeCoverageReport'
 }

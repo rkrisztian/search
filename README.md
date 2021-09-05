@@ -61,8 +61,7 @@ search for multiple patterns, Ack cannot replace text in files, and I don't care
 	Example:
 
 	```text
-	$ ack --ignore-dir=build -C 3 Test \
-			search-app/src/test/groovy/search/util/GlobPatternTest.groovy
+	$ ack --ignore-dir=build -C 3 Test src/test/groovy/search/util/GlobPatternTest.groovy
 
 	package search.util
 
@@ -78,8 +77,8 @@ search for multiple patterns, Ack cannot replace text in files, and I don't care
 	```
 
 	```text
-	$ search-app/build/dist/search \*GlobPatternTest\* - Test
-	./search-app/src/test/groovy/search/util/GlobPatternTest.groovy :
+	$ build/dist/search \*GlobPatternTest\* - Test
+	./src/test/groovy/search/util/GlobPatternTest.groovy :
 				 (...)
 
 				 package search.util
@@ -98,7 +97,7 @@ search for multiple patterns, Ack cannot replace text in files, and I don't care
 	normally it looks like this:
 
 	```text
-	search-app/src/test/groovy/search/util/GlobPatternTest.groovy
+	src/test/groovy/search/util/GlobPatternTest.groovy
 	6-
 	7-package search.util
 	8-
@@ -143,9 +142,8 @@ cd search
 gw assemble
 ```
 
-Then either you can unpack the distribution package in `search-app/build/distributions` as described
-in the previous section, or you can run `gw installDist` and use `search-app/build/install/search`
-as the extracted location.
+Then either you can unpack the distribution package in `build/distributions` as described in the previous section, or you can
+run `gw installDist` and use `build/install/search` as the extracted location.
 
 Optionally, to ensure you got a working revision:
 

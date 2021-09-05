@@ -5,5 +5,3 @@ pluginManagement {
 }
 
 rootProject.name = 'search'
-
-include 'search-app'
