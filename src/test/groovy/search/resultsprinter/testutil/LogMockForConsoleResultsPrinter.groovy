@@ -1,6 +1,7 @@
 package search.resultsprinter.testutil
 
 import groovy.transform.CompileStatic
+import search.colors.AnsiColors
 import search.log.ILog
 
 @CompileStatic
@@ -46,6 +47,10 @@ class LogMockForConsoleResultsPrinter implements ILog {
 
 	@Override
 	void debugException(Exception e) {
+	}
+
+	@Override
+	void setColors(AnsiColors colors) {
 	}
 
 }

@@ -1,6 +1,7 @@
 package search.log
 
 import groovy.transform.CompileStatic
+import search.colors.AnsiColors
 
 /**
  * A simple logger class suitable for this console app.
@@ -25,5 +26,7 @@ interface ILog {
 	void rawPrintf(String message, Object... args)
 
 	void debugException(Exception e)
+
+	void setColors(AnsiColors colors)
 
 }

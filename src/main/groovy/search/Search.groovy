@@ -8,6 +8,7 @@ import search.conf.ConfigParser
 import search.filefinder.FileFinder
 import search.linefinder.LineFinder
 import search.linefinder.LinesCollector
+import search.log.ILog
 import search.log.Log
 import search.resultsprinter.ResultsPrinterFactory
 
@@ -19,13 +20,13 @@ class Search {
 
 	protected final Conf conf
 
-	protected final Log log
+	protected final ILog log
 
 	protected final AnsiColors colors
 
 	protected final String[] args
 
-	Search(Conf conf, Log log, AnsiColors colors, String[] args) {
+	Search(Conf conf, ILog log, AnsiColors colors, String[] args) {
 		this.conf = conf
 		this.log = log
 		this.colors = colors
