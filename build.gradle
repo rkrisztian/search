@@ -1,13 +1,12 @@
 plugins {
 	id 'groovy'
 	id 'application'
-	id 'org.unbroken-dome.test-sets' version '4.0.0'
 	id 'codenarc'
 	id 'jacoco'
 }
 
 wrapper {
-	gradleVersion = '7.0.2'
+	gradleVersion = '7.3.1'
 	distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -24,18 +23,44 @@ repositories {
 	mavenCentral()
 }
 
-testSets {
-	integrationTest
-}
-
 dependencies {
-	def groovyVersion = '3.0.8'
+	def groovyVersion = '3.0.9'
 
 	implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
-	testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
 	codenarc 'org.codenarc:CodeNarc:2.2.0'
 	codenarc "org.codehaus.groovy:groovy-all:$groovyVersion"
-	integrationTestImplementation sourceSets.test.output
+}
+
+testing {
+	suites {
+		all {
+			dependencies {
+				implementation 'org.spockframework:spock-core:2.0-groovy-3.0'
+			}
+
+			useJUnitJupiter()
+
+			targets.all {
+				testTask.configure() {
+					testLogging { events 'skipped', 'failed' }
+				}
+			}
+		}
+
+		integrationTest(JvmTestSuite) {
+			dependencies {
+				implementation project
+				implementation configurations.testCompileClasspath
+				implementation sourceSets.test.output
+			}
+
+			targets.all {
+				testTask.configure {
+					systemProperty 'java.io.tmpdir', "${buildDir}/tmp"
+				}
+			}
+		}
+	}
 }
 
 application {
@@ -60,16 +85,6 @@ tasks.named('jar').configure {
 	}
 }
 
-tasks.withType(Test).configureEach {
-	useJUnitPlatform()
-	testLogging { events 'skipped', 'failed' }
-	finalizedBy "jacoco${it.name.capitalize()}Report"
-}
-
-tasks.named('integrationTest').configure { Test it ->
-	it.systemProperty 'java.io.tmpdir', "${buildDir}/tmp"
-}
-
 codenarc {
 	configFile = file 'config/codenarc/rules.groovy'
 	reportFormat = 'html'
@@ -79,10 +94,8 @@ jacoco {
 	toolVersion = '0.8.7'
 }
 
-tasks.withType(JacocoReport).configureEach {
-	reports {
-		xml.enabled true
-	}
+tasks.named('jacocoTestReport').configure {
+	enabled = false
 }
 
 tasks.register('codeCoverageReport', JacocoReport) {
@@ -94,12 +107,12 @@ tasks.register('codeCoverageReport', JacocoReport) {
 	}
 
 	reports {
-		xml.enabled false
+		xml.enabled true
 		html.enabled true
 	}
 }
 
 tasks.named('check').configure {
-	dependsOn 'integrationTest'
+	dependsOn testing.suites.integrationTest
 	dependsOn 'codeCoverageReport'
 }
