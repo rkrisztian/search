@@ -1,7 +1,13 @@
 package search.linefinder
 
 import static java.nio.file.Files.copy
+import static java.nio.file.Files.getPosixFilePermissions
+import static java.nio.file.Files.notExists
+import static java.nio.file.Files.setPosixFilePermissions
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
+import static java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE
+import static java.nio.file.attribute.PosixFilePermission.OWNER_READ
+import static java.nio.file.attribute.PosixFilePermission.OWNER_WRITE
 
 import search.conf.Conf
 import search.conf.PatternData
@@ -195,6 +201,29 @@ class LineFinderTest extends Specification {
 				foundLines?.size() == 1
 				foundLines?.every { it.line =~ /private static final String GREEN/ }
 				exampleGroovyFileCopy.readLines().every { !(it =~ /private static final String GREEN/) }
+				notExists lineFinder.replaceTmpFilePath
+			}
+	}
+
+	@ResourceLock('search.pl.out')
+	void 'keeps permissions when replacing'() {
+		given:
+			def exampleGroovyFileCopy = copyExampleGroovyFile tempDir
+			setPosixFilePermissions exampleGroovyFileCopy, [OWNER_EXECUTE, OWNER_READ, OWNER_WRITE] as Set
+
+			def lineFinder = makeLineFinderFor(new Conf(
+					patternData: [new PatternData(searchPattern: ~/private/, replace: true, replaceText: 'PRIVATE')],
+					doReplace: true,
+					dryRun: false
+			))
+
+		when:
+			lineFinder.findLines exampleGroovyFileCopy
+
+		then:
+			verifyAll {
+				foundLines
+				OWNER_EXECUTE in getPosixFilePermissions(exampleGroovyFileCopy)
 			}
 	}
 

@@ -4,14 +4,15 @@ import static LineType.CONTEXT_LINE
 import static LineType.FOUND_LINE
 import static LineVisibility.HIDE
 import static LineVisibility.SHOW
+import static java.nio.file.Files.delete
 import static java.nio.file.Files.isWritable
-import static java.nio.file.Files.move
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import static search.conf.Constants.REPLACE_TMP_FILE_NAME
 import static search.linefinder.LinesReader.eachLineWhile
 
 import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 import search.SearchError
+import search.annotations.VisibleForTesting
 import search.conf.Conf
 import search.conf.PatternData
 import search.log.ILog
@@ -40,7 +41,9 @@ class LineFinder {
 
 	private final ILog log
 
-	private final Path replaceTmpFilePath
+	@PackageScope
+	@VisibleForTesting
+	final Path replaceTmpFilePath
 
 	LineFinder(Conf conf, ILinesCollector linesCollector, IResultsPrinter resultsPrinter, ILog log) {
 		this.patternData = conf.patternData
@@ -156,7 +159,17 @@ class LineFinder {
 			}
 		}
 
-		move replaceTmpFilePath, file, REPLACE_EXISTING
+		movePreservingOriginalPermissions replaceTmpFilePath, file
+	}
+
+	private static void movePreservingOriginalPermissions(Path fromFile, Path toFile) {
+		toFile.withOutputStream { os ->
+			fromFile.withInputStream { is ->
+				os << is
+			}
+		}
+
+		delete fromFile
 	}
 
 }
