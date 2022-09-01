@@ -36,7 +36,7 @@ testing {
 	suites {
 		all {
 			dependencies {
-				implementation 'org.spockframework:spock-core:2.0-groovy-3.0'
+				implementation 'org.spockframework:spock-core:2.2-groovy-4.0'
 			}
 
 			useJUnitJupiter()
