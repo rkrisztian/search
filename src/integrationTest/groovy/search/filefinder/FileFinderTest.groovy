@@ -18,7 +18,7 @@ class FileFinderTest extends Specification {
 	@TempDir
 	private Path tempDir
 
-	private final List<Path> foundFiles = []
+	private final List<String> foundFiles = []
 
 	void setup() {
 		def exampleClass = Paths.get this.class.classLoader.getResource('example.class').toURI()
@@ -76,8 +76,8 @@ class FileFinderTest extends Specification {
 		then:
 			verifyAll(foundFiles) {
 				it?.size() == 2
-				it?.any { it as String =~ $/\ba/d/example.groovy/$ }
-				it?.any { it as String =~ $/\ba/e/greek.txt/$ }
+				it?.any { it =~ $/\ba/d/example.groovy/$ }
+				it?.any { it =~ $/\ba/e/greek.txt/$ }
 			}
 	}
 
@@ -110,14 +110,14 @@ class FileFinderTest extends Specification {
 		then:
 			verifyAll(foundFiles) {
 				it?.size() == 2
-				it[0] as String =~ $/a/d/anotherExample.groovy/$
-				it[1] as String =~ $/a/d/example.groovy/$
+				it[0] =~ $/a/d/anotherExample.groovy/$
+				it[1] =~ $/a/d/example.groovy/$
 			}
 	}
 
 	private void findFiles(Conf conf) {
 		new FileFinder(conf, LogMock.get(), tempDir).find {
-			foundFiles << it
+			foundFiles << (it as String)
 		}
 	}
 
