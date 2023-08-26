@@ -7,16 +7,16 @@ plugins {
 }
 
 wrapper {
-	gradleVersion = '7.4'
+	gradleVersion = '8.3'
 	distributionType = Wrapper.DistributionType.ALL
 }
 
-version = BUILD_VERSION
-group = GROUP_ID
+version = '3.0.0'
+group = 'rkrisztian.search'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(11)
+		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
 
@@ -25,10 +25,10 @@ repositories {
 }
 
 dependencies {
-	def groovyVersion = '3.0.9'
+	def groovyVersion = '3.0.17'
 
 	implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
-	codenarc 'org.codenarc:CodeNarc:2.2.0'
+	codenarc 'org.codenarc:CodeNarc:3.3.0'
 	codenarc "org.codehaus.groovy:groovy-all:$groovyVersion"
 }
 
@@ -36,7 +36,7 @@ testing {
 	suites {
 		all {
 			dependencies {
-				implementation 'org.spockframework:spock-core:2.0-groovy-3.0'
+				implementation 'org.spockframework:spock-core:2.3-groovy-3.0'
 			}
 
 			useJUnitJupiter()
@@ -50,14 +50,14 @@ testing {
 
 		integrationTest(JvmTestSuite) {
 			dependencies {
-				implementation project
+				implementation project()
 				implementation configurations.testCompileClasspath
 				implementation sourceSets.test.output
 			}
 
 			targets.all {
 				testTask.configure {
-					systemProperty 'java.io.tmpdir', "${buildDir}/tmp"
+					systemProperty 'java.io.tmpdir', "${->layout.buildDirectory.get()}/tmp"
 				}
 			}
 		}
@@ -79,7 +79,7 @@ distributions {
 	}
 }
 
-tasks.named('jar').configure {
+tasks.named('jar') {
 	manifest {
 		attributes 'Implementation-Title': 'Search App',
 				'Implementation-Version': archiveVersion
@@ -92,10 +92,10 @@ codenarc {
 }
 
 jacoco {
-	toolVersion = '0.8.7'
+	toolVersion = '0.8.10'
 }
 
-tasks.named('jacocoTestReport').configure {
+tasks.named('jacocoTestReport') {
 	enabled = false
 }
 
@@ -113,7 +113,7 @@ tasks.register('codeCoverageReport', JacocoReport) {
 	}
 }
 
-tasks.named('check').configure {
+tasks.named('check') {
 	dependsOn testing.suites.integrationTest
 	dependsOn 'codeCoverageReport'
 }

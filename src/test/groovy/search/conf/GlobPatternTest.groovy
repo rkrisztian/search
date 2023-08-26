@@ -8,7 +8,7 @@ class GlobPatternTest extends Specification {
 
 	void 'glob pattern works'() {
 		expect:
-			new GlobPattern('*.java').matches(Paths.get('Test.java'))
+			new GlobPattern('*.java').matches Paths.get('Test.java')
 	}
 
 }

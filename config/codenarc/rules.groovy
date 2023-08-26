@@ -5,6 +5,9 @@ ruleset {
 	ruleset 'rulesets/braces.xml'
 	ruleset('rulesets/comments.xml') {
 		'ClassJavadoc' doNotApplyToFilesMatching: /.*?(Test(Constants)?|Mock.*?|Assertions)\.groovy$/
+		// Bug: https://github.com/CodeNarc/CodeNarc/issues/743
+		'SpaceAfterCommentDelimiter' enabled: false
+		'SpaceBeforeCommentDelimiter' enabled: false
 	}
 	ruleset 'rulesets/concurrency.xml'
 	ruleset('rulesets/convention.xml') {
@@ -29,6 +32,8 @@ ruleset {
 	}
 	// TODO: Consider the DRY rules.
 	//ruleset 'rulesets/dry.xml'
+	// I get compilation failures for the enhanced ruleset.
+	//ruleset 'rulesets/enhanced.xml'
 	ruleset 'rulesets/exceptions.xml'
 	ruleset('rulesets/formatting.xml') {
 		'LineLength' length: 130
@@ -58,6 +63,13 @@ ruleset {
 	ruleset('rulesets/naming.xml') {
 		// Not Spock friendly
 		'MethodName' doNotApplyToFilesMatching: /.*?Test\.groovy$/
+	}
+	// TODO: Consider the security rules.
+	ruleset('rulesets/security.xml') {
+		// Not developing an Applet
+		'NonFinalPublicField' enabled: false
+		// Not a web application
+		'SystemExit' enabled: false
 	}
 	ruleset('rulesets/size.xml') {
 		// JaCoCo is used, not Cobertura.

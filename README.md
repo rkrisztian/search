@@ -121,7 +121,7 @@ search for multiple patterns, Ack cannot replace text in files, and I don't care
 * The tool was written primarily for use on Linux & Mac, but git bash for Windows is also supported. The implemented binary file
   detection does not work natively on Windows, as [text encoding on there is quite
   different](https://superuser.com/questions/294219/what-are-the-differences-between-linux-and-windows-txt-files-unicode-encoding).
-* Java Runtime Environment version 11 or newer
+* Java Runtime Environment version 17 or newer
 
 ### From release
 
