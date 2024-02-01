@@ -28,7 +28,7 @@ dependencies {
 	def groovyVersion = '3.0.17'
 
 	implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
-	codenarc 'org.codenarc:CodeNarc:3.3.0'
+	codenarc 'org.codenarc:CodeNarc:3.4.0-groovy-4.0'
 	codenarc "org.codehaus.groovy:groovy-all:$groovyVersion"
 }
 
