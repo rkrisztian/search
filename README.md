@@ -1,8 +1,17 @@
-# search
+# search - ARCHIVED
 
 [![Build Status](https://github.com/rkrisztian/search/actions/workflows/gradle.yml/badge.svg)](https://github.com/rkrisztian/search/actions/workflows/gradle.yml)
 [![SL Scan](https://github.com/rkrisztian/search/workflows/SL%20Scan/badge.svg)](https://github.com/rkrisztian/search/actions/workflows/shiftleft-analysis.yml)
 [![codecov](https://codecov.io/gh/rkrisztian/search/branch/master/graph/badge.svg?token=02E6VF5NTQ)](https://codecov.io/gh/rkrisztian/search)
+
+This project has been officially archived and is no longer being maintained or updated. This decision was made because other tools more or less already solve the same problem.
+
+## Alternatives
+
+I recommend the following projects for users seeking alternatives:
+
+- [ripgrep](https://github.com/BurntSushi/ripgrep) - Designed for speed, filtering by default, fewer bugs and Unicode support.
+- [ugrep](https://github.com/Genivia/ugrep) - True drop-in replacement for GNU grep, equipped with a ton of new features that users wanted.
 
 ## Overview
 
