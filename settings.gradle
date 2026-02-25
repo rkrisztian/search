@@ -4,4 +4,12 @@ pluginManagement {
 	}
 }
 
+def isCiServer = System.env.CI as boolean
+
+buildCache {
+	local {
+		enabled = !isCiServer
+	}
+}
+
 rootProject.name = 'search'
