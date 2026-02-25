@@ -4,7 +4,12 @@
 [![SL Scan](https://github.com/rkrisztian/search/workflows/SL%20Scan/badge.svg)](https://github.com/rkrisztian/search/actions/workflows/shiftleft-analysis.yml)
 [![codecov](https://codecov.io/gh/rkrisztian/search/branch/master/graph/badge.svg?token=02E6VF5NTQ)](https://codecov.io/gh/rkrisztian/search)
 
-This project has been officially archived and is no longer being maintained or updated. This decision was made because other tools more or less already solve the same problem.
+This project has been officially archived on Aug 3, 2024, and is no longer being maintained or updated. This decision was made
+because other tools more or less already solve the same problem (see below).
+
+**Note:** I may occasionally make a few exceptions and temporarily unarchive the project to do small updates for certain
+reasons. I still refer to this project from time to time, and having an updated version is sometimes helpful. However, my
+reasoning above does not change.
 
 ## Alternatives
 
