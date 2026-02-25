@@ -1,6 +1,6 @@
 # EditorConfig helps us keep consistent coding styles between different editors and IDEs (http://editorconfig.org).
 
-# Do not look for deeper placed ".editorconfig" files.
+# top-most EditorConfig file
 root = true
 
 [*]
