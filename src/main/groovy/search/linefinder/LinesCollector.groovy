@@ -11,6 +11,8 @@ import search.annotations.VisibleForTesting
 @CompileStatic
 class LinesCollector implements ILinesCollector {
 
+	private static final String ERROR_SEARCH_FINISHED = 'Search finished'
+
 	private final Integer maxContextLines
 	private final int maxMatchedLinesPerFile
 	private final int maxDisplayedLineLength
@@ -44,7 +46,7 @@ class LinesCollector implements ILinesCollector {
 
 	void storeFoundLine(int lineNr, String line, LineVisibility lineVisibility) {
 		if (finished) {
-			throw new LinesCollectorException('Search finished')
+			throw new LinesCollectorException(ERROR_SEARCH_FINISHED)
 		}
 
 		if (!maxMatchedLinesPerFile) {
@@ -94,7 +96,7 @@ class LinesCollector implements ILinesCollector {
 
 	void storeContextLine(String line) {
 		if (finished) {
-			throw new LinesCollectorException('Search finished')
+			throw new LinesCollectorException(ERROR_SEARCH_FINISHED)
 		}
 
 		if (!maxMatchedLinesPerFile) {

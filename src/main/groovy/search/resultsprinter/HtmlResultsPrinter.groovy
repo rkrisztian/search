@@ -16,6 +16,7 @@ import search.linefinder.FoundLine
 import search.log.ILog
 import search.resultsprinter.linepart.ILinePartitioner
 
+import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 
 /**
@@ -25,6 +26,8 @@ import java.nio.file.Path
 class HtmlResultsPrinter implements IResultsPrinter {
 
 	private static final String NBSP = '&#160;'
+	private static final String CLASS_CODE = 'code'
+	private static final String CLASS_LINE_NR = 'lineNr'
 
 	private final String htmlStyle = '''
 			body {
@@ -95,7 +98,7 @@ class HtmlResultsPrinter implements IResultsPrinter {
 		def builder = new MarkupBuilder(bodyPartWriter)
 
 		builder.div {
-			h4([class: 'code', 'data-id': 'filePath'] + colors.format(FILE_PATH_COLOR), filePath)
+			h4([class: CLASS_CODE, 'data-id': 'filePath'] + colors.format(FILE_PATH_COLOR), filePath)
 
 			if (!foundLines) {
 				return
@@ -123,11 +126,11 @@ class HtmlResultsPrinter implements IResultsPrinter {
 
 	private void printFoundLine(MarkupBuilder builder, FoundLine foundLine) {
 		builder.tr(['data-id': 'foundLine']) {
-			td([class: 'lineNr'] + colors.format(LINE_NUMBER_COLOR)) {
-				pre([class: 'code'], foundLine.lineNr)
+			td([class: CLASS_LINE_NR] + colors.format(LINE_NUMBER_COLOR)) {
+				pre([class: CLASS_CODE], foundLine.lineNr)
 			}
 			td {
-				pre([class: 'code']) {
+				pre([class: CLASS_CODE]) {
 					partitioner.partition(foundLine.line).each { lp ->
 						span lp.colorType ? colors.format(lp.colorType) : [:], lp.text
 					}
@@ -149,14 +152,14 @@ class HtmlResultsPrinter implements IResultsPrinter {
 
 		contextLines.each { contextLine ->
 			builder.tr(['data-id': 'contextLine']) {
-				td class: 'lineNr'
+				td class: CLASS_LINE_NR
 
 				if (contextLine == SKIPPED_LINES_MARKER) {
 					td([class: 'marker'] + colors.format(CONTEXT_LINES_SKIPPED_LINES_MARKER_COLOR), contextLine)
 				}
 				else {
 					td {
-						pre([class: 'code'] + colors.format(CONTEXT_LINES_COLOR)) {
+						pre([class: CLASS_CODE] + colors.format(CONTEXT_LINES_COLOR)) {
 							if (contextLine) {
 								mkp.yield contextLine
 							}
@@ -174,10 +177,10 @@ class HtmlResultsPrinter implements IResultsPrinter {
 	Path writeToHtmlFile() {
 		def htmlFile = tmpDir.resolve HTML_TMP_FILE_NAME
 
-		htmlFile.withWriter('utf-8') { writer ->
+		htmlFile.withWriter(StandardCharsets.UTF_8 as String) { writer ->
 			new MarkupBuilder(writer).html {
 				head {
-					meta charset: 'utf-8'
+					meta charset: StandardCharsets.UTF_8 as String
 					title 'Search results'
 					style type: 'text/css', htmlStyle
 				}

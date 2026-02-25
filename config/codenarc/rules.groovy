@@ -5,9 +5,6 @@ ruleset {
 	ruleset 'rulesets/braces.xml'
 	ruleset('rulesets/comments.xml') {
 		'ClassJavadoc' doNotApplyToFilesMatching: /.*?(Test(Constants)?|Mock.*?|Assertions)\.groovy$/
-		// Bug: https://github.com/CodeNarc/CodeNarc/issues/743
-		'SpaceAfterCommentDelimiter' enabled: false
-		'SpaceBeforeCommentDelimiter' enabled: false
 	}
 	ruleset 'rulesets/concurrency.xml'
 	ruleset('rulesets/convention.xml') {
@@ -30,8 +27,10 @@ ruleset {
 		// Public fields should be okay for data classes.
 		'PublicInstanceField' enabled: false
 	}
-	// TODO: Consider the DRY rules.
-	//ruleset 'rulesets/dry.xml'
+	ruleset('rulesets/dry.xml') {
+		// ignore common indexes and sizes
+		'DuplicateNumberLiteral' ignoreNumbers: '1,0,-1,-2'
+	}
 	// I get compilation failures for the enhanced ruleset.
 	//ruleset 'rulesets/enhanced.xml'
 	ruleset 'rulesets/exceptions.xml'
@@ -64,7 +63,6 @@ ruleset {
 		// Not Spock friendly
 		'MethodName' doNotApplyToFilesMatching: /.*?Test\.groovy$/
 	}
-	// TODO: Consider the security rules.
 	ruleset('rulesets/security.xml') {
 		// Not developing an Applet
 		'NonFinalPublicField' enabled: false
