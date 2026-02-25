@@ -25,11 +25,9 @@ repositories {
 }
 
 dependencies {
-	def groovyVersion = '3.0.25'
-
-	implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
-	codenarc 'org.codenarc:CodeNarc:3.7.0'
-	codenarc "org.codehaus.groovy:groovy-all:$groovyVersion"
+	implementation libs.groovy.all
+	codenarc libs.codenarc
+	codenarc libs.groovy.all
 }
 
 testing {
@@ -38,7 +36,7 @@ testing {
 			useJUnitJupiter()
 
 			dependencies {
-				implementation 'org.spockframework:spock-core:2.4-groovy-3.0'
+				implementation libs.spock.core
 			}
 
 			targets.all {
