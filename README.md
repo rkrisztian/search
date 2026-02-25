@@ -1,7 +1,6 @@
 # search - ARCHIVED
 
 [![Build Status](https://github.com/rkrisztian/search/actions/workflows/gradle.yml/badge.svg)](https://github.com/rkrisztian/search/actions/workflows/gradle.yml)
-[![SL Scan](https://github.com/rkrisztian/search/workflows/SL%20Scan/badge.svg)](https://github.com/rkrisztian/search/actions/workflows/shiftleft-analysis.yml)
 [![codecov](https://codecov.io/gh/rkrisztian/search/branch/master/graph/badge.svg?token=02E6VF5NTQ)](https://codecov.io/gh/rkrisztian/search)
 
 This project has been officially archived on Aug 3, 2024, and is no longer being maintained or updated. This decision was made
