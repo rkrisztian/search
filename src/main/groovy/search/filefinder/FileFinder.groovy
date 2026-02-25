@@ -10,7 +10,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import search.conf.Conf
-import search.log.ILog
+import search.log.Log
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -23,11 +23,11 @@ class FileFinder {
 
 	protected final Conf conf
 
-	protected final ILog log
+	protected final Log log
 
 	protected final Path baseDir
 
-	FileFinder(Conf conf, ILog log, Path baseDir = Paths.get('.')) {
+	FileFinder(Conf conf, Log log, Path baseDir = Paths.get('.')) {
 		this.conf = conf
 		this.log = log
 		this.baseDir = baseDir

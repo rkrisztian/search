@@ -7,7 +7,7 @@ import search.linefinder.FoundLine
  * Outputs search results.
  */
 @CompileStatic
-interface IResultsPrinter {
+interface ResultsPrinter {
 
 	void printFoundLines(String filePath, List<FoundLine> foundLines)
 

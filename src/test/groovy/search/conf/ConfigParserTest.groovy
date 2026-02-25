@@ -7,7 +7,7 @@ import static search.conf.ConfigParser.PROPERTY_MAX_CONTEXT_LINES
 import static search.conf.ConfigParser.PROPERTY_PRINT_HTML
 import static search.conf.ConfigParser.PROPERTY_TMP_DIR
 
-import search.log.ILog
+import search.log.Log
 import search.log.LogMock
 import spock.lang.Specification
 
@@ -16,7 +16,7 @@ import java.nio.file.Paths
 class ConfigParserTest extends Specification {
 
 	private final Conf conf = new Conf()
-	private final ILog log = LogMock.get()
+	private final Log log = LogMock.get()
 	private final ConfigParser configParser = new ConfigParser(conf, log)
 
 	void 'null configs are ignored'() {

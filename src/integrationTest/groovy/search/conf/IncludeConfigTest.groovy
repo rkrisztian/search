@@ -1,6 +1,6 @@
 package search.conf
 
-import search.log.ILog
+import search.log.Log
 import search.log.LogMock
 import spock.lang.Specification
 
@@ -10,7 +10,7 @@ import java.nio.file.Paths
 class IncludeConfigTest extends Specification {
 
 	private final Path testConfigFile = Paths.get this.class.classLoader.getResource('conf1.groovy').toURI()
-	private final ILog log = LogMock.get()
+	private final Log log = LogMock.get()
 
 	void 'included config files can override properties'() {
 		given:

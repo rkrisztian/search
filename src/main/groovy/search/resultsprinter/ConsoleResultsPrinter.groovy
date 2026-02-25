@@ -10,26 +10,26 @@ import groovy.transform.CompileStatic
 import search.colors.AnsiColors
 import search.conf.PatternData
 import search.linefinder.FoundLine
-import search.log.ILog
-import search.resultsprinter.linepart.ILinePartitioner
+import search.log.Log
+import search.resultsprinter.linepart.LinePartitioner
 
 /**
  * Displays search results in the console output.
  */
 @CompileStatic
-class ConsoleResultsPrinter implements IResultsPrinter {
+class ConsoleResultsPrinter implements ResultsPrinter {
 
 	private final Set<PatternData> patternData
 
-	private final ILog log
+	private final Log log
 
 	private final AnsiColors colors
 
-	private final ILinePartitioner partitioner
+	private final LinePartitioner partitioner
 
 	private final boolean disableColors
 
-	ConsoleResultsPrinter(Set<PatternData> patternData, ILog log, AnsiColors colors, ILinePartitioner partitioner,
+	ConsoleResultsPrinter(Set<PatternData> patternData, Log log, AnsiColors colors, LinePartitioner partitioner,
 			boolean disableColors) {
 		this.patternData = patternData
 		this.log = log

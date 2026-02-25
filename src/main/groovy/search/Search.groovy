@@ -7,9 +7,9 @@ import search.conf.Conf
 import search.conf.ConfigParser
 import search.filefinder.FileFinder
 import search.linefinder.LineFinder
-import search.linefinder.LinesCollector
-import search.log.ILog
+import search.linefinder.LinesCollectorImpl
 import search.log.Log
+import search.log.LogImpl
 import search.resultsprinter.ResultsPrinterFactory
 
 /**
@@ -20,13 +20,13 @@ class Search {
 
 	protected final Conf conf
 
-	protected final ILog log
+	protected final Log log
 
 	protected final AnsiColors colors
 
 	protected final String[] args
 
-	Search(Conf conf, ILog log, AnsiColors colors, String[] args) {
+	Search(Conf conf, Log log, AnsiColors colors, String[] args) {
 		this.conf = conf
 		this.log = log
 		this.colors = colors
@@ -35,7 +35,7 @@ class Search {
 
 	static void main(String[] args) {
 		def conf = new Conf()
-		def log = new Log()
+		def log = new LogImpl()
 		def colors = new AnsiColors(conf.disableColors)
 
 		new Search(conf, log, colors, args)
@@ -90,7 +90,7 @@ class Search {
 			}
 		}
 
-		def linesCollector = new LinesCollector(conf.maxMatchedLinesPerFile, conf.maxContextLines,
+		def linesCollector = new LinesCollectorImpl(conf.maxMatchedLinesPerFile, conf.maxContextLines,
 				Conf.MAX_DISPLAYED_LINE_LENGTH)
 		def resultsPrinter = ResultsPrinterFactory.makeResultsPrinter conf, log
 		def lineFinder = new LineFinder(conf, linesCollector, resultsPrinter, log)

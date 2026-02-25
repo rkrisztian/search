@@ -2,10 +2,10 @@ package search.resultsprinter.testutil
 
 import groovy.transform.CompileStatic
 import search.colors.AnsiColors
-import search.log.ILog
+import search.log.Log
 
 @CompileStatic
-class LogMockForConsoleResultsPrinter implements ILog {
+class LogMockForConsoleResultsPrinter implements Log {
 
 	List<StringBuilder> loggedLines = []
 

@@ -1,14 +1,14 @@
 package search.conf
 
 import search.SearchError
-import search.log.ILog
+import search.log.Log
 import search.log.LogMock
 import spock.lang.Specification
 
 class ArgumentsParserTest extends Specification {
 
 	private Conf conf
-	private ILog log
+	private Log log
 	private ArgumentsParser argumentsParser
 
 	void setup() {

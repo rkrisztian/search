@@ -15,14 +15,14 @@ import search.SearchError
 import search.annotations.VisibleForTesting
 import search.conf.Conf
 import search.conf.PatternData
-import search.log.ILog
-import search.resultsprinter.IResultsPrinter
+import search.log.Log
+import search.resultsprinter.ResultsPrinter
 
 import java.nio.file.Path
 import java.util.regex.Pattern
 
 /**
- * Searches for {@link FoundLine}s, storing them in a {@link ILinesCollector}, and performs string replacements where needed.
+ * Searches for {@link FoundLine}s, storing them in a {@link LinesCollector}, and performs string replacements where needed.
  */
 @CompileStatic
 class LineFinder {
@@ -35,17 +35,17 @@ class LineFinder {
 
 	private final boolean dryRun
 
-	private final ILinesCollector linesCollector
+	private final LinesCollector linesCollector
 
-	private final IResultsPrinter resultsPrinter
+	private final ResultsPrinter resultsPrinter
 
-	private final ILog log
+	private final Log log
 
 	@PackageScope
 	@VisibleForTesting
 	final Path replaceTmpFilePath
 
-	LineFinder(Conf conf, ILinesCollector linesCollector, IResultsPrinter resultsPrinter, ILog log) {
+	LineFinder(Conf conf, LinesCollector linesCollector, ResultsPrinter resultsPrinter, Log log) {
 		this.patternData = conf.patternData
 		this.excludeLinePatterns = conf.excludeLinePatterns
 		this.doReplace = conf.doReplace

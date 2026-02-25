@@ -9,7 +9,7 @@ import static search.resultsprinter.testutil.ResultsPrinterTestConstants.WITH_RE
 import search.colors.AnsiColors
 import search.conf.PatternData
 import search.linefinder.FoundLine
-import search.resultsprinter.linepart.LinePartitioner
+import search.resultsprinter.linepart.LinePartitionerImpl
 import search.resultsprinter.testutil.LogMockForConsoleResultsPrinter
 import spock.lang.Specification
 
@@ -182,7 +182,7 @@ class ConsoleResultsPrinterTest extends Specification {
 
 	private ConsoleResultsPrinter makeConsoleResultsPrinter(Set<PatternData> patternData, boolean replace, boolean dryRun,
 			boolean disableColors) {
-		def partitioner = new LinePartitioner(patternData, replace, dryRun, disableColors)
+		def partitioner = new LinePartitionerImpl(patternData, replace, dryRun, disableColors)
 		new ConsoleResultsPrinter(patternData, log, new AnsiColors(disableColors), partitioner, disableColors)
 	}
 

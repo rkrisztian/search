@@ -2,13 +2,13 @@ package search.log
 
 class LogMock {
 
-	static ILog get() {
+	static Log get() {
 		[
 				info: { message -> },
 				debug: { message -> },
 				warn: { message -> },
 				rawPrintln: { message -> }
-		] as ILog
+		] as Log
 	}
 
 }

@@ -4,7 +4,7 @@ import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
 import search.SearchError
 import search.annotations.VisibleForTesting
-import search.log.ILog
+import search.log.Log
 
 /**
  * Not using a 3rd-party library to parse arguments because of the unconventional syntax.
@@ -51,7 +51,7 @@ class ArgumentsParser {
 	'''.stripIndent(true)
 
 	private final Conf conf
-	private final ILog log
+	private final Log log
 
 	@VisibleForTesting
 	@PackageScope
@@ -63,7 +63,7 @@ class ArgumentsParser {
 	private boolean nextPatternIsNegativeSearch = false
 	private Iterator<String> argsIterator
 
-	ArgumentsParser(Conf conf, ILog log) {
+	ArgumentsParser(Conf conf, Log log) {
 		this.conf = conf
 		this.log = log
 	}

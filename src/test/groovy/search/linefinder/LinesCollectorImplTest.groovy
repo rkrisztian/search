@@ -5,7 +5,7 @@ import static search.linefinder.LineVisibility.SHOW
 
 import spock.lang.Specification
 
-class LinesCollectorTest extends Specification {
+class LinesCollectorImplTest extends Specification {
 
 	private static final String TEST_LINE_CONTEXT_BEFORE_BEFORE = 'context before before'
 	private static final String TEST_LINE_CONTEXT_BEFORE = 'context before'
@@ -14,11 +14,11 @@ class LinesCollectorTest extends Specification {
 	private static final String TEST_LINE_CONTEXT_AFTER = 'context after'
 	private static final String TEST_LINE_CONTEXT_AFTER_AFTER = 'context after after'
 
-	private LinesCollector linesCollector
+	private LinesCollectorImpl linesCollector
 
 	void 'matched lines and context disabled, found one matched line, should yield empty list'() {
 		given:
-			linesCollector = new LinesCollector(0, 0, 100)
+			linesCollector = new LinesCollectorImpl(0, 0, 100)
 
 		when:
 			linesCollector.storeFoundLine TEST_LINENR, TEST_LINE, SHOW
@@ -32,7 +32,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'matched lines and context disabled, found one context line, should yield empty list'() {
 		given:
-			linesCollector = new LinesCollector(0, 0, 100)
+			linesCollector = new LinesCollectorImpl(0, 0, 100)
 
 		when:
 			linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
@@ -46,7 +46,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'no matched lines and one context line enabled, should yield empty list'() {
 		given:
-			linesCollector = new LinesCollector(0, 1, 100)
+			linesCollector = new LinesCollectorImpl(0, 1, 100)
 
 		when:
 			linesCollector.storeContextLine TEST_LINE_CONTEXT_BEFORE
@@ -60,7 +60,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'one matched line and no context enabled, should yield one line'() {
 		given:
-			linesCollector = new LinesCollector(1, 0, 100)
+			linesCollector = new LinesCollectorImpl(1, 0, 100)
 
 		when:
 			linesCollector.with {
@@ -78,7 +78,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'one matched long line, should yield one truncated line'() {
 		given:
-			linesCollector = new LinesCollector(1, 0, 20)
+			linesCollector = new LinesCollectorImpl(1, 0, 20)
 
 		when:
 			linesCollector.storeFoundLine TEST_LINENR, 'this is a very long line that should be truncated', SHOW
@@ -89,7 +89,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'one matched line and one context line enabled, single match, without overflow'() {
 		given:
-			linesCollector = new LinesCollector(1, 1, 100)
+			linesCollector = new LinesCollectorImpl(1, 1, 100)
 
 		when:
 			linesCollector.with {
@@ -112,7 +112,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'one matched line and one context line enabled, single match, with overflow'() {
 		given:
-			linesCollector = new LinesCollector(1, 1, 100)
+			linesCollector = new LinesCollectorImpl(1, 1, 100)
 
 		when:
 			linesCollector.with {
@@ -139,7 +139,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'one matched line and one context line enabled, reset'() {
 		given:
-			linesCollector = new LinesCollector(1, 1, 100)
+			linesCollector = new LinesCollectorImpl(1, 1, 100)
 
 		when:
 			linesCollector.with {
@@ -158,7 +158,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'one matched line and one context line enabled, one match displayed'() {
 		given:
-			linesCollector = new LinesCollector(1, 1, 100)
+			linesCollector = new LinesCollectorImpl(1, 1, 100)
 
 		when:
 			linesCollector.with {
@@ -186,7 +186,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'one matched line and one context line enabled, one match, hidden'() {
 		given:
-			linesCollector = new LinesCollector(1, 1, 100)
+			linesCollector = new LinesCollectorImpl(1, 1, 100)
 
 		when:
 			linesCollector.with {
@@ -201,7 +201,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'one matched line and one context line enabled, two matches, one hidden'() {
 		given:
-			linesCollector = new LinesCollector(1, 1, 100)
+			linesCollector = new LinesCollectorImpl(1, 1, 100)
 
 		when:
 			linesCollector.with {
@@ -227,7 +227,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'two matched lines and one context line enabled'() {
 		given:
-			linesCollector = new LinesCollector(2, 1, 100)
+			linesCollector = new LinesCollectorImpl(2, 1, 100)
 
 		when:
 			linesCollector.with {
@@ -260,7 +260,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'matched line should be displayed as context line after the limit, mixed'() {
 		given:
-			linesCollector = new LinesCollector(1, 2, 100)
+			linesCollector = new LinesCollectorImpl(1, 2, 100)
 
 		when:
 			linesCollector.with {
@@ -285,7 +285,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'matched line should be displayed as context line after the limit, only found lines'() {
 		given:
-			linesCollector = new LinesCollector(1, 2, 100)
+			linesCollector = new LinesCollectorImpl(1, 2, 100)
 
 		when:
 			linesCollector.with {
@@ -307,7 +307,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'unlimited matches and one context line enabled'() {
 		given:
-			linesCollector = new LinesCollector(-1, 1, 100)
+			linesCollector = new LinesCollectorImpl(-1, 1, 100)
 
 		when:
 			linesCollector.with {
@@ -342,7 +342,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'should not be overflow between just enough context lines'() {
 		given:
-			linesCollector = new LinesCollector(-1, 2, 100)
+			linesCollector = new LinesCollectorImpl(-1, 2, 100)
 
 		when:
 			linesCollector.with {
@@ -373,7 +373,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'should overflow before and after with too many context lines'() {
 		given:
-			linesCollector = new LinesCollector(-1, 2, 100)
+			linesCollector = new LinesCollectorImpl(-1, 2, 100)
 
 		when:
 			linesCollector.with {
@@ -407,7 +407,7 @@ class LinesCollectorTest extends Specification {
 
 	void 'do not accept found lines when search finished'() {
 		given:
-			linesCollector = new LinesCollector(1, 1, 100)
+			linesCollector = new LinesCollectorImpl(1, 1, 100)
 			linesCollector.with {
 				storeContextLine 'c1'
 				storeFoundLine 2, 'f1', SHOW
@@ -419,12 +419,12 @@ class LinesCollectorTest extends Specification {
 			linesCollector.storeFoundLine 5, 'f3', SHOW
 
 		then:
-			thrown LinesCollector.LinesCollectorException
+			thrown LinesCollectorImpl.LinesCollectorException
 	}
 
 	void 'do not accept context lines when search finished'() {
 		given:
-			linesCollector = new LinesCollector(1, 1, 100)
+			linesCollector = new LinesCollectorImpl(1, 1, 100)
 			linesCollector.with {
 				storeContextLine 'c1'
 				storeFoundLine 2, 'f1', SHOW
@@ -436,7 +436,7 @@ class LinesCollectorTest extends Specification {
 			linesCollector.storeContextLine 'c3'
 
 		then:
-			thrown LinesCollector.LinesCollectorException
+			thrown LinesCollectorImpl.LinesCollectorException
 	}
 
 }

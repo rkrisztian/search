@@ -11,18 +11,18 @@ import groovy.xml.slurpersupport.GPathResult
 import search.colors.HtmlColors
 import search.conf.PatternData
 import search.linefinder.FoundLine
-import search.log.ILog
+import search.log.Log
 import search.log.LogMock
-import search.resultsprinter.linepart.LinePartitioner
+import search.resultsprinter.linepart.LinePartitionerImpl
 import spock.lang.Specification
 import spock.lang.TempDir
 
 import java.nio.file.Path
 import java.util.regex.Pattern
 
-class HtmlResultsPrinterTest extends Specification {
+class HtmlResultsPrinterImplTest extends Specification {
 
-	private final ILog log = LogMock.get()
+	private final Log log = LogMock.get()
 
 	@TempDir
 	private Path tempDir
@@ -199,13 +199,13 @@ class HtmlResultsPrinterTest extends Specification {
 			}
 	}
 
-	private HtmlResultsPrinter makeHtmlResultsPrinter(Set<PatternData> patternData, boolean replace, boolean dryRun,
-			boolean disableColors) {
-		def partitioner = new LinePartitioner(patternData, replace, dryRun, disableColors)
-		new HtmlResultsPrinter(patternData, log, new HtmlColors(disableColors), partitioner, tempDir)
+	private HtmlResultsPrinterImpl makeHtmlResultsPrinter(Set<PatternData> patternData, boolean replace, boolean dryRun,
+														  boolean disableColors) {
+		def partitioner = new LinePartitionerImpl(patternData, replace, dryRun, disableColors)
+		new HtmlResultsPrinterImpl(patternData, log, new HtmlColors(disableColors), partitioner, tempDir)
 	}
 
-	private static GPathResult printFoundLinesAndParse(HtmlResultsPrinter htmlResultsPrinter, List<FoundLine> foundLines) {
+	private static GPathResult printFoundLinesAndParse(HtmlResultsPrinterImpl htmlResultsPrinter, List<FoundLine> foundLines) {
 		htmlResultsPrinter.printFoundLines 'test.txt', foundLines
 		def htmlFile = htmlResultsPrinter.writeToHtmlFile()
 		new XmlSlurper().parse htmlFile

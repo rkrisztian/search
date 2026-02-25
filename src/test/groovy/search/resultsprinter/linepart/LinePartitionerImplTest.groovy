@@ -13,11 +13,11 @@ import static search.resultsprinter.testutil.ResultsPrinterTestConstants.WITH_RE
 import search.conf.PatternData
 import spock.lang.Specification
 
-class LinePartitionerTest extends Specification {
+class LinePartitionerImplTest extends Specification {
 
 	void 'should partition empty line'() {
 		given:
-			def partitioner = new LinePartitioner([new PatternData(searchPattern: ~/dummyPattern/)] as Set,
+			def partitioner = new LinePartitionerImpl([new PatternData(searchPattern: ~/dummyPattern/)] as Set,
 					NO_REPLACE, NO_DRY_RUN, WITH_COLORS)
 
 		expect:
@@ -27,7 +27,7 @@ class LinePartitionerTest extends Specification {
 	void 'should create right partitions, without replace [pattern: #patternData.searchPattern, colors: #disableColors]'(
 			Set<PatternData> patternData, boolean disableColors, List<? extends LinePart> expectedLineParts) {
 		given:
-			def partitioner = new LinePartitioner(patternData, NO_REPLACE, NO_DRY_RUN, disableColors)
+			def partitioner = new LinePartitionerImpl(patternData, NO_REPLACE, NO_DRY_RUN, disableColors)
 
 		expect:
 			partitioner.partition('this is a test') == expectedLineParts
@@ -88,7 +88,7 @@ class LinePartitionerTest extends Specification {
 	void 'should create right partitions, with replace [pattern: #patternData.searchPattern, colors: #disableColors]'(
 			Set<PatternData> patternData, boolean disableColors, List<? extends LinePart> expectedLineParts) {
 		given:
-			def partitioner = new LinePartitioner(patternData, WITH_REPLACE, NO_DRY_RUN, disableColors)
+			def partitioner = new LinePartitionerImpl(patternData, WITH_REPLACE, NO_DRY_RUN, disableColors)
 
 		expect:
 			partitioner.partition('this is a test') == expectedLineParts
@@ -132,7 +132,7 @@ class LinePartitionerTest extends Specification {
 	void 'should create right partitions, with dry replace [pattern: #patternData.searchPattern, colors: #disableColors]'(
 			Set<PatternData> patternData, boolean disableColors, List<? extends LinePart> expectedLineParts) {
 		given:
-			def partitioner = new LinePartitioner(patternData, WITH_REPLACE, WITH_DRY_RUN, disableColors)
+			def partitioner = new LinePartitionerImpl(patternData, WITH_REPLACE, WITH_DRY_RUN, disableColors)
 
 		expect:
 			partitioner.partition('this is a test') == expectedLineParts

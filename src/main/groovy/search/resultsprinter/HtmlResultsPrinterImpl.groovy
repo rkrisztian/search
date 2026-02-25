@@ -13,8 +13,8 @@ import search.annotations.VisibleForTesting
 import search.colors.HtmlColors
 import search.conf.PatternData
 import search.linefinder.FoundLine
-import search.log.ILog
-import search.resultsprinter.linepart.ILinePartitioner
+import search.log.Log
+import search.resultsprinter.linepart.LinePartitioner
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
@@ -23,7 +23,7 @@ import java.nio.file.Path
  * Saves the search results into an HTML file.
  */
 @CompileDynamic
-class HtmlResultsPrinter implements IResultsPrinter {
+class HtmlResultsPrinterImpl implements ResultsPrinter {
 
 	private static final String NBSP = '&#160;'
 	private static final String CLASS_CODE = 'code'
@@ -61,17 +61,17 @@ class HtmlResultsPrinter implements IResultsPrinter {
 
 	private final Set<PatternData> patternData
 
-	private final ILog log
+	private final Log log
 
 	private final HtmlColors colors
 
 	private final List<String> htmlBodyParts = []
 
-	private final ILinePartitioner partitioner
+	private final LinePartitioner partitioner
 
 	private final Path tmpDir
 
-	HtmlResultsPrinter(Set<PatternData> patternData, ILog log, HtmlColors colors, ILinePartitioner partitioner, Path tmpDir) {
+	HtmlResultsPrinterImpl(Set<PatternData> patternData, Log log, HtmlColors colors, LinePartitioner partitioner, Path tmpDir) {
 		this.patternData = patternData
 		this.log = log
 		this.colors = colors

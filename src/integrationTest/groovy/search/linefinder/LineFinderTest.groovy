@@ -12,7 +12,7 @@ import static java.nio.file.attribute.PosixFilePermission.OWNER_WRITE
 import search.conf.Conf
 import search.conf.PatternData
 import search.log.LogMock
-import search.resultsprinter.IResultsPrinter
+import search.resultsprinter.ResultsPrinter
 import spock.lang.ResourceLock
 import spock.lang.Specification
 import spock.lang.TempDir
@@ -233,9 +233,9 @@ class LineFinderTest extends Specification {
 					this.filePath = filePath
 					this.foundLines = foundLines
 				}
-		] as IResultsPrinter
+		] as ResultsPrinter
 
-		def linesCollector = new LinesCollector(conf.maxMatchedLinesPerFile, conf.maxContextLines,
+		def linesCollector = new LinesCollectorImpl(conf.maxMatchedLinesPerFile, conf.maxContextLines,
 				Conf.MAX_DISPLAYED_LINE_LENGTH)
 		new LineFinder(conf, linesCollector, mockResultsPrinter, LogMock.get())
 	}

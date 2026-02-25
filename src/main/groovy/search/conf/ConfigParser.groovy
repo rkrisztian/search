@@ -3,7 +3,7 @@ package search.conf
 import static java.nio.file.Files.isRegularFile
 
 import groovy.transform.CompileStatic
-import search.log.ILog
+import search.log.Log
 
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -28,9 +28,9 @@ class ConfigParser {
 
 	protected final Conf conf
 
-	protected final ILog log
+	protected final Log log
 
-	ConfigParser(Conf conf, ILog log) {
+	ConfigParser(Conf conf, Log log) {
 		this.conf = conf
 		this.log = log
 	}
